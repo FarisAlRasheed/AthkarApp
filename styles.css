@@ -1,0 +1,256 @@
+/* ===== BASE RESET & LAYOUT ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;direction:rtl;-webkit-font-smoothing:antialiased}
+body{
+  display:flex;align-items:center;justify-content:center;min-height:100vh;color:#111;
+  position:relative;overflow:hidden;transition:background 800ms ease
+}
+
+/* ===== THEMES ===== */
+/* Morning */
+.theme-morning{background:#e8f4f8}
+.theme-morning::before{
+  content:'';position:fixed;inset:0;
+  background:linear-gradient(180deg,#a8d8f0 0%,#c8e6f5 40%,#e8f4f8 100%);
+  z-index:-1;pointer-events:none
+}
+.theme-morning #cloudCanvas{display:block}
+.theme-morning #nightBg{display:none}
+.theme-morning .top-bar,.theme-morning .footer-note,.theme-morning .hint-arrow{color:#3a7abd}
+.theme-morning .card{background:#fff;box-shadow:0 12px 40px rgba(11,132,255,0.10)}
+.theme-morning .progress-circle{stroke:#0b84ff}
+.theme-morning .bg-circle{stroke:#e0eaf5}
+.theme-morning .progress-fill{background:#0b84ff}
+.theme-morning .progress-bar{background:rgba(58,122,189,0.15)}
+
+/* Evening */
+.theme-evening{background:#0a0a1a}
+.theme-evening::before{display:none}
+.theme-evening #cloudCanvas{display:none}
+.theme-evening #nightBg{display:block}
+.theme-evening .top-bar,.theme-evening .footer-note,.theme-evening .hint-arrow{color:rgba(200,210,240,0.85)}
+.theme-evening .card{background:rgba(15,15,40,0.85);box-shadow:0 12px 40px rgba(0,0,0,0.35);border:1px solid rgba(100,120,180,0.15)}
+.theme-evening .text-large{color:#e8e8f0}
+.theme-evening .fadhel-text{color:rgba(200,200,230,0.8)}
+.theme-evening .counter-circle{box-shadow:0 8px 24px rgba(80,100,200,0.25)}
+.theme-evening .bg-circle{stroke:rgba(100,120,180,0.25)}
+.theme-evening .progress-circle{stroke:#7b8dd4}
+.theme-evening .inner{background:rgba(20,20,50,0.9)}
+.theme-evening .counter-circle .value{color:#c0c8e8}
+.theme-evening .btn.reset{background:rgba(30,30,60,0.8);color:#8899cc;border-color:rgba(100,120,180,0.2)}
+.theme-evening .progress-fill{background:#7b8dd4}
+.theme-evening .progress-bar{background:rgba(100,120,180,0.2)}
+.theme-evening .card-info{color:rgba(200,210,240,0.8)}
+.theme-evening .dropdown-menu{background:rgba(20,20,50,0.95);border-color:rgba(100,120,180,0.2)}
+.theme-evening .dropdown-option{color:#c0c8e8}
+.theme-evening .dropdown-option:hover{background:rgba(100,120,180,0.15)}
+.theme-evening .dropdown-option.active{color:#7b8dd4}
+
+/* ===== NIGHT SKY BG ===== */
+.night-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:url('images/night-sky.svg') center/cover no-repeat;
+  transition:transform 600ms cubic-bezier(.22,.9,.26,1)
+}
+
+/* ===== CLOUD CANVAS ===== */
+#cloudCanvas{
+  position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;opacity:0.7
+}
+
+/* ===== PAGE STRUCTURE ===== */
+.page{width:100%;height:100dvh;display:flex;flex-direction:column;position:relative;z-index:1}
+
+/* ===== TOP BAR (title + dropdown) ===== */
+.top-bar{
+  height:56px;display:flex;align-items:center;justify-content:center;padding:12px 20px;
+  position:relative;z-index:100
+}
+.title-dropdown{
+  position:relative;display:flex;align-items:center;gap:8px;cursor:pointer;
+  user-select:none;-webkit-tap-highlight-color:transparent
+}
+.athkar-title{
+  font-size:20px;font-weight:700;letter-spacing:-0.3px
+}
+.dropdown-arrow{
+  transition:transform 300ms ease;flex-shrink:0
+}
+.dropdown-arrow.open{transform:rotate(180deg)}
+.dropdown-menu{
+  position:absolute;top:calc(100% + 8px);right:50%;transform:translateX(50%);
+  background:#fff;border-radius:14px;padding:6px 0;min-width:200px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.12);border:1px solid rgba(0,0,0,0.06);
+  opacity:0;visibility:hidden;transform:translateX(50%) translateY(-8px);
+  transition:all 250ms cubic-bezier(.22,.9,.26,1);z-index:200
+}
+.dropdown-menu.open{
+  opacity:1;visibility:visible;transform:translateX(50%) translateY(0)
+}
+.dropdown-option{
+  padding:12px 20px;font-size:15px;color:#333;cursor:pointer;
+  transition:background 150ms ease;text-align:center;font-weight:500
+}
+.dropdown-option:hover{background:rgba(11,132,255,0.06)}
+.dropdown-option.active{color:#0b84ff;font-weight:600}
+
+/* ===== HINT ARROWS ===== */
+.hint-arrow{
+  position:fixed;z-index:10;opacity:0.35;
+  transition:opacity 300ms ease;pointer-events:none;
+  animation:hintFloat 2.5s ease-in-out infinite
+}
+.hint-arrow:hover{opacity:0.6}
+.hint-up{top:68px;left:50%;transform:translateX(-50%)}
+.hint-down{bottom:74px;left:50%;transform:translateX(-50%)}
+.hint-left{left:12px;top:50%;transform:translateY(-50%)}
+.hint-right{right:12px;top:50%;transform:translateY(-50%)}
+.hint-arrow.hidden{opacity:0 !important}
+@keyframes hintFloat{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(-6px)}
+}
+.hint-left{animation:hintFloatH 2.5s ease-in-out infinite}
+.hint-right{animation:hintFloatH 2.5s ease-in-out infinite}
+@keyframes hintFloatH{
+  0%,100%{transform:translateY(-50%) translateX(0)}
+  50%{transform:translateY(-50%) translateX(-6px)}
+}
+
+/* ===== CARD AREA ===== */
+.canvas{flex:1;display:flex;align-items:center;justify-content:center;padding:0 4vw}
+.card-frame{
+  width:88%;max-width:480px;height:72vh;max-height:680px;min-height:280px;
+  display:flex;align-items:center;justify-content:center
+}
+.card-outer{
+  width:100%;height:100%;position:relative;
+  perspective:1400px;display:flex;align-items:center;justify-content:center
+}
+
+/* ===== CARD WRAP (vertical slide) ===== */
+.card-wrap{
+  width:100%;height:100%;position:absolute;top:0;left:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform 360ms cubic-bezier(.22,.9,.26,1),opacity 280ms ease
+}
+
+/* ===== CARD (3D flip container) ===== */
+.card{
+  width:100%;height:100%;border-radius:22px;
+  transform-style:preserve-3d;
+  transition:transform 560ms cubic-bezier(.2,.9,.22,1);
+  position:relative
+}
+
+/* ===== FACES ===== */
+.face{
+  position:absolute;inset:0;padding:32px 28px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  backface-visibility:hidden;text-align:center;border-radius:22px;overflow:hidden
+}
+.front{transform:rotateY(0deg)}
+.back{transform:rotateY(180deg)}
+
+/* KEY FIX: the card flips, but the back face content counter-rotates
+   so the text is never mirrored */
+.card.flipped{transform:rotateY(180deg)}
+
+/* ===== TEXT ===== */
+.text-large{
+  font-size:26px;line-height:1.7;direction:rtl;font-weight:600;
+  color:#1a1a1a;max-width:90%;text-align:center;word-break:break-word
+}
+.fadhel-label{font-size:13px;color:#999;margin-bottom:8px;font-weight:500;letter-spacing:0.5px}
+.fadhel-text{font-size:20px;line-height:1.6;color:#555;max-width:88%;text-align:center}
+
+/* ===== CONTROLS (outside the flipping card) ===== */
+.controls{
+  position:absolute;left:0;right:0;bottom:20px;
+  display:flex;align-items:center;justify-content:center;gap:14px;z-index:10
+}
+.card-wrap .controls{display:flex}
+.card-wrap.flip-disabled .controls{display:flex}
+
+/* Hide controls when card is flipped */
+.card-wrap.is-flipped .controls{display:none !important}
+
+/* ===== COUNTER ===== */
+.counter{display:flex;align-items:center;gap:12px;justify-content:center}
+.counter-circle{
+  width:68px;height:68px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(11,132,255,0.14);
+  color:#083a66;font-weight:700;font-size:18px;position:relative
+}
+.counter-circle .inner{
+  background:#fff;width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;position:absolute;top:8px;left:8px
+}
+.counter-circle svg{width:68px;height:68px;display:block;position:absolute;top:0;left:0}
+.counter-circle .bg-circle{stroke-width:6;fill:none}
+.counter-circle .progress-circle{stroke-width:6;fill:none;transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 420ms cubic-bezier(.22,.9,.26,1)}
+.counter-circle .value{font-weight:700;font-size:17px}
+
+/* ===== BUTTONS ===== */
+.btn{border:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn.reset{
+  padding:6px;background:rgba(255,255,255,0.9);color:#4a90d9;
+  border:1px solid rgba(74,144,217,0.12);border-radius:50%;
+  width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  font-size:14px;backdrop-filter:blur(8px);transition:all 200ms ease
+}
+.btn.reset:hover{box-shadow:0 4px 12px rgba(11,132,255,0.12)}
+.btn.reset:active{transform:scale(0.92)}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+
+/* ===== NO-FLIP indicator (subtle lock icon area, hidden for now) ===== */
+.no-flip-badge{
+  position:absolute;top:16px;left:16px;
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;opacity:0.3;pointer-events:none
+}
+
+/* ===== FOOTER ===== */
+.footer-note{
+  height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding-bottom:env(safe-area-inset-bottom,8px)
+}
+.progress-bar{width:180px;height:4px;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width 420ms cubic-bezier(.22,.9,.26,1)}
+.card-info{font-size:13px;opacity:0.8;font-weight:500}
+
+/* ===== COMPLETION OVERLAY ===== */
+.completion-overlay{
+  position:fixed;inset:0;z-index:500;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.3);backdrop-filter:blur(4px);
+  animation:fadeIn 400ms ease
+}
+.completion-card{
+  background:#fff;padding:40px 32px;border-radius:22px;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.15);animation:slideUp 500ms cubic-bezier(.22,.9,.26,1);
+  max-width:300px
+}
+.completion-card h2{font-size:24px;color:#083a66;margin-bottom:12px}
+.completion-card p{font-size:15px;color:#666;line-height:1.6}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:520px){
+  .text-large{font-size:22px}
+  .fadhel-text{font-size:17px}
+  .card-frame{width:92%}
+  .athkar-title{font-size:18px}
+  .counter-circle{width:60px;height:60px}
+  .counter-circle svg{width:60px;height:60px}
+  .counter-circle .inner{width:46px;height:46px;top:7px;left:7px}
+}
+@media (max-width:380px){
+  .text-large{font-size:20px}
+  .card-frame{width:96%;height:68vh}
+}
