@@ -1,3 +1,10 @@
+/* ===== OTHMANIC FONT ===== */
+@font-face{
+  font-family:'UthmanicHafs';
+  src:url('fonts/UthmanicHafs.ttf') format('truetype');
+  font-weight:normal;font-style:normal;font-display:swap
+}
+
 /* ===== BASE RESET & LAYOUT ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;direction:rtl;-webkit-font-smoothing:antialiased}
@@ -8,16 +15,11 @@ body{
 
 /* ===== THEMES ===== */
 /* Morning */
-.theme-morning{background:#e8f4f8}
-.theme-morning::before{
-  content:'';position:fixed;inset:0;
-  background:linear-gradient(180deg,#a8d8f0 0%,#c8e6f5 40%,#e8f4f8 100%);
-  z-index:-1;pointer-events:none
-}
-.theme-morning #cloudCanvas{display:block}
+.theme-morning{background:#d0e8f5}
+.theme-morning #morningBg{display:block}
 .theme-morning #nightBg{display:none}
 .theme-morning .top-bar,.theme-morning .footer-note,.theme-morning .hint-arrow{color:#3a7abd}
-.theme-morning .card{background:#fff;box-shadow:0 12px 40px rgba(11,132,255,0.10)}
+.theme-morning .card{background:rgba(255,255,255,0.92);box-shadow:0 12px 40px rgba(11,132,255,0.10)}
 .theme-morning .progress-circle{stroke:#0b84ff}
 .theme-morning .bg-circle{stroke:#e0eaf5}
 .theme-morning .progress-fill{background:#0b84ff}
@@ -25,8 +27,7 @@ body{
 
 /* Evening */
 .theme-evening{background:#0a0a1a}
-.theme-evening::before{display:none}
-.theme-evening #cloudCanvas{display:none}
+.theme-evening #morningBg{display:none}
 .theme-evening #nightBg{display:block}
 .theme-evening .top-bar,.theme-evening .footer-note,.theme-evening .hint-arrow{color:rgba(200,210,240,0.85)}
 .theme-evening .card{background:rgba(15,15,40,0.85);box-shadow:0 12px 40px rgba(0,0,0,0.35);border:1px solid rgba(100,120,180,0.15)}
@@ -45,17 +46,23 @@ body{
 .theme-evening .dropdown-option{color:#c0c8e8}
 .theme-evening .dropdown-option:hover{background:rgba(100,120,180,0.15)}
 .theme-evening .dropdown-option.active{color:#7b8dd4}
+.theme-evening .quran-text{color:#7ecba1}
+.theme-evening .basmalah{color:#7ecba1}
+
+/* ===== MORNING SKY BG ===== */
+.morning-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:url('images/morning-sky.svg') center top/100% 160% no-repeat;
+  background-color:#87CEEB;
+  transition:transform 600ms cubic-bezier(.22,.9,.26,1)
+}
 
 /* ===== NIGHT SKY BG ===== */
 .night-bg{
   position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:url('images/night-sky.svg') center/cover no-repeat;
+  background:url('images/night-sky.svg') center top/100% 160% no-repeat;
+  background-color:#0a0a2e;
   transition:transform 600ms cubic-bezier(.22,.9,.26,1)
-}
-
-/* ===== CLOUD CANVAS ===== */
-#cloudCanvas{
-  position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;opacity:0.7
 }
 
 /* ===== PAGE STRUCTURE ===== */
@@ -63,8 +70,27 @@ body{
 
 /* ===== TOP BAR (title + dropdown) ===== */
 .top-bar{
-  height:56px;display:flex;align-items:center;justify-content:center;padding:12px 20px;
+  height:56px;display:flex;align-items:center;justify-content:center;padding:12px 20px;gap:10px;
   position:relative;z-index:100
+}
+.reset-all{
+  border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.85);color:#3a7abd;font-size:16px;
+  box-shadow:0 6px 16px rgba(0,0,0,0.08);transition:transform 160ms ease,box-shadow 160ms ease
+}
+.theme-evening .reset-all{background:rgba(20,20,50,0.9);color:#c0c8e8;box-shadow:0 6px 18px rgba(0,0,0,0.25)}
+.reset-all:active{transform:scale(0.92)}
+.controls-backdrop{
+  position:absolute;inset:0;z-index:-1;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  background:rgba(255,255,255,0.08);
+  mask-image:linear-gradient(to bottom,black 40%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,black 40%,transparent 100%);
+  pointer-events:none
+}
+.theme-evening .controls-backdrop{
+  background:rgba(0,0,10,0.15)
 }
 .title-dropdown{
   position:relative;display:flex;align-items:center;gap:8px;cursor:pointer;
@@ -132,7 +158,8 @@ body{
 .card-wrap{
   width:100%;height:100%;position:absolute;top:0;left:0;
   display:flex;align-items:center;justify-content:center;
-  transition:transform 360ms cubic-bezier(.22,.9,.26,1),opacity 280ms ease
+  transition:transform 320ms cubic-bezier(.22,.9,.26,1),opacity 250ms ease;
+  will-change:transform,opacity
 }
 
 /* ===== CARD (3D flip container) ===== */
@@ -145,7 +172,7 @@ body{
 
 /* ===== FACES ===== */
 .face{
-  position:absolute;inset:0;padding:32px 28px;
+  position:absolute;inset:0;padding:64px 24px 92px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   backface-visibility:hidden;text-align:center;border-radius:22px;overflow:hidden
 }
@@ -156,41 +183,107 @@ body{
    so the text is never mirrored */
 .card.flipped{transform:rotateY(180deg)}
 
+/* ===== SCROLLABLE TEXT CONTAINER ===== */
+.text-scroll-container{
+  flex:1;width:100%;overflow-y:auto;overflow-x:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:8px 0;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  mask-image:linear-gradient(to bottom,transparent 0%,black 3%,black 97%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 3%,black 97%,transparent 100%)
+}
+.text-scroll-container::-webkit-scrollbar{display:none}
+/* When content overflows, align to top */
+.text-scroll-container.has-overflow{justify-content:flex-start;padding-top:16px}
+
 /* ===== TEXT ===== */
 .text-large{
-  font-size:26px;line-height:1.7;direction:rtl;font-weight:600;
-  color:#1a1a1a;max-width:90%;text-align:center;word-break:break-word
+  font-size:25px;line-height:1.85;direction:rtl;font-weight:600;
+  color:#1a1a1a;max-width:92%;text-align:center;word-break:break-word
 }
+.upper-text,.lower-text{
+  font-size:14px;line-height:1.6;color:rgba(60,80,100,0.8);
+  margin:8px 0;text-align:center;max-width:90%
+}
+.theme-evening .upper-text,.theme-evening .lower-text{color:rgba(200,210,240,0.75)}
+
+/* ===== QURANIC TEXT ===== */
+.quran-text{
+  font-family:'UthmanicHafs','Traditional Arabic','Scheherazade New',serif;
+  font-size:26px;line-height:2.0;color:#1a7a4c;font-weight:normal;
+  letter-spacing:0.3px
+}
+
+/* ===== BASMALAH ===== */
+.basmalah{
+  font-family:'UthmanicHafs','Traditional Arabic','Scheherazade New',serif;
+  font-size:20px;line-height:1.8;color:#1a7a4c;font-weight:normal;
+  margin-bottom:16px;opacity:0.85;
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(26,122,76,0.15);
+  width:80%;text-align:center
+}
+
 .fadhel-label{font-size:13px;color:#999;margin-bottom:8px;font-weight:500;letter-spacing:0.5px}
-.fadhel-text{font-size:20px;line-height:1.6;color:#555;max-width:88%;text-align:center}
+.fadhel-text{font-size:20px;line-height:1.7;color:#555;max-width:88%;text-align:center}
 
 /* ===== CONTROLS (outside the flipping card) ===== */
-.controls{
-  position:absolute;left:0;right:0;bottom:20px;
-  display:flex;align-items:center;justify-content:center;gap:14px;z-index:10
+.card-bottom{
+  position:absolute;left:0;right:0;bottom:18px;
+  display:flex;align-items:center;justify-content:center;gap:12px;z-index:10;direction:ltr
 }
-.card-wrap .controls{display:flex}
-.card-wrap.flip-disabled .controls{display:flex}
+.card-wrap.is-flipped .card-bottom{display:none !important}
+.card-wrap.single-count .card-bottom{gap:0}
 
-/* Hide controls when card is flipped */
-.card-wrap.is-flipped .controls{display:none !important}
+.count-progress{
+  position:absolute;left:18px;right:18px;bottom:54px;
+  height:4px;border-radius:3px;overflow:hidden;
+  background:rgba(58,122,189,0.15)
+}
+.theme-evening .count-progress{background:rgba(100,120,180,0.2)}
+.count-progress-fill{
+  height:100%;width:100%;transform-origin:right center;
+  transform:scaleX(0);
+  background:#0b84ff;transition:transform 300ms cubic-bezier(.22,.9,.26,1)
+}
+.theme-evening .count-progress-fill{background:#7b8dd4}
 
-/* ===== COUNTER ===== */
-.counter{display:flex;align-items:center;gap:12px;justify-content:center}
-.counter-circle{
-  width:68px;height:68px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 8px 24px rgba(11,132,255,0.14);
-  color:#083a66;font-weight:700;font-size:18px;position:relative
+.count-value{
+  font-size:28px;font-weight:800;color:#0a3a66;
+  text-align:center;min-width:44px
 }
-.counter-circle .inner{
-  background:#fff;width:52px;height:52px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;position:absolute;top:8px;left:8px
+.theme-evening .count-value{color:#c0c8e8}
+
+.play-btn{
+  border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.9);color:#3a7abd;font-size:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.12);transition:transform 160ms ease
 }
-.counter-circle svg{width:68px;height:68px;display:block;position:absolute;top:0;left:0}
-.counter-circle .bg-circle{stroke-width:6;fill:none}
-.counter-circle .progress-circle{stroke-width:6;fill:none;transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 420ms cubic-bezier(.22,.9,.26,1)}
-.counter-circle .value{font-weight:700;font-size:17px}
+.theme-evening .play-btn{background:rgba(20,20,50,0.95);color:#c0c8e8;box-shadow:0 6px 18px rgba(0,0,0,0.25)}
+.play-btn:active{transform:scale(0.92)}
+.card-bottom.center-only{justify-content:center}
+
+/* ===== CARD TOP BAR ===== */
+.card-top{
+  position:absolute;top:14px;left:16px;right:16px;height:18px;z-index:2
+}
+.card-progress{
+  position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+  height:3px;border-radius:3px;overflow:hidden;background:rgba(58,122,189,0.15)
+}
+.theme-evening .card-progress{background:rgba(100,120,180,0.2)}
+.card-progress-fill{
+  height:100%;width:100%;transform-origin:right center;transform:scaleX(0);
+  background:#0b84ff;transition:transform 300ms cubic-bezier(.22,.9,.26,1)
+}
+.theme-evening .card-progress-fill{background:#7b8dd4}
+.card-index{
+  position:absolute;left:0;top:-6px;font-size:13px;font-weight:700;
+  color:rgba(20,40,60,0.7)
+}
+.theme-evening .card-index{color:rgba(200,210,240,0.7)}
 
 /* ===== BUTTONS ===== */
 .btn{border:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -204,7 +297,7 @@ body{
 .btn.reset:active{transform:scale(0.92)}
 .btn:disabled{opacity:0.4;cursor:not-allowed}
 
-/* ===== NO-FLIP indicator (subtle lock icon area, hidden for now) ===== */
+/* ===== NO-FLIP indicator ===== */
 .no-flip-badge{
   position:absolute;top:16px;left:16px;
   width:28px;height:28px;border-radius:50%;
@@ -212,20 +305,13 @@ body{
   font-size:12px;opacity:0.3;pointer-events:none
 }
 
-/* ===== FOOTER ===== */
-.footer-note{
-  height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-  padding-bottom:env(safe-area-inset-bottom,8px)
-}
-.progress-bar{width:180px;height:4px;border-radius:3px;overflow:hidden}
-.progress-fill{height:100%;border-radius:3px;transition:width 420ms cubic-bezier(.22,.9,.26,1)}
-.card-info{font-size:13px;opacity:0.8;font-weight:500}
+/* Footer removed */
 
 /* ===== COMPLETION OVERLAY ===== */
 .completion-overlay{
   position:fixed;inset:0;z-index:500;
   display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,0.3);backdrop-filter:blur(4px);
+  background:rgba(0,0,0,0.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   animation:fadeIn 400ms ease
 }
 .completion-card{
@@ -233,8 +319,13 @@ body{
   box-shadow:0 20px 60px rgba(0,0,0,0.15);animation:slideUp 500ms cubic-bezier(.22,.9,.26,1);
   max-width:300px
 }
+.theme-evening .completion-card{
+  background:rgba(20,20,50,0.95);border:1px solid rgba(100,120,180,0.2)
+}
 .completion-card h2{font-size:24px;color:#083a66;margin-bottom:12px}
+.theme-evening .completion-card h2{color:#c0c8e8}
 .completion-card p{font-size:15px;color:#666;line-height:1.6}
+.theme-evening .completion-card p{color:rgba(200,200,230,0.8)}
 
 /* ===== ANIMATIONS ===== */
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -242,15 +333,17 @@ body{
 
 /* ===== RESPONSIVE ===== */
 @media (max-width:520px){
-  .text-large{font-size:22px}
+  .text-large{font-size:21px;line-height:1.8}
+  .quran-text{font-size:22px}
+  .basmalah{font-size:17px}
   .fadhel-text{font-size:17px}
   .card-frame{width:92%}
   .athkar-title{font-size:18px}
-  .counter-circle{width:60px;height:60px}
-  .counter-circle svg{width:60px;height:60px}
-  .counter-circle .inner{width:46px;height:46px;top:7px;left:7px}
+  .count-value{font-size:24px}
 }
 @media (max-width:380px){
-  .text-large{font-size:20px}
+  .text-large{font-size:19px}
+  .quran-text{font-size:20px}
+  .basmalah{font-size:16px}
   .card-frame{width:96%;height:68vh}
 }

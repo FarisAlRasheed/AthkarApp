@@ -8,16 +8,18 @@
 </head>
 <body class="theme-morning">
 
+  <!-- Morning sky background (shown for morning theme) -->
+  <div class="morning-bg" id="morningBg"></div>
+
   <!-- Night sky background (shown for evening theme) -->
   <div class="night-bg" id="nightBg"></div>
-
-  <!-- Cloud canvas for morning theme -->
-  <canvas id="cloudCanvas"></canvas>
 
   <div class="page">
 
     <!-- Top bar: athkar title + dropdown -->
     <header class="top-bar">
+      <div class="controls-backdrop"></div>
+      <button class="reset-all" id="resetAllBtn" aria-label="إعادة تعيين الكل" title="إعادة تعيين الكل">↺</button>
       <div class="title-dropdown" id="titleDropdown">
         <h1 class="athkar-title" id="athkarTitle">أذكار الصباح</h1>
         <svg class="dropdown-arrow" id="dropdownArrow" viewBox="0 0 24 24" width="18" height="18">
@@ -47,11 +49,6 @@
         <div id="card" class="card-outer" aria-live="polite"></div>
       </div>
     </main>
-
-    <!-- Footer progress -->
-    <footer class="footer-note">
-      <div id="cardIndex"></div>
-    </footer>
 
   </div>
 

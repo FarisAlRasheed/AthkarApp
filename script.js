@@ -1,71 +1,100 @@
 /* =====================================================
    Athkar App — script.js
-   
-   HOW TO MODIFY:
-   ─────────────
-   1. Add new athkar collections:
-      • Create a new JSON file in the /data folder
-      • Follow the same structure as morning.json / evening.json
-      • Add its filename to the ATHKAR_FILES array below
-      
-   2. JSON file structure:
-      {
-        "title": "عنوان الأذكار",     ← title shown in the dropdown
-        "theme": "morning" or "evening", ← controls background theme
-        "athkar": [
-          {
-            "text": "نص الذكر",        ← the thiker (front face)
-            "num": 3,                   ← number of times to repeat
-            "fadhel": "فضل الذكر"      ← (OPTIONAL) shown on back face; if omitted, card won't flip
-          }
-        ]
-      }
-
-   3. Theme values:
-      • "morning" → blue sky + animated clouds
-      • "evening" → night sky with stars + moon
-
-   4. Default selection logic:
-      • 3:00 AM – 2:59 PM → first file with theme "morning"
-      • 3:00 PM – 2:59 AM → first file with theme "evening"
-   
-   5. Night sky image: replace /images/night-sky.svg with your own
-   6. Fonts: put .woff2 files in /fonts and add @font-face in styles.css
    ===================================================== */
 
 // ── List of JSON files in /data folder ──
-// Add new filenames here when you create new athkar collections
 const ATHKAR_FILES = [
   'morning.json',
   'evening.json'
 ];
 
 // ── State ──
-let athkarCollections = [];   // loaded JSON data for each file
-let currentFileIndex = 0;     // which collection is active
-let cardsData = [];           // current collection's athkar array
-let counters = [];            // per-card counter
-let currentIndex = 0;         // which card is showing
+let athkarCollections = [];
+let currentFileIndex = 0;
+let cardsData = [];
+let counters = [];
+let currentIndex = 0;
 let isFlipped = false;
-let isAnimating = false;      // prevent overlapping animations
-let nightParallaxOffset = 0;  // for night bg parallax
+let parallaxOffset = 0;
+let currentVoiceDir = 'voices';
+
+// Animation management — interruptible
+let animationTimer = null;
+let activeAudio = null;
 
 // ── DOM refs ──
 const cardOuter   = document.getElementById('card');
-const cardIndexEl = document.getElementById('cardIndex');
 const titleEl     = document.getElementById('athkarTitle');
 const dropdownEl  = document.getElementById('dropdownMenu');
 const arrowEl     = document.getElementById('dropdownArrow');
 const nightBgEl   = document.getElementById('nightBg');
+const morningBgEl = document.getElementById('morningBg');
 const hintUp      = document.getElementById('hintUp');
 const hintDown    = document.getElementById('hintDown');
 const hintLeft    = document.getElementById('hintLeft');
 const hintRight   = document.getElementById('hintRight');
+const resetAllBtn = document.getElementById('resetAllBtn');
 
 // ── LocalStorage ──
 const LS_COUNTERS = 'athkar_counters_v2';
 const LS_INDEX    = 'athkar_cardindex_v2';
 const LS_FILE     = 'athkar_file_v2';
+
+// ── Quranic character detection ──
+// These Unicode characters are unique to Othmanic script
+const QURAN_CHARS = /[\u0671\u06D6-\u06ED\u08D4-\u08E1\u0615-\u061A\uFD3E\uFD3F\u0670]/;
+// Simpler: check for Othmanic-specific characters like ٱ (alef wasla), ۖ ۗ ۚ ۛ ٰ etc.
+function isQuranicText(text){
+  return QURAN_CHARS.test(text);
+}
+
+// ── Basmalah detection ──
+const BASMALAH_PATTERN = /^بسم\s+الله\s+الرحمن\s+الرحيم/;
+function splitBasmalah(text){
+  const match = text.match(BASMALAH_PATTERN);
+  if(match){
+    const basmalah = match[0];
+    let rest = text.slice(basmalah.length).replace(/^[\s.،,]+/, '').trim();
+    return { basmalah, rest };
+  }
+  return { basmalah: null, rest: text };
+}
+
+/* =========================================
+   ARABIC/HINDI DIGITS
+   ========================================= */
+const ARABIC_DIGITS = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+function toArabicDigits(value){
+  return String(value).replace(/\d/g, d => ARABIC_DIGITS[Number(d)]);
+}
+
+/* =========================================
+   VOICE
+   ========================================= */
+function resolveVoiceSrc(voice){
+  if(!voice) return null;
+  if(voice.startsWith('http') || voice.startsWith('/')) return voice;
+  return `${currentVoiceDir}/${voice}`;
+}
+
+function playVoice(voice){
+  const src = resolveVoiceSrc(voice);
+  if(!src) return;
+  if(activeAudio){
+    activeAudio.pause();
+    activeAudio.currentTime = 0;
+  }
+  activeAudio = new Audio(src);
+  activeAudio.play().catch(() => {});
+}
+
+function getParallaxConfig(text){
+  const length = Math.min(800, (text || '').length);
+  const factor = length / 800; // 0..1
+  const step = 4 - (2 * factor);
+  const limit = 70 - (25 * factor);
+  return { step, limit };
+}
 
 /* =========================================
    LOAD ALL JSON FILES
@@ -93,13 +122,11 @@ async function loadAllCollections(){
    DETERMINE DEFAULT FILE BY TIME
    ========================================= */
 function getDefaultFileIndex(){
-  // Check saved preference first
   const saved = localStorage.getItem(LS_FILE);
   if(saved !== null){
     const idx = parseInt(saved, 10);
     if(!isNaN(idx) && idx >= 0 && idx < athkarCollections.length) return idx;
   }
-  // Auto-select by time: 3AM–2:59PM → morning, 3PM–2:59AM → evening
   const hour = new Date().getHours();
   const wantTheme = (hour >= 3 && hour < 15) ? 'morning' : 'evening';
   const idx = athkarCollections.findIndex(c => c.theme === wantTheme);
@@ -113,29 +140,25 @@ function switchCollection(fileIdx){
   currentFileIndex = fileIdx;
   const col = athkarCollections[fileIdx];
   cardsData = col.athkar;
-  
-  // Apply theme
+  currentVoiceDir = col.voiceDir || 'voices';
+
   document.body.className = col.theme === 'evening' ? 'theme-evening' : 'theme-morning';
   titleEl.textContent = col.title;
-  
-  // Reset state
+
   currentIndex = 0;
   isFlipped = false;
+  parallaxOffset = 0;
   counters = new Array(cardsData.length).fill(0);
-  
-  // Load saved counters for this collection
+
+  // Reset parallax
+  nightBgEl.style.transform = '';
+  morningBgEl.style.transform = '';
+
   loadState();
-  
-  // Render
   render();
   updateDropdownUI();
   updateHintArrows();
-  
-  // Setup/teardown background
-  if(col.theme === 'morning') setupCloudCanvas();
-  else stopCloudCanvas();
-  
-  // Save file preference
+
   localStorage.setItem(LS_FILE, String(fileIdx));
 }
 
@@ -162,17 +185,14 @@ function toggleDropdown(){
   if(isOpen) closeDropdown();
   else openDropdown();
 }
-
 function openDropdown(){
   dropdownEl.classList.add('open');
   arrowEl.classList.add('open');
 }
-
 function closeDropdown(){
   dropdownEl.classList.remove('open');
   arrowEl.classList.remove('open');
 }
-
 function updateDropdownUI(){
   const opts = dropdownEl.querySelectorAll('.dropdown-option');
   opts.forEach((opt, i) => {
@@ -223,10 +243,12 @@ function createCardElement(index){
   const data = cardsData[index];
   const maxCount = data.num || 1;
   const hasFadhel = !!data.fadhel;
+  const hasCounter = maxCount > 1;
 
   const wrapper = document.createElement('div');
   wrapper.className = 'card-wrap';
   if(!hasFadhel) wrapper.classList.add('flip-disabled');
+  if(!hasCounter) wrapper.classList.add('single-count');
 
   const card = document.createElement('div');
   card.className = 'card';
@@ -234,15 +256,79 @@ function createCardElement(index){
   // ── FRONT FACE ──
   const front = document.createElement('div');
   front.className = 'face front';
+
+  // Card top bar (progress + index)
+  const cardTop = document.createElement('div');
+  cardTop.className = 'card-top';
+  const cardProgress = document.createElement('div');
+  cardProgress.className = 'card-progress';
+  const cardProgressFill = document.createElement('div');
+  cardProgressFill.className = 'card-progress-fill';
+  const total = cardsData.length;
+  const overallRatio = total > 1 ? (index / (total - 1)) : 1;
+  cardProgressFill.style.transform = `scaleX(${overallRatio})`;
+  cardProgress.appendChild(cardProgressFill);
+  const cardIndex = document.createElement('div');
+  cardIndex.className = 'card-index';
+  cardIndex.textContent = toArabicDigits(index + 1);
+  cardTop.appendChild(cardProgress);
+  cardTop.appendChild(cardIndex);
+  front.appendChild(cardTop);
+
+  // Upper text (optional)
+  if(data.upperText){
+    const upperText = document.createElement('div');
+    upperText.className = 'upper-text';
+    upperText.textContent = data.upperText;
+    front.appendChild(upperText);
+  }
+
+  // Scrollable container for long text
+  const scrollContainer = document.createElement('div');
+  scrollContainer.className = 'text-scroll-container';
+
+  const rawText = data.text;
+  const isQuran = isQuranicText(rawText);
+  const { basmalah, rest } = splitBasmalah(rawText);
+
+  // Add Basmalah if exists
+  if(basmalah){
+    const basmalahEl = document.createElement('div');
+    basmalahEl.className = 'basmalah';
+    basmalahEl.textContent = basmalah;
+    scrollContainer.appendChild(basmalahEl);
+  }
+
+  // Main text
   const frontText = document.createElement('div');
   frontText.className = 'text-large';
-  frontText.textContent = data.text;
-  front.appendChild(frontText);
+  if(isQuran) frontText.classList.add('quran-text');
+  frontText.textContent = rest;
+  scrollContainer.appendChild(frontText);
+
+  front.appendChild(scrollContainer);
+
+  // Lower text (optional)
+  if(data.lowerText){
+    const lowerText = document.createElement('div');
+    lowerText.className = 'lower-text';
+    lowerText.textContent = data.lowerText;
+    front.appendChild(lowerText);
+  }
+
+  // Check if content overflows after adding to DOM
+  requestAnimationFrame(() => {
+    if(scrollContainer.scrollHeight > scrollContainer.clientHeight + 4){
+      scrollContainer.classList.add('has-overflow');
+    }
+  });
 
   // ── BACK FACE (only if fadhel exists) ──
   if(hasFadhel){
     const back = document.createElement('div');
     back.className = 'face back';
+    const backTop = cardTop.cloneNode(true);
+    back.appendChild(backTop);
     const label = document.createElement('div');
     label.className = 'fadhel-label';
     label.textContent = 'فضل الذكر';
@@ -258,50 +344,42 @@ function createCardElement(index){
 
   // ── CONTROLS (outside the card so they don't flip) ──
   const controls = document.createElement('div');
-  controls.className = 'controls';
+  controls.className = 'card-bottom';
 
-  const counterWrap = document.createElement('div');
-  counterWrap.className = 'counter';
+  if(hasCounter){
+    const countProgress = document.createElement('div');
+    countProgress.className = 'count-progress';
+    const countFill = document.createElement('div');
+    countFill.className = 'count-progress-fill';
+    countProgress.appendChild(countFill);
+    controls.appendChild(countProgress);
 
-  // SVG circular progress
-  const svgNS = 'http://www.w3.org/2000/svg';
-  const svg = document.createElementNS(svgNS, 'svg');
-  svg.setAttribute('viewBox', '0 0 68 68');
-  const bgCircle = document.createElementNS(svgNS, 'circle');
-  bgCircle.setAttribute('cx', '34');
-  bgCircle.setAttribute('cy', '34');
-  bgCircle.setAttribute('r', '28');
-  bgCircle.setAttribute('class', 'bg-circle');
-  const progCircle = document.createElementNS(svgNS, 'circle');
-  progCircle.setAttribute('cx', '34');
-  progCircle.setAttribute('cy', '34');
-  progCircle.setAttribute('r', '28');
-  progCircle.setAttribute('class', 'progress-circle');
-  svg.appendChild(bgCircle);
-  svg.appendChild(progCircle);
+    const countValue = document.createElement('div');
+    countValue.className = 'count-value';
+    countValue.textContent = toArabicDigits(counters[index]);
+    controls.appendChild(countValue);
 
-  const circleWrap = document.createElement('div');
-  circleWrap.className = 'counter-circle';
-  circleWrap.appendChild(svg);
+    if(data.voice){
+      const playBtn = document.createElement('button');
+      playBtn.className = 'play-btn';
+      playBtn.innerHTML = '▶';
+      playBtn.title = 'تشغيل الصوت';
+      playBtn.addEventListener('click', (ev) => { ev.stopPropagation(); playVoice(data.voice); });
+      controls.appendChild(playBtn);
+    }
 
-  const inner = document.createElement('div');
-  inner.className = 'inner';
-  const val = document.createElement('div');
-  val.className = 'value';
-  val.textContent = counters[index];
-  inner.appendChild(val);
-  circleWrap.appendChild(inner);
-
-  // Reset button
-  const resetBtn = document.createElement('button');
-  resetBtn.className = 'btn reset';
-  resetBtn.innerHTML = '↺';
-  resetBtn.title = 'إعادة تعيين';
-  resetBtn.addEventListener('click', (ev) => { ev.stopPropagation(); resetCounter(); });
-
-  counterWrap.appendChild(circleWrap);
-  controls.appendChild(counterWrap);
-  controls.appendChild(resetBtn);
+    updateCountUI(controls, index);
+  } else {
+    if(data.voice){
+      controls.classList.add('center-only');
+      const playBtn = document.createElement('button');
+      playBtn.className = 'play-btn';
+      playBtn.innerHTML = '▶';
+      playBtn.title = 'تشغيل الصوت';
+      playBtn.addEventListener('click', (ev) => { ev.stopPropagation(); playVoice(data.voice); });
+      controls.appendChild(playBtn);
+    }
+  }
 
   wrapper.appendChild(card);
   wrapper.appendChild(controls);
@@ -312,51 +390,37 @@ function createCardElement(index){
     incrementCounter();
   });
 
-  // Initial SVG fill
-  updateCircle(circleWrap, index);
-
   return wrapper;
 }
 
 /* =========================================
-   UPDATE SVG CIRCLE
+   UPDATE COUNT UI
    ========================================= */
-function updateCircle(circleEl, index){
-  if(!circleEl) return;
+function updateCountUI(container, index){
+  if(!container) return;
+  const countValue = container.querySelector('.count-value');
+  const countFill = container.querySelector('.count-progress-fill');
+  if(!countValue || !countFill) return;
   const current = counters[index] || 0;
   const max = cardsData[index].num || 1;
-  const ratio = Math.min(1, current / max);
-  const prog = circleEl.querySelector('.progress-circle');
-  if(!prog) return;
-  const r = 28;
-  const c = 2 * Math.PI * r;
-  prog.style.strokeDasharray = `${c}`;
-  prog.style.strokeDashoffset = `${c * (1 - ratio)}`;
-  const valEl = circleEl.querySelector('.value');
-  if(valEl) valEl.textContent = current;
+  const ratio = max > 0 ? Math.min(1, current / max) : 0;
+  countValue.textContent = toArabicDigits(current);
+  countFill.style.transform = `scaleX(${ratio})`;
 }
 
 /* =========================================
    RENDER
    ========================================= */
 function render(){
+  // Cancel any pending animation
+  cancelAnimation();
+  
   cardOuter.innerHTML = '';
   isFlipped = false;
   const el = createCardElement(currentIndex);
   cardOuter.appendChild(el);
   el.id = 'activeCard';
-  updateFooter();
-  updateResetState();
   updateHintArrows();
-}
-
-function updateFooter(){
-  const total = cardsData.length;
-  const pct = total > 1 ? (currentIndex / (total - 1)) * 100 : 100;
-  cardIndexEl.innerHTML = `
-    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-    <div class="card-info">${currentIndex + 1} / ${total}</div>
-  `;
 }
 
 /* =========================================
@@ -366,13 +430,12 @@ function incrementCounter(){
   const max = cardsData[currentIndex].num || 1;
   if(counters[currentIndex] >= max) return;
   counters[currentIndex]++;
-  
+
   const wrap = document.getElementById('activeCard');
   if(wrap){
-    const circle = wrap.querySelector('.counter-circle');
-    updateCircle(circle, currentIndex);
+    const controls = wrap.querySelector('.card-bottom');
+    updateCountUI(controls, currentIndex);
   }
-  updateResetState();
   saveState();
 
   // Auto-advance when counter reaches max
@@ -381,10 +444,9 @@ function incrementCounter(){
       if(currentIndex < cardsData.length - 1){
         goToIndex(currentIndex + 1);
       } else {
-        // All cards done — show completion
         showCompletion();
       }
-    }, 500);
+    }, 450);
   }
 }
 
@@ -392,16 +454,10 @@ function resetCounter(){
   counters[currentIndex] = 0;
   const wrap = document.getElementById('activeCard');
   if(wrap){
-    const circle = wrap.querySelector('.counter-circle');
-    updateCircle(circle, currentIndex);
+    const controls = wrap.querySelector('.card-bottom');
+    updateCountUI(controls, currentIndex);
   }
-  updateResetState();
   saveState();
-}
-
-function updateResetState(){
-  const resetBtn = document.querySelector('#activeCard .btn.reset');
-  if(resetBtn) resetBtn.disabled = counters[currentIndex] <= 0;
 }
 
 /* =========================================
@@ -421,25 +477,48 @@ function showCompletion(){
 }
 
 /* =========================================
-   NAVIGATION
+   CANCEL IN-FLIGHT ANIMATION
+   ========================================= */
+function cancelAnimation(){
+  if(animationTimer){
+    clearTimeout(animationTimer);
+    animationTimer = null;
+  }
+  // Clean up any old wraps that aren't the active card
+  const wraps = cardOuter.querySelectorAll('.card-wrap');
+  wraps.forEach(w => {
+    if(w.id !== 'activeCard') w.remove();
+  });
+}
+
+/* =========================================
+   NAVIGATION — INTERRUPTIBLE
    ========================================= */
 function goToIndex(idx){
-  if(isAnimating) return;
   if(idx < 0 || idx >= cardsData.length || idx === currentIndex) return;
   const dir = idx > currentIndex ? 'up' : 'down';
   animateToIndex(idx, dir);
 }
 
 function animateToIndex(newIndex, direction){
-  isAnimating = true;
+  // INTERRUPTIBLE: cancel any in-flight animation immediately
+  cancelAnimation();
+
+  // Immediately update the logical index
+  const oldIndex = currentIndex;
+  currentIndex = newIndex;
+  isFlipped = false;
+
   const currentWrap = document.getElementById('activeCard');
   const newWrap = createCardElement(newIndex);
 
-  // Night bg parallax
-  if(document.body.classList.contains('theme-evening')){
-    nightParallaxOffset += direction === 'up' ? -8 : 8;
-    nightBgEl.style.transform = `translateY(${nightParallaxOffset}px)`;
-  }
+  // Parallax for both themes
+  const bgEl = document.body.classList.contains('theme-evening') ? nightBgEl : morningBgEl;
+  const cfg = getParallaxConfig(cardsData[newIndex]?.text || '');
+  parallaxOffset += direction === 'up' ? -cfg.step : cfg.step;
+  // Clamp parallax to avoid edges
+  parallaxOffset = Math.max(-cfg.limit, Math.min(cfg.limit, parallaxOffset));
+  bgEl.style.transform = `translateY(${parallaxOffset}px)`;
 
   newWrap.style.transform = `translateY(${direction === 'up' ? '100%' : '-100%'})`;
   newWrap.style.opacity = '0';
@@ -450,31 +529,30 @@ function animateToIndex(newIndex, direction){
 
   requestAnimationFrame(() => {
     if(currentWrap){
+      currentWrap.id = '';  // remove active id immediately
       currentWrap.style.transform = `translateY(${direction === 'up' ? '-100%' : '100%'})`;
       currentWrap.style.opacity = '0';
     }
     newWrap.style.transform = 'translateY(0)';
     newWrap.style.opacity = '1';
+    newWrap.id = 'activeCard';
   });
 
-  setTimeout(() => {
+  // Update UI immediately (don't wait for animation)
+  updateHintArrows();
+  saveState();
+
+  // Clean up old card after transition
+  animationTimer = setTimeout(() => {
     if(currentWrap && currentWrap.parentNode) currentWrap.remove();
-    newWrap.id = 'activeCard';
-    isFlipped = false;
-    currentIndex = newIndex;
-    updateFooter();
-    updateResetState();
-    updateHintArrows();
-    saveState();
-    isAnimating = false;
-  }, 400);
+    animationTimer = null;
+  }, 350);
 }
 
 /* =========================================
    FLIP
    ========================================= */
 function toggleFlip(){
-  // Don't flip if no fadhel
   const data = cardsData[currentIndex];
   if(!data.fadhel) return;
 
@@ -498,21 +576,34 @@ function toggleFlip(){
    HINT ARROWS VISIBILITY
    ========================================= */
 function updateHintArrows(){
-  // Up: hide if at first card
   hintUp.classList.toggle('hidden', currentIndex <= 0);
-  // Down: hide if at last card
   hintDown.classList.toggle('hidden', currentIndex >= cardsData.length - 1);
-  // Left/Right: hide if no fadhel (can't flip)
   const hasFadhel = !!cardsData[currentIndex]?.fadhel;
   hintLeft.classList.toggle('hidden', !hasFadhel);
   hintRight.classList.toggle('hidden', !hasFadhel);
 }
 
 /* =========================================
-   SWIPE / TOUCH / MOUSE
+   SWIPE / TOUCH / MOUSE — with in-card scroll awareness
    ========================================= */
 let startX = 0, startY = 0, isTouching = false, movedDuringTouch = false;
 const H_THRESH = 40, V_THRESH = 40;
+
+function getScrollContainer(){
+  const wrap = document.getElementById('activeCard');
+  if(!wrap) return null;
+  return wrap.querySelector('.text-scroll-container');
+}
+
+function isScrolledToTop(el){
+  if(!el) return true;
+  return el.scrollTop <= 2;
+}
+
+function isScrolledToBottom(el){
+  if(!el) return true;
+  return el.scrollTop + el.clientHeight >= el.scrollHeight - 2;
+}
 
 function onStart(x, y){
   startX = x; startY = y; isTouching = true; movedDuringTouch = false;
@@ -525,100 +616,94 @@ function onEnd(x, y){
   if(!isTouching) return;
   isTouching = false;
   const dx = x - startX, dy = y - startY;
+
+  // Horizontal swipe → flip
   if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > H_THRESH){
     toggleFlip();
-  } else if(Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > V_THRESH){
-    if(dy < 0) goToIndex(currentIndex + 1);
-    else goToIndex(currentIndex - 1);
+    return;
+  }
+
+  // Vertical swipe → navigate, but respect in-card scroll
+  if(Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > V_THRESH){
+    const scrollEl = getScrollContainer();
+    const hasOverflow = scrollEl && scrollEl.scrollHeight > scrollEl.clientHeight + 4;
+
+    if(dy < 0){
+      // Swipe up → go to next card
+      if(!hasOverflow || isScrolledToBottom(scrollEl)){
+        goToIndex(currentIndex + 1);
+      }
+    } else {
+      // Swipe down → go to previous card
+      if(!hasOverflow || isScrolledToTop(scrollEl)){
+        goToIndex(currentIndex - 1);
+      }
+    }
   }
 }
 
-cardOuter.addEventListener('touchstart', e => { const t = e.changedTouches[0]; onStart(t.clientX, t.clientY); }, {passive: true});
-cardOuter.addEventListener('touchmove', e => { const t = e.changedTouches[0]; onMove(t.clientX, t.clientY); e.preventDefault(); }, {passive: false});
-cardOuter.addEventListener('touchend', e => { const t = e.changedTouches[0]; onEnd(t.clientX, t.clientY); });
+cardOuter.addEventListener('touchstart', e => {
+  const t = e.changedTouches[0];
+  onStart(t.clientX, t.clientY);
+}, {passive: true});
+
+cardOuter.addEventListener('touchmove', e => {
+  const t = e.changedTouches[0];
+  onMove(t.clientX, t.clientY);
+  
+  // Only prevent default if we're not scrolling inside the card
+  const scrollEl = getScrollContainer();
+  const hasOverflow = scrollEl && scrollEl.scrollHeight > scrollEl.clientHeight + 4;
+  if(!hasOverflow){
+    e.preventDefault();
+  }
+}, {passive: false});
+
+cardOuter.addEventListener('touchend', e => {
+  const t = e.changedTouches[0];
+  onEnd(t.clientX, t.clientY);
+});
 
 let mouseDown = false;
 cardOuter.addEventListener('mousedown', e => { mouseDown = true; onStart(e.clientX, e.clientY); });
 window.addEventListener('mousemove', e => { if(mouseDown) onMove(e.clientX, e.clientY); });
 window.addEventListener('mouseup', e => { if(mouseDown){ mouseDown = false; onEnd(e.clientX, e.clientY); }});
 
+// Keyboard navigation
 window.addEventListener('keydown', e => {
-  if(e.key === 'ArrowUp')    goToIndex(currentIndex + 1);
-  if(e.key === 'ArrowDown')  goToIndex(currentIndex - 1);
+  if(e.key === 'ArrowUp')   goToIndex(currentIndex - 1);
+  if(e.key === 'ArrowDown') goToIndex(currentIndex + 1);
   if(e.key === 'ArrowLeft' || e.key === 'ArrowRight') toggleFlip();
+  if(e.key === ' ') { e.preventDefault(); incrementCounter(); }
 });
 
 /* =========================================
-   CLOUD CANVAS (morning theme)
+   RESET ALL STORAGE
    ========================================= */
-let cloudAnimId = null;
-
-function setupCloudCanvas(){
-  // Don't double-init
-  if(cloudAnimId) return;
-  
-  const canvas = document.getElementById('cloudCanvas');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  const ctx = canvas.getContext('2d');
-  let time = 0;
-
-  const clouds = [
-    { x: 0.05, y: 0.08, size: 80, speed: 0.0003, offset: 0 },
-    { x: 0.25, y: 0.14, size: 60, speed: 0.00025, offset: Math.PI },
-    { x: 0.48, y: 0.10, size: 95, speed: 0.00035, offset: Math.PI * 0.5 },
-    { x: 0.72, y: 0.18, size: 70, speed: 0.0002, offset: Math.PI * 1.5 },
-    { x: 0.90, y: 0.12, size: 75, speed: 0.00028, offset: Math.PI * 0.25 },
-    { x: 0.15, y: 0.25, size: 55, speed: 0.00022, offset: Math.PI * 0.75 },
-    { x: 0.60, y: 0.22, size: 65, speed: 0.00032, offset: Math.PI * 1.25 }
-  ];
-
-  function draw(){
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    time++;
-    clouds.forEach(c => {
-      const px = c.x * canvas.width + Math.sin(time * c.speed + c.offset) * 120;
-      const py = c.y * canvas.height;
-      drawCloud(ctx, px, py, c.size);
-    });
-    cloudAnimId = requestAnimationFrame(draw);
-  }
-
-  function drawCloud(ctx, x, y, s){
-    ctx.fillStyle = 'rgba(255,255,255,0.3)';
-    const parts = [
-      [-0.35, 0, 0.45], [-0.05, -0.18, 0.55],
-      [0.30, -0.05, 0.50], [0.55, 0.10, 0.40], [0.10, 0.08, 0.38]
-    ];
-    parts.forEach(([ox, oy, r]) => {
-      ctx.beginPath();
-      ctx.arc(x + s * ox, y + s * oy, s * r, 0, Math.PI * 2);
-      ctx.fill();
-    });
-    // Bottom shadow
-    const g = ctx.createLinearGradient(x, y - s * 0.1, x, y + s * 0.35);
-    g.addColorStop(0, 'rgba(180,210,240,0)');
-    g.addColorStop(1, 'rgba(140,180,220,0.08)');
-    ctx.fillStyle = g;
-    ctx.fillRect(x - s * 0.6, y + s * 0.05, s * 1.2, s * 0.35);
-  }
-
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+function resetAllState(){
+  athkarCollections.forEach((_, i) => {
+    localStorage.removeItem(`${LS_COUNTERS}_${i}`);
+    localStorage.removeItem(`${LS_INDEX}_${i}`);
   });
+  localStorage.removeItem(LS_FILE);
 
-  draw();
+  counters = new Array(cardsData.length).fill(0);
+  const shouldAnimate = currentIndex > 0;
+  currentIndex = 0;
+  saveState();
+
+  if(shouldAnimate){
+    animateToIndex(0, 'down');
+  } else {
+    render();
+  }
 }
 
-function stopCloudCanvas(){
-  if(cloudAnimId){
-    cancelAnimationFrame(cloudAnimId);
-    cloudAnimId = null;
-    const canvas = document.getElementById('cloudCanvas');
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
+if(resetAllBtn){
+  resetAllBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    resetAllState();
+  });
 }
 
 /* =========================================
