@@ -122,3 +122,43 @@ Replace `images/night-sky.svg` with any image (SVG, PNG, JPG). Update the path i
 ## Themes
 - **Morning** (`theme: "morning"`): gradient blue sky + animated clouds
 - **Evening** (`theme: "evening"`): starry night sky with moon + subtle parallax on swipe
+
+---
+
+### Adding Voice / Audio to Cards
+
+You can attach audio files to a collection (collection-level prefix) or to individual cards.
+
+- **Place audio files** in the `voices/` folder (or subfolders) in the project root.
+- **Collection-level field**: add `voiceDir` to the top-level JSON object to set a folder prefix for card audio files, for example: `"voiceDir": "voices/evening/"`.
+- **Card-level field**: add `voice` to a thiker object. Accepted values:
+  - a single filename string: `"voice": "duaa1.mp3"` (combined with `voiceDir` if present)
+  - a path string: `"voice": "voices/custom/duaa1.mp3"` (used as-is)
+  - an array of filenames: `"voice": ["a.mp3", "b.mp3"]` (the app may play the first or choose randomly depending on implementation)
+
+Examples:
+
+Collection with `voiceDir` and cards using filenames:
+```json
+{
+  "title": "أذكار المساء",
+  "theme": "evening",
+  "voiceDir": "voices/evening/",
+  "athkar": [
+    { "text": "اللهم بك أصبحنا", "num": 1, "voice": "duaa1.mp3" },
+    { "text": "سبحان الله", "num": 33, "voice": ["subhan1.mp3","subhan2.mp3"] }
+  ]
+}
+```
+
+Single card with a full path:
+```json
+{ "text": "باسمك اللهم أموت وأحيا", "num": 1, "voice": "voices/sleep/bismillah.mp3" }
+```
+
+Notes:
+- Supported formats: `mp3`, `wav`, `ogg`.
+- When `voice` is a filename (not a path) the app will combine `voiceDir` + `voice` if `voiceDir` exists. If `voice` already contains a path it will be used directly.
+- The UI displays a play button on cards that include a `voice` field. Auto-play behaviour (on tap or on load) depends on the app logic in `script.js` and browser autoplay policies — update `script.js` if you want custom autoplay behaviour.
+
+If you want, I can also update `script.js` to demonstrate how the app loads and plays `voice` files (play button, preload, and fallbacks). Let me know if you'd like that change.
