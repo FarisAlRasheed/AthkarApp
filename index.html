@@ -3,30 +3,86 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <title>تطبيق الأذكار</title>
+  <title>الأذكار</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="theme-morning">
+<body class="theme-fajr">
 
-  <!-- Morning sky background (shown for morning theme) -->
-  <div class="morning-bg" id="morningBg"></div>
+  <!-- Dynamic background layer -->
+  <div class="dynamic-bg" id="dynamicBg"></div>
 
-  <!-- Night sky background (shown for evening theme) -->
-  <div class="night-bg" id="nightBg"></div>
+  <!-- ==================== MAIN ATHKAR PAGE ==================== -->
+  <div class="page" id="mainPage">
 
-  <div class="page">
-
-    <!-- Top bar: athkar title + dropdown -->
+    <!-- Top bar -->
     <header class="top-bar">
       <div class="controls-backdrop"></div>
-      <button class="reset-all" id="resetAllBtn" aria-label="إعادة تعيين الكل" title="إعادة تعيين الكل">↺</button>
-      <div class="title-dropdown" id="titleDropdown">
-        <h1 class="athkar-title" id="athkarTitle">أذكار الصباح</h1>
-        <svg class="dropdown-arrow" id="dropdownArrow" viewBox="0 0 24 24" width="18" height="18">
-          <polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <div class="dropdown-menu" id="dropdownMenu"></div>
+
+      <div class="top-bar-main">
+        <div class="prayer-selector">
+          <button class="prayer-btn" id="prayerSummaryBtn" aria-label="مواقيت الصلاة" title="مواقيت الصلاة">
+            <span class="prayer-btn-name" id="prayerSummaryName">الصلاة القادمة</span>
+            <span class="prayer-btn-time" id="prayerSummaryTime">--:--</span>
+            <span class="prayer-btn-countdown" id="topPrayerCountdown">--:--:--</span>
+          </button>
+          <div class="prayer-menu" id="prayerDropdownMenu"></div>
+        </div>
+
+        <div class="athkar-selector" id="athkarDropdownWrap">
+          <button class="athkar-btn" id="athkarDropdownBtn" aria-label="الأذكار الحالية" title="الأذكار الحالية">
+            <span id="athkarTitle">أذكار الصباح</span>
+            <svg class="dropdown-arrow" id="dropdownArrow" viewBox="0 0 24 24" width="16" height="16">
+              <polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="dropdown-menu" id="dropdownMenu"></div>
+        </div>
       </div>
+
+      <!-- Options dropdown -->
+      <div class="options-menu" id="optionsMenu">
+        <div class="options-header">القائمة</div>
+        <div class="options-item" id="sheikhMenuBtn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>تجميع حسب الشيخ</span>
+        </div>
+        <div class="options-divider"></div>
+        <div class="options-item" id="resetAllMenuBtn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 9 8 9"/></svg>
+          <span>إعادة تعيين الكل</span>
+        </div>
+        <div class="options-divider"></div>
+        <div class="options-item" id="contactDevBtn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>تواصل مع المطور</span>
+        </div>
+      </div>
+      
+      <!-- Contact Developer Popup -->
+      <div class="contact-popup" id="contactPopup">
+        <div class="contact-card">
+          <button class="contact-close" id="contactClose">✕</button>
+          <h3> المطور: فارس بن تركي الرشيد </h3>
+          <p class="contact-desc">لأي اقتراحات أو ملاحظات</p>
+          <div class="contact-links">
+            <a href="mailto:farsalrasheed27@gmail.com" class="contact-link">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+              <span>البريد الإلكتروني</span>
+            </a>
+            <a href="https://github.com/FarisAlRasheed" target="_blank" class="contact-link">
+              <span>جيت هب</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Smart recommendation banner -->
+      <div class="smart-banner" id="smartBanner" style="display:none">
+        <span class="smart-banner-text" id="smartBannerText"></span>
+        <button class="smart-banner-btn" id="smartBannerBtn">فتح</button>
+        <button class="smart-banner-close" id="smartBannerClose">✕</button>
+      </div>
+
     </header>
 
     <!-- Directional hint arrows -->
@@ -50,6 +106,73 @@
       </div>
     </main>
 
+  </div>
+
+  <!-- ==================== PRAYER TIMES PAGE ==================== -->
+  <div class="page prayer-page" id="prayerPage" style="display:none">
+    <header class="top-bar prayer-top-bar">
+      <div class="controls-backdrop"></div>
+      <button class="back-btn" id="prayerBackBtn" aria-label="رجوع">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <h1 class="page-title">مواقيت الصلاة</h1>
+      <div style="width:34px"></div>
+    </header>
+
+    <div class="prayer-content">
+      <!-- City chooser -->
+      <div class="city-chooser">
+        <label class="city-label">المدينة</label>
+        <div class="city-select-wrap">
+          <select class="city-select" id="citySelect">
+            <option value="Makkah,SA">مكة المكرمة</option>
+            <option value="Madinah,SA">المدينة المنورة</option>
+            <option value="Riyadh,SA">الرياض</option>
+            <option value="Jeddah,SA">جدة</option>
+            <option value="Dammam,SA">الدمام</option>
+            <option value="Tabuk,SA">تبوك</option>
+            <option value="Abha,SA">أبها</option>
+            <option value="Hail,SA">حائل</option>
+            <option value="Cairo,EG">القاهرة</option>
+            <option value="Dubai,AE">دبي</option>
+            <option value="Amman,JO">عمان</option>
+            <option value="Istanbul,TR">إسطنبول</option>
+            <option value="London,GB">لندن</option>
+            <option value="Kuala Lumpur,MY">كوالالمبور</option>
+          </select>
+          <svg class="city-select-arrow" viewBox="0 0 24 24" width="16" height="16"><polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+
+      <!-- Date display -->
+      <div class="prayer-date" id="prayerDate"></div>
+
+      <!-- Prayer times cards -->
+      <div class="prayer-list" id="prayerList">
+        <div class="prayer-loading" id="prayerLoading">
+          <div class="prayer-spinner"></div>
+          <span>جاري تحميل المواقيت...</span>
+        </div>
+      </div>
+
+      <!-- Next prayer countdown -->
+      <div class="next-prayer-card" id="nextPrayerCard" style="display:none">
+        <div class="next-prayer-label">الصلاة القادمة</div>
+        <div class="next-prayer-name" id="nextPrayerName"></div>
+        <div class="next-prayer-countdown" id="nextPrayerCountdown"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SHEIKH GROUP OVERLAY ==================== -->
+  <div class="sheikh-overlay" id="sheikhOverlay" style="display:none">
+    <div class="sheikh-overlay-card">
+      <div class="sheikh-overlay-header">
+        <h3>اختيار الجمع</h3>
+        <button class="sheikh-overlay-close" id="sheikhOverlayClose">✕</button>
+      </div>
+      <div class="sheikh-list" id="sheikhList"></div>
+    </div>
   </div>
 
   <script src="script.js"></script>
