@@ -914,3 +914,59 @@ body{
   .basmalah{font-size:16px}
   .card-frame{width:96%;height:68vh}
 }
+
+/* ===== GLOBAL RESET BUTTON ===== */
+.global-reset-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.85);
+  background: rgba(255, 255, 255, 0.9);
+  color: #3a7abd;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 18px;
+  cursor: pointer;
+  z-index: 105;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 250ms cubic-bezier(.22,.9,.26,1), opacity 200ms ease, background-color 200ms ease;
+  opacity: 0;
+  pointer-events: none;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.global-reset-btn.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+.global-reset-btn:hover {
+  background: #ffffff;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+.global-reset-btn:active {
+  transform: translate(-50%, -50%) scale(0.95) !important;
+}
+
+/* Dark theme style overrides */
+.theme-fajr .global-reset-btn,
+.theme-maghrib .global-reset-btn,
+.theme-isha .global-reset-btn,
+.theme-evening .global-reset-btn {
+  background: rgba(30, 30, 60, 0.85);
+  color: #c0c8e8;
+  border: 1px solid rgba(100, 120, 180, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+.theme-fajr .global-reset-btn:hover,
+.theme-maghrib .global-reset-btn:hover,
+.theme-isha .global-reset-btn:hover,
+.theme-evening .global-reset-btn:hover {
+  background: rgba(40, 40, 80, 0.95);
+}
+

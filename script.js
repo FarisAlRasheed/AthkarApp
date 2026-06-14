@@ -998,6 +998,7 @@ function render(){
   cardOuter.appendChild(el);
   el.id = 'activeCard';
   updateHintArrows();
+  updatePageResetBtnVisibility();
 }
 
 /* =========================================
@@ -1022,6 +1023,7 @@ function decrementCounter() {
     updateCountUI(controls, currentIndex);
   }
   saveState();
+  updatePageResetBtnVisibility();
 
   if (counters[currentIndex] <= 0) {
     triggerHaptic('strong');
@@ -1054,6 +1056,36 @@ function resetCounter(){
     updateCountUI(controls, currentIndex);
   }
   saveState();
+  updatePageResetBtnVisibility();
+}
+
+function resetCurrentCollection(){
+  counters = cardsData.map(card => card.num || 1);
+  const shouldAnimate = currentIndex > 0;
+  currentIndex = 0;
+  saveState();
+
+  if(shouldAnimate){
+    animateToIndex(0, 'down');
+  } else {
+    render();
+  }
+}
+
+function updatePageResetBtnVisibility() {
+  const globalResetBtn = document.getElementById('globalResetBtn');
+  if (!globalResetBtn || !cardsData || !counters) return;
+
+  const isUsed = currentIndex > 0 || counters.some((c, idx) => {
+    const max = cardsData[idx]?.num || 1;
+    return c < max;
+  });
+
+  if (isUsed) {
+    globalResetBtn.classList.add('visible');
+  } else {
+    globalResetBtn.classList.remove('visible');
+  }
 }
 
 /* =========================================
@@ -1131,6 +1163,7 @@ function animateToIndex(newIndex, direction){
 
   updateHintArrows();
   saveState();
+  updatePageResetBtnVisibility();
 
   animationTimer = setTimeout(() => {
     if(currentWrap && currentWrap.parentNode) currentWrap.remove();
@@ -1317,6 +1350,14 @@ if(resetAllMenuBtn){
     e.stopPropagation();
     closeOptionsMenu();
     resetAllState();
+  });
+}
+
+const globalResetBtn = document.getElementById('globalResetBtn');
+if(globalResetBtn){
+  globalResetBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    resetCurrentCollection();
   });
 }
 
