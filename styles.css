@@ -173,6 +173,19 @@ body{
 /* ===== PAGE STRUCTURE ===== */
 .page{width:100%;height:100dvh;display:flex;flex-direction:column;position:relative;z-index:1}
 
+.menu-page{background:#fff}
+body.menu-active .dynamic-bg{opacity:0;visibility:hidden}
+body.menu-active{background:#fff}
+
+.menu-back-btn{
+  position:absolute;top:12px;left:14px;z-index:110;
+  display:flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border:none;border-radius:10px;
+  background:rgba(255,255,255,0.18);color:currentColor;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;transition:opacity 160ms ease
+}
+.menu-back-btn:active{opacity:0.72}
+
 .top-bar{
   min-height:88px;display:flex;flex-direction:column;align-items:stretch;justify-content:center;
   padding:10px 14px 8px;gap:6px;position:relative;z-index:100;direction:ltr
@@ -969,4 +982,100 @@ body{
 .theme-evening .global-reset-btn:hover {
   background: rgba(40, 40, 80, 0.95);
 }
+
+/* Custom Modifications */
+.prayer-selector {
+  display: none !important;
+}
+.athkar-selector {
+  display: none !important;
+}
+.global-reset-btn {
+  display: none !important;
+}
+.hint-arrow {
+  display: none !important;
+}
+#mainPage .top-bar {
+  min-height: 60px !important;
+}
+
+/* Dynamic Background & Glassmorphic Menu Theme */
+#mainMenuRoot {
+  background-color: transparent !important;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 0.5s ease-in-out, color 0.3s ease, text-shadow 0.3s ease;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+#mainMenuRoot.theme-daytime {
+  background-image: url('images/bg-day.png');
+  color: #0f172a;
+}
+#mainMenuRoot.theme-nighttime {
+  background-image: url('images/bg-night.png');
+  color: #f8fafc;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+body.menu-active {
+  background-color: #f1f5f9;
+  transition: background-color 0.5s ease-in-out;
+}
+body.menu-active.theme-nighttime-body {
+  background-color: #080d16 !important;
+}
+.thikr-card {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.theme-daytime .thikr-card {
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #0f172a;
+}
+.theme-daytime .thikr-card:hover {
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+.theme-nighttime .thikr-card {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+}
+.theme-nighttime .thikr-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+.resume-btn {
+  background: rgba(14, 116, 144, 0.12);
+  border: 1px solid rgba(14, 116, 144, 0.25);
+  color: #0c4a6e;
+  transition: all 0.2s ease;
+}
+.resume-btn:hover {
+  background: rgba(14, 116, 144, 0.2);
+}
+.theme-nighttime .resume-btn {
+  background: rgba(34, 211, 238, 0.15);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  color: #cffafe;
+}
+.theme-nighttime .resume-btn:hover {
+  background: rgba(34, 211, 238, 0.25);
+}
+#menuCityDropdown {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+.theme-nighttime #menuCityDropdown {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+}
+
 

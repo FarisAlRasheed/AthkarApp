@@ -32,6 +32,52 @@ let prayerCountdownInterval = null;
 const LS_CITY = 'athkar_city_v3';
 const POST_PRAYER_TITLE = 'أذكار بعد الصلاة';
 
+const CATEGORY_FILE_MAP = {
+  'morning.json': 'morning',
+  'evening.json': 'evening',
+  'sleep.json': 'sleep',
+  'post-prayer.json': 'post-prayer',
+};
+
+function getCategoryIdForFileIndex(fileIdx){
+  const fileName = ATHKAR_FILES[fileIdx];
+  return CATEGORY_FILE_MAP[fileName] || null;
+}
+
+function getFileIndexForCategoryId(categoryId){
+  const fileName = Object.entries(CATEGORY_FILE_MAP).find(([, id]) => id === categoryId)?.[0];
+  if(!fileName) return -1;
+  return ATHKAR_FILES.indexOf(fileName);
+}
+
+function hasCollectionProgress(fileIdx){
+  if(fileIdx < 0 || !athkarCollections[fileIdx]) return false;
+  const col = athkarCollections[fileIdx];
+  const idx = parseInt(localStorage.getItem(`${LS_INDEX}_${fileIdx}`) || '0', 10);
+  const raw = localStorage.getItem(`${LS_COUNTERS}_${fileIdx}`);
+  if(!raw) {
+    return idx > 0 && idx < col.athkar.length - 1;
+  }
+  try{
+    const parsed = JSON.parse(raw);
+    if(!Array.isArray(parsed)) {
+      return idx > 0 && idx < col.athkar.length - 1;
+    }
+    const isCompleted = (idx === col.athkar.length - 1) && (parsed[idx] === 0);
+    if (isCompleted) return false;
+    if (idx > 0 && idx < col.athkar.length) return true;
+    const max = col.athkar[0]?.num || 1;
+    const val = parsed[0];
+    if (Number.isFinite(val) && val < max) return true;
+  }catch(e){}
+  return false;
+}
+
+function resetCollectionProgress(fileIdx){
+  localStorage.removeItem(`${LS_COUNTERS}_${fileIdx}`);
+  localStorage.removeItem(`${LS_INDEX}_${fileIdx}`);
+}
+
 // ── DOM refs ──
 const dynamicBgEl  = document.getElementById('dynamicBg');
 const cardOuter    = document.getElementById('card');
@@ -1088,21 +1134,15 @@ function updatePageResetBtnVisibility() {
   }
 }
 
-/* =========================================
-   COMPLETION SCREEN
-   ========================================= */
 function showCompletion(){
-  const overlay = document.createElement('div');
+  resetCollectionProgress(currentFileIndex);
+  var overlay = document.createElement('div');
   overlay.className = 'completion-overlay';
-  overlay.innerHTML = `
-    <div class="completion-card">
-      <h2>تقبّل الله ✨</h2>
-      <p>أتممت ${titleEl.textContent} بنجاح</p>
-    </div>
-  `;
-  overlay.addEventListener('click', () => overlay.remove());
+  overlay.innerHTML = '<div class="completion-card"><h2>\u062a\u0642\u0628\u0651\u0644 \u0627\u0644\u0644\u0647 \u2728</h2><p>\u0623\u062a\u0645\u0645\u062a ' + titleEl.textContent + ' \u0628\u0646\u062c\u0627\u062d</p></div>';
+  overlay.addEventListener('click', function() { overlay.remove(); });
   document.body.appendChild(overlay);
 }
+
 
 /* =========================================
    CANCEL ANIMATION
@@ -1365,7 +1405,9 @@ if(globalResetBtn){
    PRAYER TIMES PAGE
    ========================================= */
 const prayerPage = document.getElementById('prayerPage');
+const menuPage = document.getElementById('menuPage');
 const mainPage = document.getElementById('mainPage');
+const menuBackBtn = document.getElementById('menuBackBtn');
 const prayerBackBtn = document.getElementById('prayerBackBtn');
 const citySelect = document.getElementById('citySelect');
 const prayerList = document.getElementById('prayerList');
@@ -1375,10 +1417,43 @@ const nextPrayerName = document.getElementById('nextPrayerName');
 const nextPrayerCountdown = document.getElementById('nextPrayerCountdown');
 const prayerLoading = document.getElementById('prayerLoading');
 
+function showMenuPage(){
+  if(prayerPage) prayerPage.style.display = 'none';
+  if(mainPage) mainPage.style.display = 'none';
+  if(menuPage){
+    menuPage.style.display = 'flex';
+    menuPage.style.animation = 'fadeIn 300ms ease';
+  }
+  document.body.classList.add('menu-active');
+  if(window.MainMenu?.renderMainMenu) window.MainMenu.renderMainMenu();
+}
+
+function showAthkarPage(){
+  if(menuPage) menuPage.style.display = 'none';
+  if(prayerPage) prayerPage.style.display = 'none';
+  if(mainPage){
+    mainPage.style.display = 'flex';
+    mainPage.style.animation = 'fadeIn 300ms ease';
+  }
+  document.body.classList.remove('menu-active');
+  if(window.MainMenu?.stopMenuCountdown) window.MainMenu.stopMenuCountdown();
+}
+
+function openAthkarCategory(categoryId, { resume = false, reset = false } = {}){
+  const fileIdx = getFileIndexForCategoryId(categoryId);
+  if(fileIdx < 0) return;
+  if(reset) resetCollectionProgress(fileIdx);
+  showAthkarPage();
+  switchCollection(fileIdx);
+}
+
 function showPrayerPage(){
   closeOptionsMenu();
   stopAndResetAudio();
-  mainPage.style.display = 'none';
+  if(menuPage) menuPage.style.display = 'none';
+  if(mainPage) mainPage.style.display = 'none';
+  document.body.classList.remove('menu-active');
+  if(window.MainMenu?.stopMenuCountdown) window.MainMenu.stopMenuCountdown();
   prayerPage.style.display = 'flex';
   prayerPage.style.animation = 'fadeIn 300ms ease';
   loadPrayerTimes();
@@ -1386,8 +1461,7 @@ function showPrayerPage(){
 
 function hidePrayerPage(){
   prayerPage.style.display = 'none';
-  mainPage.style.display = 'flex';
-  mainPage.style.animation = 'fadeIn 300ms ease';
+  showMenuPage();
   if(prayerCountdownInterval){
     clearInterval(prayerCountdownInterval);
     prayerCountdownInterval = null;
@@ -1396,6 +1470,13 @@ function hidePrayerPage(){
 
 if(prayerBackBtn){
   prayerBackBtn.addEventListener('click', hidePrayerPage);
+}
+
+if(menuBackBtn){
+  menuBackBtn.addEventListener('click', () => {
+    stopAndResetAudio();
+    showMenuPage();
+  });
 }
 
 // Restore saved city
@@ -1493,6 +1574,9 @@ async function loadPrayerTimes(){
   
   // Also update dynamic background with new prayer times
   updateBackgroundForTime();
+  if(document.body.classList.contains('menu-active') && window.MainMenu?.renderMainMenu){
+    window.MainMenu.renderMainMenu();
+  }
 }
 
 /* =========================================
@@ -1654,12 +1738,27 @@ function resetAllState(){
 
   buildDropdown();
 
-  const defaultIdx = getDefaultFileIndex();
-  
-  // Fetch prayer times for dynamic background and recommendations
-  const savedCityVal = localStorage.getItem(LS_CITY) || 'Makkah,SA';
+  const savedCityVal = localStorage.getItem(LS_CITY) || 'Riyadh,SA';
   if(citySelect) citySelect.value = savedCityVal;
   syncCityButtons();
+
+  window.AthkarApp = {
+    getPrayerTimes: () => cachedPrayerTimes,
+    getSelectedCityLabel,
+    hasCollectionProgressByCategory: (categoryId) => {
+      const idx = getFileIndexForCategoryId(categoryId);
+      return idx >= 0 && hasCollectionProgress(idx);
+    },
+    isCategoryAvailable: (category) => {
+      if(!category.file) return false;
+      return getFileIndexForCategoryId(category.id) >= 0;
+    },
+    openAthkarCategory,
+    showMenuPage,
+    showAthkarPage,
+  };
+
+  showMenuPage();
 
   // Fire and forget — don't block app load
   fetchPrayerTimes(savedCityVal).then(() => {
@@ -1670,8 +1769,9 @@ function resetAllState(){
       updateCountdownDisplay(nextP);
     }
     updateBackgroundForTime();
-    // Check smart recommendations after prayer times are loaded
-    setTimeout(checkSmartRecommendation, 500);
+    if(document.body.classList.contains('menu-active') && window.MainMenu?.renderMainMenu){
+      window.MainMenu.renderMainMenu();
+    }
   });
   
   // Apply a default background immediately
@@ -1685,6 +1785,4 @@ function resetAllState(){
   else if(hour >= 17 && hour < 19) defaultPeriod = 'maghrib';
   else defaultPeriod = 'isha';
   applyDynamicBackground(defaultPeriod);
-  
-  switchCollection(defaultIdx);
 })();
