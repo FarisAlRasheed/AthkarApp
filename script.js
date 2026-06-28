@@ -2,17 +2,10 @@
    Athkar App — script.js  (Full rewrite v3)
    ===================================================== */
 
-// ── Data files ──
-const ATHKAR_FILES = [
-  'morning.json',
-  'evening.json',
-  'sleep.json',
-  'post-prayer.json'
-];
-
 // ── State ──
-let athkarCollections = [];
-let currentFileIndex = 0;
+let sheikhConfigs = {};
+let currentCategoryId = null;
+let currentCollectionTitle = '';
 let cardsData = [];
 let counters = [];
 let currentIndex = 0;
@@ -26,56 +19,29 @@ let audioAnimFrame = null;
 
 // Prayer times state
 let cachedPrayerTimes = null;
+try {
+  const savedPrayerTimes = localStorage.getItem('cached_prayer_times');
+  if (savedPrayerTimes) {
+    cachedPrayerTimes = JSON.parse(savedPrayerTimes);
+  }
+} catch (e) {}
 let prayerCountdownInterval = null;
 
 // City preference
 const LS_CITY = 'athkar_city_v3';
 const POST_PRAYER_TITLE = 'أذكار بعد الصلاة';
 
-const CATEGORY_FILE_MAP = {
-  'morning.json': 'morning',
-  'evening.json': 'evening',
-  'sleep.json': 'sleep',
-  'post-prayer.json': 'post-prayer',
-};
-
-function getCategoryIdForFileIndex(fileIdx){
-  const fileName = ATHKAR_FILES[fileIdx];
-  return CATEGORY_FILE_MAP[fileName] || null;
+function hasCollectionProgress(categoryId){
+  if (!categoryId) return false;
+  const idxRaw = localStorage.getItem(`${LS_INDEX}_${categoryId}`);
+  const countersRaw = localStorage.getItem(`${LS_COUNTERS}_${categoryId}`);
+  return (idxRaw !== null && parseInt(idxRaw, 10) > 0) || countersRaw !== null;
 }
 
-function getFileIndexForCategoryId(categoryId){
-  const fileName = Object.entries(CATEGORY_FILE_MAP).find(([, id]) => id === categoryId)?.[0];
-  if(!fileName) return -1;
-  return ATHKAR_FILES.indexOf(fileName);
-}
-
-function hasCollectionProgress(fileIdx){
-  if(fileIdx < 0 || !athkarCollections[fileIdx]) return false;
-  const col = athkarCollections[fileIdx];
-  const idx = parseInt(localStorage.getItem(`${LS_INDEX}_${fileIdx}`) || '0', 10);
-  const raw = localStorage.getItem(`${LS_COUNTERS}_${fileIdx}`);
-  if(!raw) {
-    return idx > 0 && idx < col.athkar.length - 1;
-  }
-  try{
-    const parsed = JSON.parse(raw);
-    if(!Array.isArray(parsed)) {
-      return idx > 0 && idx < col.athkar.length - 1;
-    }
-    const isCompleted = (idx === col.athkar.length - 1) && (parsed[idx] === 0);
-    if (isCompleted) return false;
-    if (idx > 0 && idx < col.athkar.length) return true;
-    const max = col.athkar[0]?.num || 1;
-    const val = parsed[0];
-    if (Number.isFinite(val) && val < max) return true;
-  }catch(e){}
-  return false;
-}
-
-function resetCollectionProgress(fileIdx){
-  localStorage.removeItem(`${LS_COUNTERS}_${fileIdx}`);
-  localStorage.removeItem(`${LS_INDEX}_${fileIdx}`);
+function resetCollectionProgress(categoryId){
+  if (!categoryId) return;
+  localStorage.removeItem(`${LS_COUNTERS}_${categoryId}`);
+  localStorage.removeItem(`${LS_INDEX}_${categoryId}`);
 }
 
 // ── DOM refs ──
@@ -162,18 +128,28 @@ const PRAYER_NAMES = {
 const PRAYER_KEYS = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 
 async function fetchPrayerTimes(cityStr){
-  const [city, country] = cityStr.split(',');
   const today = new Date();
   const dd = String(today.getDate()).padStart(2,'0');
   const mm = String(today.getMonth()+1).padStart(2,'0');
   const yyyy = today.getFullYear();
-  const url = `https://api.aladhan.com/v1/timingsByCity/${dd}-${mm}-${yyyy}?city=${encodeURIComponent(city.trim())}&country=${encodeURIComponent(country.trim())}&method=4`;
+  
+  let url;
+  if (cityStr && cityStr.startsWith('gps:')) {
+    const [lat, lng] = cityStr.slice(4).split(',');
+    url = `https://api.aladhan.com/v1/timings/${dd}-${mm}-${yyyy}?latitude=${lat.trim()}&longitude=${lng.trim()}&method=4`;
+  } else {
+    const [city, country] = cityStr.split(',');
+    url = `https://api.aladhan.com/v1/timingsByCity/${dd}-${mm}-${yyyy}?city=${encodeURIComponent(city.trim())}&country=${encodeURIComponent(country.trim())}&method=4`;
+  }
   
   try{
     const res = await fetch(url);
     const data = await res.json();
     if(data.code === 200 && data.data){
       cachedPrayerTimes = data.data.timings;
+      try {
+        localStorage.setItem('cached_prayer_times', JSON.stringify(cachedPrayerTimes));
+      } catch (e) {}
       return data.data;
     }
   }catch(e){
@@ -232,6 +208,9 @@ function formatShortPrayerTime(timeStr){
 }
 
 function getSelectedCityLabel(){
+  if (citySelect && citySelect.value && citySelect.value.startsWith('gps:')) {
+    return 'موقعي الحالي';
+  }
   if(!citySelect || !citySelect.selectedOptions || !citySelect.selectedOptions[0]) return 'المدينة';
   return citySelect.selectedOptions[0].textContent.trim();
 }
@@ -239,6 +218,12 @@ function getSelectedCityLabel(){
 function syncCityButtons(){
   const saved = localStorage.getItem(LS_CITY);
   if(citySelect && saved && citySelect.value !== saved){
+    if (saved.startsWith('gps:') && !Array.from(citySelect.options).some(o => o.value === saved)) {
+      const opt = document.createElement('option');
+      opt.textContent = 'موقعي الحالي';
+      opt.value = saved;
+      citySelect.appendChild(opt);
+    }
     citySelect.value = saved;
   }
 }
@@ -330,22 +315,19 @@ function applyDynamicBackground(period){
 }
 
 function getActiveBackgroundPeriod(){
-  const col = athkarCollections[currentFileIndex];
-  if(!col) return getCurrentPeriod(cachedPrayerTimes);
+  if(!currentCategoryId) return getCurrentPeriod(cachedPrayerTimes);
 
-  const collectionTitle = (col.title || '').trim();
-  const isPostPrayerCollection = collectionTitle === POST_PRAYER_TITLE || ATHKAR_FILES[currentFileIndex] === 'post-prayer.json';
-
+  const isPostPrayerCollection = currentCategoryId === 'post-prayer';
   if(isPostPrayerCollection){
     return getCurrentPeriod(cachedPrayerTimes);
   }
 
-  if(collectionTitle === 'أذكار النوم'){
+  if(currentCategoryId === 'sleep'){
     return 'isha';
   }
 
-  if(col.theme === 'morning') return 'morning';
-  if(col.theme === 'evening') return 'evening';
+  if(currentCategoryId === 'morning') return 'morning';
+  if(currentCategoryId === 'evening') return 'evening';
 
   return getCurrentPeriod(cachedPrayerTimes);
 }
@@ -602,59 +584,79 @@ function createPlayButton(voice){
 }
 
 /* =========================================
-   LOAD ALL JSON FILES
+   LOAD SHEIKH CONFIGS
    ========================================= */
-async function loadAllCollections(){
-  const promises = ATHKAR_FILES.map(f =>
-    fetch(`data/${f}`).then(r => {
-      if(!r.ok) throw new Error(`Failed to load data/${f}`);
-      return r.json();
-    }).catch(err => {
-      console.warn(err);
-      return null;
-    })
-  );
-  const results = await Promise.all(promises);
-  athkarCollections = results.filter(Boolean);
-  if(athkarCollections.length === 0){
-    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-size:20px;color:#999;text-align:center;padding:20px">لم يتم العثور على ملفات أذكار<br>تأكد من وجود ملفات JSON في مجلد /data</div>';
-    return false;
+async function loadSheikhConfigs(){
+  try {
+    const r = await fetch('data/sheikh_configs.json');
+    if(r.ok) {
+      sheikhConfigs = await r.json();
+    } else {
+      console.warn('sheikh_configs.json not found');
+    }
+  } catch(e) {
+    console.warn('Error loading sheikh_configs.json', e);
   }
   return true;
 }
 
 /* =========================================
-   DETERMINE DEFAULT FILE BY TIME
-   ========================================= */
-function getDefaultFileIndex(){
-  const saved = localStorage.getItem(LS_FILE);
-  if(saved !== null){
-    const idx = parseInt(saved, 10);
-    if(!isNaN(idx) && idx >= 0 && idx < athkarCollections.length) return idx;
-  }
-  const hour = new Date().getHours();
-  if(hour >= 3 && hour < 15){
-    const idx = athkarCollections.findIndex(c => c.theme === 'morning');
-    return idx >= 0 ? idx : 0;
-  } else {
-    const idx = athkarCollections.findIndex(c => c.theme === 'evening');
-    return idx >= 0 ? idx : 0;
-  }
-}
-
-/* =========================================
    SWITCH COLLECTION
    ========================================= */
-function switchCollection(fileIdx) {
-  currentFileIndex = fileIdx;
-  const col = athkarCollections[fileIdx];
-  cardsData = col.athkar;
-  currentVoiceDir = col.voiceDir || 'voices';
+async function switchCollection(categoryId) {
+  currentCategoryId = categoryId;
+  const menuCat = window.MainMenu?.MENU_CATEGORIES.find(c => c.id === categoryId);
+  currentCollectionTitle = menuCat ? menuCat.title : categoryId;
+
+  const config = sheikhConfigs[categoryId];
+  const selectedSheikh = localStorage.getItem('athkar_sheikh_' + categoryId);
+
+  let poolData = null;
+  let trackList = null;
+
+  if (config) {
+    const sheikhKey = selectedSheikh && config[selectedSheikh] ? selectedSheikh : Object.keys(config)[0];
+    trackList = config[sheikhKey].track;
+    const capitalCategory = categoryId.charAt(0).toUpperCase() + categoryId.slice(1);
+    try {
+      const r = await fetch(`data/${capitalCategory}_pool.json`);
+      if(r.ok) {
+        poolData = await r.json();
+      }
+    } catch(e) {
+      console.warn('Pool load failed', e);
+    }
+  }
+
+  if (poolData && trackList) {
+    cardsData = trackList.map(id => {
+      const item = poolData.athkar_pool[id];
+      return item || { text: "Error loading " + id, num: 1, fadhel: "", voice: "" };
+    });
+  } else {
+    // Fallback to legacy
+    const legacyFile = menuCat && menuCat.file ? menuCat.file : `${categoryId}.json`;
+    try {
+      const r = await fetch(`data/${legacyFile}`);
+      if(r.ok) {
+        const legacyData = await r.json();
+        cardsData = legacyData.athkar;
+        currentCollectionTitle = legacyData.title || currentCollectionTitle;
+      } else {
+        cardsData = [];
+      }
+    } catch(e) {
+      console.warn('Legacy fallback failed', e);
+      cardsData = [];
+    }
+  }
+
+  currentVoiceDir = 'voices'; // always enforce flat directory
 
   // Apply dynamic background based on prayer times
   updateBackgroundForTime();
 
-  titleEl.textContent = col.title;
+  titleEl.textContent = currentCollectionTitle;
 
   currentIndex = 0;
   isFlipped = false;
@@ -667,15 +669,6 @@ function switchCollection(fileIdx) {
   updateDropdownUI();
   updateHintArrows();
   updateParallax();
-
-  localStorage.setItem(LS_FILE, String(fileIdx));
-}
-
-/* =========================================
-   SHEIKH FOOTER (for morning/evening only)
-   ========================================= */
-function updateSheikhFooter(){
-  return;
 }
 
 /* =========================================
@@ -683,20 +676,23 @@ function updateSheikhFooter(){
    ========================================= */
 function buildDropdown(){
   dropdownEl.innerHTML = '';
-  athkarCollections.forEach((col, i) => {
-    const opt = document.createElement('div');
-    opt.className = 'dropdown-option' + (i === currentFileIndex ? ' active' : '');
-    let label = col.title;
-    // Add collection folder label if applicable
-    if(col.collection) label = col.title + ' — ' + col.collection;
-    opt.textContent = label;
-    opt.addEventListener('click', (e) => {
-      e.stopPropagation();
-      closeDropdown();
-      if(i !== currentFileIndex) switchCollection(i);
+  if(window.MainMenu?.MENU_CATEGORIES) {
+    window.MainMenu.MENU_CATEGORIES.forEach((cat) => {
+      if(!cat.file && cat.id !== 'tasbih' && !sheikhConfigs[cat.id]) return; // ignore if neither file nor config exists
+      if(cat.id === 'tasbih') return; // ignore tasbih
+
+      const opt = document.createElement('div');
+      opt.className = 'dropdown-option' + (cat.id === currentCategoryId ? ' active' : '');
+      opt.dataset.categoryId = cat.id;
+      opt.textContent = cat.title;
+      opt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeDropdown();
+        if(cat.id !== currentCategoryId) switchCollection(cat.id);
+      });
+      dropdownEl.appendChild(opt);
     });
-    dropdownEl.appendChild(opt);
-  });
+  }
 
   const divider = document.createElement('div');
   divider.className = 'dropdown-divider';
@@ -728,8 +724,10 @@ function closeDropdown(){
 }
 function updateDropdownUI(){
   const opts = dropdownEl.querySelectorAll('.dropdown-option');
-  opts.forEach((opt, i) => {
-    opt.classList.toggle('active', i === currentFileIndex);
+  opts.forEach((opt) => {
+    if(opt.dataset.categoryId) {
+      opt.classList.toggle('active', opt.dataset.categoryId === currentCategoryId);
+    }
   });
 }
 
@@ -781,7 +779,7 @@ document.addEventListener('click', (e) => {
    ========================================= */
 function loadState(){
   try{
-    const key = `${LS_COUNTERS}_${currentFileIndex}`;
+    const key = `${LS_COUNTERS}_${currentCategoryId}`;
     const raw = localStorage.getItem(key);
     if(raw){
       const parsed = JSON.parse(raw);
@@ -795,7 +793,7 @@ function loadState(){
         }
       }
     }
-    const idxKey = `${LS_INDEX}_${currentFileIndex}`;
+    const idxKey = `${LS_INDEX}_${currentCategoryId}`;
     const idxRaw = localStorage.getItem(idxKey);
     if(idxRaw != null){
       const n = Number(idxRaw);
@@ -806,8 +804,8 @@ function loadState(){
 
 function saveState(){
   try{
-    localStorage.setItem(`${LS_COUNTERS}_${currentFileIndex}`, JSON.stringify(counters));
-    localStorage.setItem(`${LS_INDEX}_${currentFileIndex}`, String(currentIndex));
+    localStorage.setItem(`${LS_COUNTERS}_${currentCategoryId}`, JSON.stringify(counters));
+    localStorage.setItem(`${LS_INDEX}_${currentCategoryId}`, String(currentIndex));
   }catch(e){ console.warn('saveState error', e); }
 }
 
@@ -1347,11 +1345,7 @@ const contactDevBtn = document.getElementById('contactDevBtn');
 const contactPopup = document.getElementById('contactPopup');
 const contactClose = document.getElementById('contactClose');
 
-function toggleOptionsMenu(){
-  const isOpen = optionsMenu.classList.contains('open');
-  if(isOpen) closeOptionsMenu();
-  else openOptionsMenu();
-}
+
 function openOptionsMenu(){
   optionsMenu.classList.add('open');
   closeDropdown();
@@ -1440,11 +1434,9 @@ function showAthkarPage(){
 }
 
 function openAthkarCategory(categoryId, { resume = false, reset = false } = {}){
-  const fileIdx = getFileIndexForCategoryId(categoryId);
-  if(fileIdx < 0) return;
-  if(reset) resetCollectionProgress(fileIdx);
+  if(reset) resetCollectionProgress(categoryId);
   showAthkarPage();
-  switchCollection(fileIdx);
+  switchCollection(categoryId);
 }
 
 function showPrayerPage(){
@@ -1495,154 +1487,150 @@ if(citySelect){
 }
 
 async function loadPrayerTimes(){
-  if(prayerLoading) prayerLoading.style.display = 'flex';
-  prayerList.innerHTML = '';
-  prayerList.appendChild(prayerLoading);
-  nextPrayerCard.style.display = 'none';
-  
   const cityVal = citySelect ? citySelect.value : 'Makkah,SA';
-  const data = await fetchPrayerTimes(cityVal);
   
-  if(!data){
-    prayerList.innerHTML = '<div style="text-align:center;padding:40px;color:#999">تعذّر تحميل المواقيت</div>';
+  if (cityVal === 'auto') {
+    if (prayerLoading) prayerLoading.style.display = 'flex';
+    prayerList.innerHTML = '';
+    prayerList.appendChild(prayerLoading);
+    
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const gpsVal = `gps:${lat},${lng}`;
+          
+          if (citySelect) {
+            let opt = Array.from(citySelect.options).find(o => o.value.startsWith('gps:'));
+            if (!opt) {
+              opt = document.createElement('option');
+              opt.textContent = 'موقعي الحالي';
+              citySelect.appendChild(opt);
+            }
+            opt.value = gpsVal;
+            citySelect.value = gpsVal;
+            localStorage.setItem(LS_CITY, gpsVal);
+          }
+          loadPrayerTimes();
+        },
+        (error) => {
+          console.warn('Geolocation error:', error);
+          alert('تعذّر تحديد الموقع. سيتم الرجوع إلى الرياض.');
+          if (citySelect) {
+            citySelect.value = 'Riyadh,SA';
+            localStorage.setItem(LS_CITY, 'Riyadh,SA');
+          }
+          loadPrayerTimes();
+        }
+      );
+    } else {
+      alert('متصفحك لا يدعم تحديد الموقع. سيتم الرجوع إلى الرياض.');
+      if (citySelect) {
+        citySelect.value = 'Riyadh,SA';
+        localStorage.setItem(LS_CITY, 'Riyadh,SA');
+      }
+      loadPrayerTimes();
+    }
     return;
   }
 
-  syncCityButtons();
-  
-  // Show date
-  if(prayerDate && data.date){
-    const hijri = data.date.hijri;
-    const greg = data.date.gregorian;
-    prayerDate.textContent = `${hijri.day} ${hijri.month.ar} ${hijri.year} — ${greg.day} ${greg.month.en} ${greg.year}`;
-  }
-  
-  // Build prayer cards
-  prayerList.innerHTML = '';
-  const now = new Date();
-  const nextP = getNextPrayer(data.timings);
-  
-  PRAYER_KEYS.forEach(key => {
-    const timeStr = data.timings[key];
-    if(!timeStr) return;
-    const prayerTime = parsePrayerTime(timeStr);
-    const isPassed = now > prayerTime;
-    const isNext = nextP && nextP.key === key;
-    
-    const card = document.createElement('div');
-    card.className = 'prayer-card';
-    if(isPassed && !isNext) card.classList.add('passed');
-    if(isNext) card.classList.add('active');
-    
-    const nameEl = document.createElement('div');
-    nameEl.className = 'prayer-card-name';
-    nameEl.textContent = PRAYER_NAMES[key];
-    
-    const timeEl = document.createElement('div');
-    timeEl.className = 'prayer-card-time';
-    timeEl.textContent = timeStr.replace(/\s*\(.*\)/, '');
-    
-    card.appendChild(nameEl);
-    card.appendChild(timeEl);
-    prayerList.appendChild(card);
-  });
-  
-  // Next prayer countdown
-  if(nextP){
-    nextPrayerCard.style.display = 'block';
-    nextPrayerName.textContent = nextP.name;
-    updatePrayerSummary(nextP);
-    buildPrayerMenu(data.timings);
-    
-    function updateCountdown(){
-      updateCountdownDisplay(nextP);
-      const now = new Date();
-      let diff = nextP.time - now;
-      if(diff < 0) diff = 0;
-      if(diff <= 0){
-        clearInterval(prayerCountdownInterval);
-        nextPrayerCountdown.textContent = 'حان الآن';
-      }
+  try {
+    if(prayerLoading) prayerLoading.style.display = 'flex';
+    if(prayerList) {
+      prayerList.innerHTML = '';
+      if(prayerLoading) prayerList.appendChild(prayerLoading);
     }
-    updateCountdown();
-    if(prayerCountdownInterval) clearInterval(prayerCountdownInterval);
-    prayerCountdownInterval = setInterval(updateCountdown, 1000);
-  }
-  else{
-    buildPrayerMenu(data.timings);
-  }
-  
-  // Also update dynamic background with new prayer times
-  updateBackgroundForTime();
-  if(document.body.classList.contains('menu-active') && window.MainMenu?.renderMainMenu){
-    window.MainMenu.renderMainMenu();
-  }
-}
-
-/* =========================================
-   SMART ATHKAR RECOMMENDATIONS
-   ========================================= */
-function checkSmartRecommendation(){
-  if(!cachedPrayerTimes) return;
-  
-  const now = new Date();
-  const banner = document.getElementById('smartBanner');
-  const bannerText = document.getElementById('smartBannerText');
-  const bannerBtn = document.getElementById('smartBannerBtn');
-  const bannerClose = document.getElementById('smartBannerClose');
-  
-  if(!banner || !bannerText || !bannerBtn) return;
-  
-  // Check if banner was dismissed this session
-  if(sessionStorage.getItem('smart_banner_dismissed')) return;
-  
-  const isha = parsePrayerTime(cachedPrayerTimes.Isha);
-  const fajr = parsePrayerTime(cachedPrayerTimes.Fajr);
-  
-  // Sleep logic: 30min after Isha until Fajr
-  const ishaPlus30 = new Date(isha.getTime() + 30 * 60000);
-  const isSleepTime = (now >= ishaPlus30) || (now < fajr);
-  
-  if(isSleepTime){
-    const sleepIdx = athkarCollections.findIndex(c => c.title === 'أذكار النوم');
-    if(sleepIdx >= 0 && currentFileIndex !== sleepIdx){
-      banner.style.display = 'flex';
-      bannerText.textContent = '🌙 وقت أذكار النوم';
-      bannerBtn.onclick = () => {
-        switchCollection(sleepIdx);
-        banner.style.display = 'none';
-      };
-      if(bannerClose) bannerClose.onclick = () => {
-        banner.style.display = 'none';
-        sessionStorage.setItem('smart_banner_dismissed', '1');
-      };
+    if(nextPrayerCard) nextPrayerCard.style.display = 'none';
+    
+    const data = await fetchPrayerTimes(cityVal);
+    
+    if(!data){
+      if(prayerList) prayerList.innerHTML = '<div style="text-align:center;padding:40px;color:#999">تعذّر تحميل المواقيت</div>';
       return;
     }
-  }
-  
-  // Post-prayer logic: within 30min after any prayer
-  const prayerKeys = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-  for(const key of prayerKeys){
-    const pTime = parsePrayerTime(cachedPrayerTimes[key]);
-    const pTimePlus30 = new Date(pTime.getTime() + 30 * 60000);
-    if(now >= pTime && now <= pTimePlus30){
-      const postIdx = athkarCollections.findIndex(c => c.title === 'أذكار بعد الصلاة');
-      if(postIdx >= 0 && currentFileIndex !== postIdx){
-        banner.style.display = 'flex';
-        bannerText.textContent = `🕌 أذكار بعد صلاة ${PRAYER_NAMES[key]}`;
-        bannerBtn.onclick = () => {
-          switchCollection(postIdx);
-          banner.style.display = 'none';
+
+    syncCityButtons();
+    
+    // Show date
+    if(prayerDate && data.date){
+      const hijri = data.date.hijri;
+      const greg = data.date.gregorian;
+      prayerDate.textContent = `${hijri.day} ${hijri.month.ar} ${hijri.year} — ${greg.day} ${greg.month.en} ${greg.year}`;
+    }
+    
+    // Build prayer cards
+    if(prayerList) {
+      prayerList.innerHTML = '';
+      const now = new Date();
+      const nextP = getNextPrayer(data.timings);
+      
+      PRAYER_KEYS.forEach(key => {
+        const timeStr = data.timings[key];
+        if(!timeStr) return;
+        const prayerTime = parsePrayerTime(timeStr);
+        const isPassed = now > prayerTime;
+        const isNext = nextP && nextP.key === key;
+        
+        const card = document.createElement('div');
+        card.className = 'prayer-card';
+        if(isPassed && !isNext) card.classList.add('passed');
+        if(isNext) card.classList.add('active');
+        
+        const nameEl = document.createElement('div');
+        nameEl.className = 'prayer-card-name';
+        nameEl.textContent = PRAYER_NAMES[key];
+        
+        const timeEl = document.createElement('div');
+        timeEl.className = 'prayer-card-time';
+        timeEl.textContent = timeStr.replace(/\s*\(.*\)/, '');
+        
+        card.appendChild(nameEl);
+        card.appendChild(timeEl);
+        prayerList.appendChild(card);
+      });
+      
+      // Next prayer countdown
+      if(nextP){
+        if(nextPrayerCard) nextPrayerCard.style.display = 'block';
+        if(nextPrayerName) nextPrayerName.textContent = nextP.name;
+        updatePrayerSummary(nextP);
+        buildPrayerMenu(data.timings);
+        
+        const updateCountdown = () => {
+          updateCountdownDisplay(nextP);
+          const now = new Date();
+          let diff = nextP.time - now;
+          if(diff < 0) diff = 0;
+          if(diff <= 0){
+            clearInterval(prayerCountdownInterval);
+            if(nextPrayerCountdown) nextPrayerCountdown.textContent = 'حان الآن';
+          }
         };
-        if(bannerClose) bannerClose.onclick = () => {
-          banner.style.display = 'none';
-          sessionStorage.setItem('smart_banner_dismissed', '1');
-        };
-        return;
+        updateCountdown();
+        if(prayerCountdownInterval) clearInterval(prayerCountdownInterval);
+        prayerCountdownInterval = setInterval(updateCountdown, 1000);
+      }
+      else{
+        buildPrayerMenu(data.timings);
       }
     }
+  } catch (e) {
+    console.error("Error loading prayer times:", e);
   }
+
+  try {
+    updateBackgroundForTime();
+  } catch (e) {}
+
+  try {
+    if(window.MainMenu?.renderMainMenu){
+      window.MainMenu.renderMainMenu();
+    }
+  } catch (e) {}
 }
+
+
 
 /* =========================================
    SHEIKH GROUPING
@@ -1711,11 +1699,11 @@ if(sheikhOverlay){
    RESET ALL STORAGE
    ========================================= */
 function resetAllState(){
-  athkarCollections.forEach((_, i) => {
-    localStorage.removeItem(`${LS_COUNTERS}_${i}`);
-    localStorage.removeItem(`${LS_INDEX}_${i}`);
-  });
-  localStorage.removeItem(LS_FILE);
+  if(window.MainMenu?.MENU_CATEGORIES) {
+    window.MainMenu.MENU_CATEGORIES.forEach(cat => {
+      resetCollectionProgress(cat.id);
+    });
+  }
 
   counters = cardsData.map(card => card.num || 1);
   const shouldAnimate = currentIndex > 0;
@@ -1733,25 +1721,31 @@ function resetAllState(){
    INIT
    ========================================= */
 (async function init(){
-  const ok = await loadAllCollections();
-  if(!ok) return;
+  await loadSheikhConfigs();
 
   buildDropdown();
 
   const savedCityVal = localStorage.getItem(LS_CITY) || 'Riyadh,SA';
-  if(citySelect) citySelect.value = savedCityVal;
+  if(citySelect) {
+    if (savedCityVal.startsWith('gps:') && !Array.from(citySelect.options).some(o => o.value === savedCityVal)) {
+      const opt = document.createElement('option');
+      opt.textContent = 'موقعي الحالي';
+      opt.value = savedCityVal;
+      citySelect.appendChild(opt);
+    }
+    citySelect.value = savedCityVal;
+  }
   syncCityButtons();
 
   window.AthkarApp = {
     getPrayerTimes: () => cachedPrayerTimes,
     getSelectedCityLabel,
+    sheikhConfigs: sheikhConfigs,
     hasCollectionProgressByCategory: (categoryId) => {
-      const idx = getFileIndexForCategoryId(categoryId);
-      return idx >= 0 && hasCollectionProgress(idx);
+      return hasCollectionProgress(categoryId);
     },
     isCategoryAvailable: (category) => {
-      if(!category.file) return false;
-      return getFileIndexForCategoryId(category.id) >= 0;
+      return !!category.file || !!sheikhConfigs[category.id];
     },
     openAthkarCategory,
     showMenuPage,

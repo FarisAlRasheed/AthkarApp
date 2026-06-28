@@ -279,7 +279,6 @@ body.menu-active{background:#fff}
 }
 .dropdown-menu.open{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
 .hint-up{top:132px}
-.smart-banner{top:132px}
 .controls-backdrop{
   position:absolute;inset:0;z-index:-1;
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
@@ -676,36 +675,6 @@ body.menu-active{background:#fff}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 
-/* ===== SMART RECOMMENDATION BANNER ===== */
-.smart-banner{
-  position:fixed;top:132px;left:50%;transform:translateX(-50%);z-index:150;
-  display:flex;align-items:center;gap:10px;
-  padding:10px 16px;border-radius:16px;
-  background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  box-shadow:0 8px 32px rgba(0,0,0,0.12);border:1px solid rgba(0,0,0,0.06);
-  animation:slideDown 400ms cubic-bezier(.22,.9,.26,1);
-  max-width:calc(100% - 32px);width:auto
-}
-.theme-fajr .smart-banner,.theme-maghrib .smart-banner,.theme-isha .smart-banner{
-  background:rgba(20,20,50,0.95);border-color:rgba(100,120,180,0.2)
-}
-@keyframes slideDown{from{transform:translateX(-50%) translateY(-20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
-.smart-banner-text{font-size:13px;font-weight:500;color:#333;white-space:nowrap}
-.theme-fajr .smart-banner-text,.theme-maghrib .smart-banner-text,.theme-isha .smart-banner-text{color:#c0c8e8}
-.smart-banner-btn{
-  padding:6px 14px;border-radius:10px;border:none;cursor:pointer;
-  background:#0b84ff;color:#fff;font-size:12px;font-weight:600;
-  transition:all 200ms ease;white-space:nowrap
-}
-.smart-banner-btn:active{transform:scale(0.95)}
-.smart-banner-close{
-  width:22px;height:22px;border-radius:50%;border:none;cursor:pointer;
-  background:rgba(0,0,0,0.06);color:#999;font-size:11px;
-  display:flex;align-items:center;justify-content:center;
-  transition:all 150ms ease;flex-shrink:0
-}
-.theme-fajr .smart-banner-close,.theme-maghrib .smart-banner-close,.theme-isha .smart-banner-close{background:rgba(255,255,255,0.08);color:#aaa}
-
 /* ===== SHEIKH FOOTER ===== */
 .sheikh-footer{
   position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:50;
@@ -1066,13 +1035,13 @@ body.menu-active.theme-nighttime-body {
 .theme-nighttime .resume-btn:hover {
   background: rgba(34, 211, 238, 0.25);
 }
-#menuCityDropdown {
+#menuCityDropdown, #menuOptionsDropdown {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
-.theme-nighttime #menuCityDropdown {
+.theme-nighttime #menuCityDropdown, .theme-nighttime #menuOptionsDropdown {
   background: rgba(15, 23, 42, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #f8fafc;
