@@ -14,16 +14,21 @@ python3 -m http.server 8000
 ## Project Structure
 
 ```
-firstTest/
+AthkarApp/
 ├── index.html          ← main page
 ├── styles.css          ← all styling + themes
-├── script.js           ← all logic
-├── data/               ← athkar JSON files (add more here!)
+├── script.js           ← core app logic
+├── main-menu.js        ← main menu page structure & rendering
+├── data/               ← athkar JSON files
 │   ├── morning.json    ← أذكار الصباح
-│   └── evening.json    ← أذكار المساء
-├── images/             ← background images
-│   └── night-sky.svg   ← night sky for evening theme
-└── fonts/              ← put custom Arabic fonts here (.woff2)
+│   ├── evening.json    ← أذكار المساء
+│   ├── sleep.json      ← أذكار النوم
+│   └── post-prayer.json ← أذكار بعد الصلاة
+├── images/             ← background images and logo
+│   ├── bg-day.png      ← background for daytime
+│   ├── bg-night.png    ← background for nighttime
+│   └── logo.png        ← app logo
+└── voices/             ← voice recordings (.m4a)
 ```
 
 ---
@@ -82,11 +87,14 @@ Each thiker object:
 | `num`    | ✅       | Number of repetitions (counter limit) |
 | `fadhel` | ❌       | Virtue text (back face). If omitted, card won't flip |
 
-### 4. Change the Night Sky Image
-Replace `images/night-sky.svg` with any image (SVG, PNG, JPG). Update the path in `styles.css`:
+### 4. Change the Background Images
+Replace `images/bg-day.png` or `images/bg-night.png` with any image. Update the paths in `styles.css` if necessary:
 ```css
-.night-bg{
-  background: url('images/your-new-image.jpg') center/cover no-repeat;
+.daytime-bg {
+  background-image: url('images/bg-day.png');
+}
+.nighttime-bg {
+  background-image: url('images/bg-night.png');
 }
 ```
 
