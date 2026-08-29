@@ -2,6 +2,16 @@
    Athkar App — script.js  (Full rewrite v3)
    ===================================================== */
 
+// ── LocalStorage keys ──
+// Declared before any function that reads them. They used to sit ~30 lines
+// below hasCollectionProgress(), which made that function a temporal-dead-zone
+// ReferenceError waiting for someone to reorder the file.
+const LS_COUNTERS = 'athkar_counters_v2';
+const LS_INDEX    = 'athkar_cardindex_v2';
+const LS_CITY     = 'athkar_city_v3';
+const LS_PRAYER_CACHE = 'cached_prayer_times';
+
+
 // ── State ──
 let sheikhConfigs = {};
 let currentCategoryId = null;
@@ -14,22 +24,38 @@ let currentVoiceDir = 'voices';
 
 // Animation management
 let animationTimer = null;
+let advanceTimer = null;
 let activeAudio = null;
 let audioAnimFrame = null;
 
-// Prayer times state
+// ── Prayer times state ──
+function todayStamp(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// The cache used to store bare timings with no date and no city. They were
+// restored unconditionally and re-anchored to `new Date()`, so last week's
+// times — or another city's — silently presented as today's.
 let cachedPrayerTimes = null;
+let cachedPrayerStamp = null;
+let cachedPrayerCity = null;
 try {
-  const savedPrayerTimes = localStorage.getItem('cached_prayer_times');
-  if (savedPrayerTimes) {
-    cachedPrayerTimes = JSON.parse(savedPrayerTimes);
+  const saved = JSON.parse(localStorage.getItem(LS_PRAYER_CACHE) || 'null');
+  if (saved && saved.timings) {
+    cachedPrayerTimes = saved.timings;
+    cachedPrayerStamp = saved.date || null;
+    cachedPrayerCity  = saved.city || null;
   }
 } catch (e) {}
-let prayerCountdownInterval = null;
 
-// City preference
-const LS_CITY = 'athkar_city_v3';
-const POST_PRAYER_TITLE = 'أذكار بعد الصلاة';
+/** True when the cache is for today and for the city we're about to display. */
+function isPrayerCacheFresh(cityStr){
+  return !!cachedPrayerTimes
+    && cachedPrayerStamp === todayStamp()
+    && (!cityStr || cachedPrayerCity === cityStr);
+}
+let prayerCountdownInterval = null;
 
 function hasCollectionProgress(categoryId){
   if (!categoryId) return false;
@@ -61,10 +87,6 @@ const hintDown     = document.getElementById('hintDown');
 const hintLeft     = document.getElementById('hintLeft');
 const hintRight    = document.getElementById('hintRight');
 
-// ── LocalStorage ──
-const LS_COUNTERS = 'athkar_counters_v2';
-const LS_INDEX    = 'athkar_cardindex_v2';
-const LS_FILE     = 'athkar_file_v2';
 let prayerCityExpanded = false;
 
 // ── Quranic character detection ──
@@ -147,14 +169,23 @@ async function fetchPrayerTimes(cityStr){
     const data = await res.json();
     if(data.code === 200 && data.data){
       cachedPrayerTimes = data.data.timings;
+      cachedPrayerStamp = todayStamp();
+      cachedPrayerCity  = cityStr || null;
       try {
-        localStorage.setItem('cached_prayer_times', JSON.stringify(cachedPrayerTimes));
+        localStorage.setItem(LS_PRAYER_CACHE, JSON.stringify({
+          date: cachedPrayerStamp,
+          city: cachedPrayerCity,
+          timings: cachedPrayerTimes
+        }));
       } catch (e) {}
       return data.data;
     }
   }catch(e){
     console.warn('Prayer times fetch failed:', e);
   }
+  // Offline or API failure: fall back to the cache, but only report success
+  // when it is actually for today and this city.
+  if(isPrayerCacheFresh(cityStr)) return { timings: cachedPrayerTimes };
   return null;
 }
 
@@ -199,12 +230,16 @@ function getNextPrayer(timings){
   return { name: PRAYER_NAMES.Fajr, key: 'Fajr', time: tomorrow };
 }
 
+// Arabic-only app: use ص/م and Arabic-Indic digits, matching main-menu.js.
+// This used to emit "3:24 PM" while the main menu showed "٣:٢٤ م" for the
+// same timing.
 function formatShortPrayerTime(timeStr){
-  if (!timeStr) return '--:--';
+  if (!timeStr) return toArabicDigits('--:--');
   const [hours, minutes] = timeStr.replace(/\s*\(.*\)/, '').trim().split(':').map(Number);
-  const period = hours >= 12 ? 'PM' : 'AM';
-  const formattedHours = hours % 12 || 12; // Convert 0 to 12 for 12-hour format
-  return `${formattedHours}:${String(minutes).padStart(2, '0')} ${period}`;
+  if(!Number.isFinite(hours) || !Number.isFinite(minutes)) return toArabicDigits('--:--');
+  const period = hours >= 12 ? 'م' : 'ص';
+  const h12 = hours % 12 || 12;
+  return toArabicDigits(`${h12}:${String(minutes).padStart(2, '0')}`) + ' ' + period;
 }
 
 function getSelectedCityLabel(){
@@ -237,10 +272,11 @@ function buildPrayerMenu(timings){
   header.textContent = 'مواقيت الصلاة';
   prayerDropdownMenu.appendChild(header);
 
+  const nextKey = getNextPrayer(timings)?.key;
   PRAYER_KEYS.forEach((key) => {
     if(!timings[key]) return;
     const row = document.createElement('div');
-    row.className = 'prayer-menu-item' + (key === getNextPrayer(timings)?.key ? ' active' : '');
+    row.className = 'prayer-menu-item' + (key === nextKey ? ' active' : '');
     row.innerHTML = `<span class="prayer-menu-name">${PRAYER_NAMES[key]}</span><span class="prayer-menu-time">${formatShortPrayerTime(timings[key])}</span>`;
     prayerDropdownMenu.appendChild(row);
   });
@@ -285,7 +321,12 @@ function buildPrayerMenu(timings){
 function updatePrayerSummary(nextP){
   if(!nextP) return;
   if(prayerSummaryName) prayerSummaryName.textContent = nextP.name;
-  if(prayerSummaryTime) prayerSummaryTime.textContent = formatShortPrayerTime(nextP.time ? `${String(nextP.time.getHours()).padStart(2,'0')}:${String(nextP.time.getMinutes()).padStart(2,'0')}` : '--:--');
+  if(prayerSummaryTime){
+    const t = nextP.time;
+    prayerSummaryTime.textContent = t
+      ? formatShortPrayerTime(`${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`)
+      : toArabicDigits('--:--');
+  }
 }
 
 function updateCountdownDisplay(nextP){
@@ -308,9 +349,14 @@ function updateCountdownDisplay(nextP){
 /* =========================================
    DYNAMIC BACKGROUND SYSTEM
    ========================================= */
+const THEME_PERIODS = ['fajr','morning','daytime','dhuhr','asr','maghrib','evening','isha','nighttime'];
+
 function applyDynamicBackground(period){
-  const themeClass = `theme-${period}`;
-  document.body.className = themeClass;
+  // Was `document.body.className = themeClass`, which erased every other class
+  // on <body> — including `menu-active` (main menu visibility) and
+  // `theme-nighttime-body` (set by main-menu.js). Swap only the theme class.
+  THEME_PERIODS.forEach(p => document.body.classList.remove(`theme-${p}`));
+  document.body.classList.add(`theme-${period}`);
   document.body.dataset.bgPeriod = period;
 }
 
@@ -352,16 +398,12 @@ let playbackSpeed = 1.0;
 const SPEED_OPTIONS = [0.75, 1, 1.25, 1.5, 1.75, 2];
 
 function resolveVoiceSrc(voice){
-  if(!voice) return null;
+  // README documents the array form ("voice": ["a.m4a","b.m4a"]); calling
+  // .startsWith() on an array threw. Take the first entry.
+  if(Array.isArray(voice)) voice = voice[0];
+  if(!voice || typeof voice !== 'string') return null;
   if(voice.startsWith('http') || voice.startsWith('/')) return voice;
   return `${currentVoiceDir}/${voice}`;
-}
-
-async function checkAudioExists(src){
-  try{
-    const response = await fetch(src, { method: 'HEAD' });
-    return response.ok;
-  }catch{ return false; }
 }
 
 function stopAndResetAudio(){
@@ -402,8 +444,10 @@ function playVoice(voice, playBtn, speedBtn){
   }
   
   if(activeAudio && activeAudio.paused && activeAudio.currentTime > 0){
+    // Compare the fully-resolved URL. endsWith(voice) was a substring test:
+    // "021.m4a".endsWith("1.m4a") is true, so it could resume the wrong clip.
     const currentSrc = activeAudio.src;
-    if(currentSrc && currentSrc.endsWith(voice)){
+    if(currentSrc && currentSrc === new URL(src, document.baseURI).href){
       activeAudio.play().catch(() => {});
       if(playBtn) playBtn.innerHTML = '⏸';
       if(speedBtn) speedBtn.style.display = 'flex';
@@ -629,10 +673,19 @@ async function switchCollection(categoryId) {
   }
 
   if (poolData && trackList) {
-    cardsData = trackList.map(id => {
+    // A track id with no pool entry used to render a card whose text read
+    // "Error loading <id>" — an English error string shown mid-worship. Skip
+    // the entry instead and warn; it reappears once the pool gains the id.
+    const missingIds = [];
+    cardsData = trackList.reduce((acc, id) => {
       const item = poolData.athkar_pool[id];
-      return item || { text: "Error loading " + id, num: 1, fadhel: "", voice: "" };
-    });
+      if (item) acc.push(item);
+      else missingIds.push(id);
+      return acc;
+    }, []);
+    if (missingIds.length) {
+      console.warn(`Collection "${categoryId}": ids missing from pool, skipped:`, missingIds);
+    }
   } else {
     // Fallback to legacy
     const legacyFile = menuCat && menuCat.file ? menuCat.file : `${categoryId}.json`;
@@ -937,29 +990,24 @@ function createCardElement(index){
     resetBtn.addEventListener('click', (ev) => { ev.stopPropagation(); resetCounter(); });
     controls.appendChild(resetBtn);
 
-    if(data.voice){
-      const voiceSrc = resolveVoiceSrc(data.voice);
-      checkAudioExists(voiceSrc).then(exists => {
-        if(!exists) return;
-        const pb = createPlayButton(data.voice);
-        controls.appendChild(pb.wrap);
-        controls.appendChild(pb.speedBtn);
-        controls.appendChild(pb.speedDrawer);
-      });
+    // Previously gated behind a HEAD request per card, which cost a network
+    // round-trip on every render and hid the button entirely when offline.
+    // A missing file is already handled by the <audio> error handler.
+    if(resolveVoiceSrc(data.voice)){
+      const pb = createPlayButton(data.voice);
+      controls.appendChild(pb.wrap);
+      controls.appendChild(pb.speedBtn);
+      controls.appendChild(pb.speedDrawer);
     }
 
     updateCountUI(controls, index);
   } else {
-    if(data.voice){
-      const voiceSrc = resolveVoiceSrc(data.voice);
-      checkAudioExists(voiceSrc).then(exists => {
-        if(!exists) return;
-        controls.classList.add('center-only');
-        const pb = createPlayButton(data.voice);
-        controls.appendChild(pb.wrap);
-        controls.appendChild(pb.speedBtn);
-        controls.appendChild(pb.speedDrawer);
-      });
+    if(resolveVoiceSrc(data.voice)){
+      controls.classList.add('center-only');
+      const pb = createPlayButton(data.voice);
+      controls.appendChild(pb.wrap);
+      controls.appendChild(pb.speedBtn);
+      controls.appendChild(pb.speedDrawer);
     }
   }
 
@@ -1049,7 +1097,6 @@ function render(){
    COUNTER LOGIC
    ========================================= */
 function decrementCounter() {
-  const max = cardsData[currentIndex].num || 1;
   if (counters[currentIndex] <= 0) {
     if (currentIndex < cardsData.length - 1) {
       goToIndex(currentIndex + 1);
@@ -1071,21 +1118,27 @@ function decrementCounter() {
 
   if (counters[currentIndex] <= 0) {
     triggerHaptic('strong');
-    const wrap = document.getElementById('activeCard');
-    if (wrap) {
-      const countFill = wrap.querySelector('.count-progress-fill');
+    const doneWrap = document.getElementById('activeCard');
+    if (doneWrap) {
+      const countFill = doneWrap.querySelector('.count-progress-fill');
       if (countFill) countFill.classList.add('completed');
-      const resetBtn = wrap.querySelector('.counter-reset-btn');
+      const resetBtn = doneWrap.querySelector('.counter-reset-btn');
       if (resetBtn) resetBtn.classList.add('visible');
-      wrap.classList.add('completion-deep');
-      setTimeout(() => wrap.classList.remove('completion-deep'), 550);
+      doneWrap.classList.add('completion-deep');
+      setTimeout(() => doneWrap.classList.remove('completion-deep'), 550);
     }
 
-    setTimeout(() => {
+    // Held in `advanceTimer` so leaving the card (navigating, resetting, or
+    // going back to the menu) can cancel it. As a bare setTimeout it still
+    // fired after the user had moved on — skipping a card, or dropping the
+    // completion overlay on top of the main menu.
+    clearTimeout(advanceTimer);
+    advanceTimer = setTimeout(() => {
+      advanceTimer = null;
       if (currentIndex < cardsData.length - 1) {
-        goToIndex(currentIndex + 1); // Go to the next card
+        goToIndex(currentIndex + 1);
       } else {
-        showCompletion(); // Show completion screen if it's the last card
+        showCompletion();
       }
     }, 500);
   }
@@ -1133,11 +1186,25 @@ function updatePageResetBtnVisibility() {
 }
 
 function showCompletion(){
-  resetCollectionProgress(currentFileIndex);
-  var overlay = document.createElement('div');
+  // `currentFileIndex` was never declared anywhere — a leftover from the
+  // pre-pool file-index model. This threw a ReferenceError on the first line,
+  // so finishing a collection silently did nothing at all.
+  resetCollectionProgress(currentCategoryId);
+
+  // Clearing localStorage alone left `counters` at zero in memory, and the
+  // next saveState() wrote the completed state straight back. Reset both.
+  counters = cardsData.map(card => card.num || 1);
+  currentIndex = 0;
+
+  const overlay = document.createElement('div');
   overlay.className = 'completion-overlay';
-  overlay.innerHTML = '<div class="completion-card"><h2>\u062a\u0642\u0628\u0651\u0644 \u0627\u0644\u0644\u0647 \u2728</h2><p>\u0623\u062a\u0645\u0645\u062a ' + titleEl.textContent + ' \u0628\u0646\u062c\u0627\u062d</p></div>';
-  overlay.addEventListener('click', function() { overlay.remove(); });
+  overlay.innerHTML = '<div class="completion-card"><h2>تقبّل الله ✨</h2><p>أتممت '
+    + titleEl.textContent + ' بنجاح</p></div>';
+  overlay.addEventListener('click', function(){
+    overlay.remove();
+    render();
+    updatePageResetBtnVisibility();
+  });
   document.body.appendChild(overlay);
 }
 
@@ -1149,6 +1216,10 @@ function cancelAnimation(){
   if(animationTimer){
     clearTimeout(animationTimer);
     animationTimer = null;
+  }
+  if(advanceTimer){
+    clearTimeout(advanceTimer);
+    advanceTimer = null;
   }
   const wraps = cardOuter.querySelectorAll('.card-wrap');
   wraps.forEach(w => {
@@ -1172,7 +1243,6 @@ function goToIndex(idx){
 function animateToIndex(newIndex, direction){
   cancelAnimation();
 
-  const oldIndex = currentIndex;
   currentIndex = newIndex;
   isFlipped = false;
 
@@ -1339,7 +1409,6 @@ document.addEventListener('visibilitychange', () => {
    OPTIONS MENU
    ========================================= */
 const optionsMenu = document.getElementById('optionsMenu');
-const sheikhMenuBtn = document.getElementById('sheikhMenuBtn');
 const resetAllMenuBtn = document.getElementById('resetAllMenuBtn');
 const contactDevBtn = document.getElementById('contactDevBtn');
 const contactPopup = document.getElementById('contactPopup');
@@ -1412,6 +1481,10 @@ const nextPrayerCountdown = document.getElementById('nextPrayerCountdown');
 const prayerLoading = document.getElementById('prayerLoading');
 
 function showMenuPage(){
+  // Cancel any in-flight card advance so it can't fire once we're on the menu
+  // (it used to drop the completion overlay on top of the main menu).
+  cancelAnimation();
+  stopAndResetAudio();
   if(prayerPage) prayerPage.style.display = 'none';
   if(mainPage) mainPage.style.display = 'none';
   if(menuPage){
@@ -1439,6 +1512,11 @@ function openAthkarCategory(categoryId, { resume = false, reset = false } = {}){
   switchCollection(categoryId);
 }
 
+// NOTE: nothing currently calls this — the prayer page in index.html is fully
+// built (and its back button works) but has no entry point, so prayer times are
+// only reachable via the top dropdown. Kept rather than deleted because the
+// screen is wanted; wiring up a trigger is a product decision, not a bug fix.
+// eslint-disable-next-line no-unused-vars
 function showPrayerPage(){
   closeOptionsMenu();
   stopAndResetAudio();
@@ -1631,69 +1709,6 @@ async function loadPrayerTimes(){
 }
 
 
-
-/* =========================================
-   SHEIKH GROUPING
-   ========================================= */
-const sheikhOverlay = document.getElementById('sheikhOverlay');
-const sheikhOverlayClose = document.getElementById('sheikhOverlayClose');
-const sheikhList = document.getElementById('sheikhList');
-
-function openSheikhGrouping(){
-  if(!sheikhOverlay || !sheikhList) return;
-  
-  const col = athkarCollections[currentFileIndex];
-  if(!col) return;
-  
-  // Group by sheikh
-  const groups = {};
-  col.athkar.forEach((item, i) => {
-    const sheikh = item.sheikh || 'ابن عثيمين'; // default
-    if(!groups[sheikh]) groups[sheikh] = [];
-    groups[sheikh].push({ ...item, originalIndex: i });
-  });
-  
-  sheikhList.innerHTML = '';
-  Object.keys(groups).forEach(sheikh => {
-    const items = groups[sheikh];
-    const el = document.createElement('div');
-    el.className = 'sheikh-item';
-    el.innerHTML = `<div class="sheikh-item-name">${sheikh}</div><div class="sheikh-item-count">${toArabicDigits(items.length)} أذكار</div>`;
-    el.addEventListener('click', () => {
-      // Navigate to first card by this sheikh
-      const firstIdx = items[0].originalIndex;
-      goToIndex(firstIdx);
-      sheikhOverlay.classList.remove('open');
-      sheikhOverlay.style.display = 'none';
-    });
-    sheikhList.appendChild(el);
-  });
-  
-  sheikhOverlay.style.display = 'flex';
-  sheikhOverlay.classList.add('open');
-}
-
-if(sheikhMenuBtn){
-  sheikhMenuBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeOptionsMenu();
-    openSheikhGrouping();
-  });
-}
-if(sheikhOverlayClose){
-  sheikhOverlayClose.addEventListener('click', () => {
-    sheikhOverlay.classList.remove('open');
-    sheikhOverlay.style.display = 'none';
-  });
-}
-if(sheikhOverlay){
-  sheikhOverlay.addEventListener('click', (e) => {
-    if(e.target === sheikhOverlay){
-      sheikhOverlay.classList.remove('open');
-      sheikhOverlay.style.display = 'none';
-    }
-  });
-}
 
 /* =========================================
    RESET ALL STORAGE

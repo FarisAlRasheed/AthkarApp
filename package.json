@@ -1,0 +1,13 @@
+{
+  "name": "athkar-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "تطبيق الأذكار — Arabic athkar web app",
+  "scripts": {
+    "lint": "eslint .",
+    "start": "python3 -m http.server 8000"
+  },
+  "devDependencies": {
+    "eslint": "^9.15.0"
+  }
+}
