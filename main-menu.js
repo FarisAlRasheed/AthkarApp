@@ -4,7 +4,6 @@
 const MENU_CATEGORIES = /** @type {MenuCategory[]} */ ([
   { id: 'morning', title: 'أذكار الصباح', file: 'morning.json' },
   { id: 'evening', title: 'أذكار المساء', file: 'evening.json' },
-  { id: 'tasbih', title: 'المسبحة', file: null },
   { id: 'post-prayer', title: 'أذكار بعد الصلاة', file: 'post-prayer.json' },
   { id: 'sleep', title: 'أذكار النوم', file: 'sleep.json' },
 ]);
@@ -269,34 +268,55 @@ function createThikrCard(category, { large = false } = {}) {
   const available = isCategoryAvailable(category);
   const hasProgress = available && hasCategoryProgress(category.id);
 
+  // The suggested card stays a big centred hero; the rest are full-width list
+  // rows, where the sheikh picker sits inline instead of being absolutely
+  // positioned into a 72px-tall row.
+  const isRow = !large;
+
   const card = document.createElement('div');
   card.dataset.categoryId = category.id;
   card.className = [
-    'relative w-full text-center font-bold transition-all thikr-card',
-    large ? 'rounded-[24px] min-h-[140px] text-2xl px-6 py-8' : 'rounded-[16px] min-h-[100px] text-lg px-4 py-6',
+    'relative w-full font-bold transition-all thikr-card',
+    large
+      ? 'rounded-[24px] min-h-[140px] text-2xl px-6 py-8 text-center flex items-center justify-center'
+      : 'rounded-[16px] min-h-[72px] text-xl px-5 py-4 text-right flex items-center justify-between gap-3',
     available ? 'active:scale-[0.98] cursor-pointer' : 'opacity-40 cursor-not-allowed',
-    'flex items-center justify-center',
   ].join(' ');
   card.setAttribute('role', 'button');
   card.tabIndex = available ? 0 : -1;
 
   const title = document.createElement('span');
   title.textContent = category.title;
-  card.appendChild(title);
+
+  // Rows get a leading title block and a trailing control cluster.
+  const titleBlock = isRow ? document.createElement('div') : null;
+  const trailing = isRow ? document.createElement('div') : null;
+  if (isRow) {
+    titleBlock.className = 'flex min-w-0 flex-col items-start gap-0.5';
+    titleBlock.appendChild(title);
+    card.appendChild(titleBlock);
+    trailing.className = 'flex shrink-0 items-center gap-2';
+    card.appendChild(trailing);
+  } else {
+    card.appendChild(title);
+  }
 
   if (hasProgress) {
     const continueHint = document.createElement('div');
-    continueHint.className = 'absolute top-3 right-4 text-[11px] font-bold text-cyan-600 dark:text-cyan-400';
+    continueHint.className = isRow
+      ? 'text-[11px] font-bold text-cyan-600 dark:text-cyan-400'
+      : 'absolute top-3 right-4 text-[11px] font-bold text-cyan-600 dark:text-cyan-400';
     continueHint.textContent = 'اضغط للمتابعة';
-    card.appendChild(continueHint);
+    (isRow ? titleBlock : card).appendChild(continueHint);
 
     const restartBtn = document.createElement('button');
     restartBtn.type = 'button';
     restartBtn.textContent = 'من البداية';
-    restartBtn.className =
-      'absolute bottom-3 left-3 z-10 rounded-full px-3 py-1 text-xs font-bold shadow-sm resume-btn';
+    restartBtn.className = isRow
+      ? 'z-10 rounded-full px-3 py-1 text-xs font-bold shadow-sm resume-btn'
+      : 'absolute bottom-3 left-3 z-10 rounded-full px-3 py-1 text-xs font-bold shadow-sm resume-btn';
     restartBtn.addEventListener('click', (e) => handleRestartClick(e, category));
-    card.appendChild(restartBtn);
+    (isRow ? trailing : card).appendChild(restartBtn);
   }
 
   if (available && window.AthkarApp?.sheikhConfigs) {
@@ -309,7 +329,7 @@ function createThikrCard(category, { large = false } = {}) {
       }
 
       const sheikhWrap = document.createElement('div');
-      sheikhWrap.className = 'absolute bottom-3 right-3 z-20';
+      sheikhWrap.className = isRow ? 'relative z-20' : 'absolute bottom-3 right-3 z-20';
 
       const sheikhBtn = document.createElement('button');
       sheikhBtn.type = 'button';
@@ -354,7 +374,7 @@ function createThikrCard(category, { large = false } = {}) {
 
       sheikhWrap.appendChild(sheikhBtn);
       sheikhWrap.appendChild(sheikhDropdown);
-      card.appendChild(sheikhWrap);
+      (isRow ? trailing : card).appendChild(sheikhWrap);
     }
   }
 
@@ -571,11 +591,11 @@ function renderMainMenu() {
   section2.appendChild(createThikrCard(suggested, { large: true }));
   root.appendChild(section2);
 
-  // ── Section 3: Categories Grid ──
-  const gridCategories = MENU_CATEGORIES.filter((c) => c.id !== suggested.id);
+  // ── Section 3: Categories list ──
+  const listCategories = MENU_CATEGORIES.filter((c) => c.id !== suggested.id);
   const section3 = document.createElement('section');
-  section3.className = 'grid grid-cols-2 gap-3';
-  gridCategories.forEach((category) => {
+  section3.className = 'flex flex-col gap-3';
+  listCategories.forEach((category) => {
     section3.appendChild(createThikrCard(category));
   });
   root.appendChild(section3);

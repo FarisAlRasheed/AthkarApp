@@ -731,8 +731,7 @@ function buildDropdown(){
   dropdownEl.innerHTML = '';
   if(window.MainMenu?.MENU_CATEGORIES) {
     window.MainMenu.MENU_CATEGORIES.forEach((cat) => {
-      if(!cat.file && cat.id !== 'tasbih' && !sheikhConfigs[cat.id]) return; // ignore if neither file nor config exists
-      if(cat.id === 'tasbih') return; // ignore tasbih
+      if(!cat.file && !sheikhConfigs[cat.id]) return; // no data source for this category
 
       const opt = document.createElement('div');
       opt.className = 'dropdown-option' + (cat.id === currentCategoryId ? ' active' : '');
