@@ -5,7 +5,10 @@
   "description": "تطبيق الأذكار — Arabic athkar web app",
   "scripts": {
     "lint": "eslint .",
-    "start": "python3 -m http.server 8000"
+    "start": "python3 -m http.server 8000",
+    "content:convert": "node scripts/convert-content.mjs",
+    "content:validate": "node scripts/validate-content.mjs",
+    "editor": "node scripts/editor/server.mjs"
   },
   "devDependencies": {
     "eslint": "^9.15.0"

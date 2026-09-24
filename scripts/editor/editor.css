@@ -1,0 +1,75 @@
+:root {
+  --bg: #f6f4ef;
+  --panel: #ffffff;
+  --ink: #1f2328;
+  --muted: #6b7280;
+  --line: #e5e1d8;
+  --accent: #0f766e;
+  --accent-soft: #e6f2f1;
+  --danger: #b42318;
+  --quran: #1e7a4f;
+  --ui: system-ui, "SF Arabic", "Geeza Pro", "Segoe UI", sans-serif;
+  --arabic: "Noto Naskh Arabic", "Geeza Pro", "Traditional Arabic", serif;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 var(--ui); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 6px 12px; }
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: .45; cursor: default; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.danger { color: var(--danger); }
+button.link { border: none; background: none; padding: 0; color: var(--accent); text-align: start; }
+input, select, textarea { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; background: #fff; width: 100%; }
+input[type="checkbox"] { width: auto; }
+label.row { color: var(--ink); font-size: 15px; justify-content: flex-start; }
+label.row > span { flex: 0 1 auto; }
+textarea { resize: vertical; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 4px; }
+h2 { font-size: 18px; margin: 0; }
+h3 { font-size: 15px; margin: 0 0 6px; }
+
+.topbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 10px 20px; background: var(--panel); border-bottom: 1px solid var(--line); }
+.topbar h1 { font-size: 18px; margin: 0; }
+.views { display: flex; gap: 6px; }
+.views button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.status { margin-inline-start: auto; color: var(--muted); font-size: 13px; }
+
+.problems { margin: 12px 20px 0; padding: 12px 16px; border-radius: 10px; background: #fef3f2; border: 1px solid #fecdca; font-size: 13px; direction: ltr; text-align: left; white-space: pre-wrap; }
+.problems.ok { background: #fffaeb; border-color: #fedf89; }
+
+main { padding: 16px 20px 40px; }
+.split { display: grid; grid-template-columns: 320px 1fr; gap: 16px; align-items: start; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.list-panel { position: sticky; top: 70px; max-height: calc(100vh - 90px); display: flex; flex-direction: column; gap: 8px; }
+.list { overflow: auto; margin: 0 -6px; }
+.item { display: block; width: 100%; text-align: start; border: none; border-radius: 8px; padding: 8px 10px; background: none; }
+.item:hover { background: var(--bg); }
+.item[aria-current="true"] { background: var(--accent-soft); }
+.item small { display: block; color: var(--muted); font-size: 12px; direction: ltr; text-align: end; }
+.badges { float: left; font-size: 12px; color: var(--muted); }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.row > * { flex: 1; min-width: 0; }
+.row > .fit { flex: 0 0 auto; }
+.muted { color: var(--muted); font-size: 13px; }
+.stack > * + * { margin-top: 14px; }
+
+.arabic { font-family: var(--arabic); font-size: 20px; line-height: 2; }
+.preview { background: var(--bg); border-radius: 12px; padding: 18px 20px; white-space: pre-wrap; }
+.preview.quran { color: var(--quran); }
+
+.usage { border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+.usage header { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.evidence { display: grid; grid-template-columns: 1fr 160px; gap: 0 10px; }
+.evidence .wide { grid-column: 1 / -1; }
+
+table { width: 100%; border-collapse: collapse; }
+td, th { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: start; }
+th { font-size: 13px; color: var(--muted); font-weight: 500; }
+td.num input { width: 80px; }
+td.actions { white-space: nowrap; width: 1%; }
+td.actions button { padding: 2px 8px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+.tabs button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }

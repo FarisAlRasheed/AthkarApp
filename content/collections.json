@@ -1,0 +1,18 @@
+{
+  "morning": {
+    "title": "أذكار الصباح",
+    "resetAt": "fajr"
+  },
+  "evening": {
+    "title": "أذكار المساء",
+    "resetAt": "asr"
+  },
+  "post-prayer": {
+    "title": "أذكار بعد الصلاة",
+    "resetAt": "each-prayer"
+  },
+  "sleep": {
+    "title": "أذكار النوم",
+    "resetAt": "isha"
+  }
+}

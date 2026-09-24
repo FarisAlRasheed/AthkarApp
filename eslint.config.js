@@ -24,6 +24,7 @@ const rules = {
 const languageOptions = { ecmaVersion: 2022, sourceType: 'script' };
 
 module.exports = [
+  { ignores: ['mobile/**'] },
   {
     // Loaded first; owns the shared helpers and publishes window.AthkarApp.
     files: ['script.js'],
@@ -41,6 +42,24 @@ module.exports = [
         toArabicDigits: 'readonly',
         MainMenu: 'writable',
       },
+    },
+    rules,
+  },
+  {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 2024,
+      sourceType: 'module',
+      globals: { process: 'readonly', console: 'readonly', Buffer: 'readonly', URL: 'readonly' },
+    },
+    rules,
+  },
+  {
+    files: ['scripts/editor/editor.js'],
+    languageOptions: {
+      ...languageOptions,
+      ecmaVersion: 2024,
+      globals: { ...browser, Node: 'readonly', confirm: 'readonly', prompt: 'readonly', structuredClone: 'readonly' },
     },
     rules,
   },

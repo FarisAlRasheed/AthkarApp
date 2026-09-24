@@ -1,0 +1,252 @@
+{
+  "name": "الشيخ ابن عثيمين",
+  "collections": {
+    "morning": [
+      {
+        "id": "baqarah-opening",
+        "num": 1
+      },
+      {
+        "id": "ayat-al-kursi",
+        "num": 1,
+        "fadl": "تحمي من الشيطان حتى يمسي"
+      },
+      {
+        "id": "baqarah-ending",
+        "num": 1
+      },
+      {
+        "id": "ghafir-opening",
+        "num": 1
+      },
+      {
+        "id": "hashr-ending",
+        "num": 1
+      },
+      {
+        "id": "al-ikhlas",
+        "num": 3,
+        "fadl": "تكفيك من كل شيء"
+      },
+      {
+        "id": "al-falaq",
+        "num": 3,
+        "fadl": "تكفيك من كل شيء"
+      },
+      {
+        "id": "an-nas",
+        "num": 3,
+        "fadl": "تكفيك من كل شيء"
+      },
+      {
+        "id": "kalimat-allah",
+        "num": 3,
+        "fadl": "من قالها ثلاث مرات حين يمسي لم تضره حُمَة تلك الليلة"
+      },
+      {
+        "id": "bismillah-la-yadurr",
+        "num": 3,
+        "fadl": "لم يضره شيء"
+      },
+      {
+        "id": "raditu-billah",
+        "num": 3,
+        "fadl": "إلا كان حقاً على الله أن يرضيه يوم القيامة"
+      },
+      {
+        "id": "asbahna-almulk",
+        "num": 1,
+        "evidence": {
+          "source": "صحيح مسلم (2723)"
+        }
+      },
+      {
+        "id": "khayra-hadha-alyawm",
+        "num": 1,
+        "evidence": {
+          "source": "صحيح مسلم (2723)"
+        }
+      },
+      {
+        "id": "bika-asbahna",
+        "num": 1
+      },
+      {
+        "id": "ma-asbaha-bi",
+        "num": 1,
+        "fadl": "من قالها حين يصبح فقد أدى شكر يومه"
+      },
+      {
+        "id": "asbahtu-fi-nimah",
+        "num": 3,
+        "fadl": "ثَلاثَ مَرَّاتٍ إذا أصبَحَ وإذا أمسى، كان حَقًّا على اللهِ أن يُتِمَّ عليه نِعمَتَه"
+      },
+      {
+        "id": "hamm-wal-hazan",
+        "num": 1,
+        "fadl": "ألا أعلمُكَ كلامًا إذا قلتَه أذهَب اللهُ تعالى همَّكَ وقضى عنكَ دَينَكَ ؟ قُلْ إذا أصبَحتَ وإذا أمسَيتَ ؛ اللهم إني أعوذُ بكَ…"
+      },
+      {
+        "id": "afiyah",
+        "num": 1
+      },
+      {
+        "id": "sayyid-al-istighfar",
+        "num": 1,
+        "fadl": "سيد الاستغفار، من قالها موقنًا بها حين يصبح فمات من يومه دخل الجنة"
+      },
+      {
+        "id": "fatir-as-samawat",
+        "num": 1
+      },
+      {
+        "id": "asbahtu-ushhiduk",
+        "num": 4,
+        "fadl": "من قالها حين يصبح أعتق الله ربعه من النار، فإن قالها أربعاً أعتقه الله من النار"
+      },
+      {
+        "id": "tahleel",
+        "num": 100,
+        "fadl": "كانت له عدل عشر رقاب، وكتبت له مائة حسنة، ومحيت عنه مائة سيئة، وكانت له حرزاً من الشيطان يومه ذلك حتى يمسي"
+      },
+      {
+        "id": "hasbiyallah",
+        "num": 7,
+        "fadl": "إلَّا كفاه اللهُ ما همَّهُ"
+      },
+      {
+        "id": "hasbiyallah-wa-kafa",
+        "num": 1
+      },
+      {
+        "id": "subhanallah-wa-bihamdih",
+        "num": 100,
+        "fadl": "حطت خطياه ولو كانت مثل زبد البحر"
+      },
+      {
+        "id": "astaghfirullah-wa-atubu",
+        "num": 100
+      }
+    ],
+    "evening": [
+      {
+        "id": "baqarah-opening",
+        "num": 1
+      },
+      {
+        "id": "ayat-al-kursi",
+        "num": 1,
+        "fadl": "تحمي من الشيطان حتى يصبح"
+      },
+      {
+        "id": "baqarah-ending",
+        "num": 1
+      },
+      {
+        "id": "ghafir-opening",
+        "num": 1
+      },
+      {
+        "id": "hashr-ending",
+        "num": 1
+      },
+      {
+        "id": "al-ikhlas",
+        "num": 3,
+        "fadl": "تكفيك من كل شيء"
+      },
+      {
+        "id": "al-falaq",
+        "num": 3,
+        "fadl": "تكفيك من كل شيء"
+      },
+      {
+        "id": "an-nas",
+        "num": 3
+      },
+      {
+        "id": "kalimat-allah",
+        "num": 3,
+        "fadl": "لم يضره حُمَة تلك الليلة (ولا يضره شيء حتى يرتحل)"
+      },
+      {
+        "id": "bismillah-la-yadurr",
+        "num": 3,
+        "fadl": "لم يضره شيء"
+      },
+      {
+        "id": "raditu-billah",
+        "num": 3,
+        "fadl": "إلا كان حقاً على الله أن يرضيه يوم القيامة"
+      },
+      {
+        "id": "amsayna-almulk-long",
+        "num": 1,
+        "evidence": {
+          "source": "صحيح مسلم (2723)"
+        }
+      },
+      {
+        "id": "bika-amsayna",
+        "num": 1
+      },
+      {
+        "id": "ma-amsa-bi",
+        "num": 1,
+        "fadl": "من قالها حين يمسي فقد أدى شكر ليلته"
+      },
+      {
+        "id": "amsaytu-fi-nimah",
+        "num": 3,
+        "fadl": "ثَلاثَ مَرَّاتٍ إذا أصبَحَ وإذا أمسى، كان حَقًّا على اللهِ أن يُتِمَّ عليه نِعمَتَه"
+      },
+      {
+        "id": "amsaytu-ushhiduk",
+        "num": 4,
+        "fadl": "من قالها أربع مرات أعتقه الله من النار"
+      },
+      {
+        "id": "hamm-wal-hazan",
+        "num": 1,
+        "fadl": "ألا أعلمُكَ كلامًا إذا قلتَه أذهَب اللهُ تعالى همَّكَ وقضى عنكَ دَينَكَ ؟ قُلْ إذا أصبَحتَ وإذا أمسَيتَ ؛ اللهم إني أعوذُ بكَ…"
+      },
+      {
+        "id": "afiyah-alt",
+        "num": 1,
+        "fadl": "لم يكن النبي يدع هؤلاء الدعوات حين يمسي وحين يصبح"
+      },
+      {
+        "id": "sayyid-al-istighfar-alt",
+        "num": 1,
+        "fadl": "سيد الاستغفار، من قالها من الليل وهو موقن بها فمات قبل أن يصبح فهو من أهل الجنة"
+      },
+      {
+        "id": "fatir-as-samawat",
+        "num": 1
+      },
+      {
+        "id": "tahleel",
+        "num": 100,
+        "fadl": "كانت له حرزاً من الشيطان يومه ذلك حتى يمسي"
+      },
+      {
+        "id": "hasbiyallah",
+        "num": 7,
+        "fadl": "إلَّا كفاه اللهُ ما همَّهُ"
+      },
+      {
+        "id": "hasbiyallah-wa-kafa",
+        "num": 1
+      },
+      {
+        "id": "subhanallah-wa-bihamdih",
+        "num": 100,
+        "fadl": "حطت خطياه ولو كانت مثل زبد البحر"
+      },
+      {
+        "id": "astaghfirullah-wa-atubu",
+        "num": 100
+      }
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "targets": [
+    33,
+    99,
+    100
+  ],
+  "phrases": [
+    {
+      "id": "subhanallah",
+      "text": "سُبْحَانَ اللَّهِ",
+      "target": 33
+    },
+    {
+      "id": "alhamdulillah",
+      "text": "الْحَمْدُ لِلَّهِ",
+      "target": 33
+    },
+    {
+      "id": "allahu-akbar",
+      "text": "اللَّهُ أَكْبَرُ",
+      "target": 33
+    },
+    {
+      "id": "la-ilaha-illallah",
+      "text": "لَا إِلَٰهَ إِلَّا اللَّهُ",
+      "target": 100
+    },
+    {
+      "id": "astaghfirullah",
+      "text": "أَسْتَغْفِرُ اللَّهَ",
+      "target": 100
+    },
+    {
+      "id": "subhanallah-wa-bihamdih",
+      "text": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+      "target": 100
+    },
+    {
+      "id": "hawqalah",
+      "text": "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+      "target": 100
+    },
+    {
+      "id": "salat-alan-nabi",
+      "text": "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ",
+      "target": 100
+    }
+  ]
+}

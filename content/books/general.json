@@ -1,0 +1,78 @@
+{
+  "name": "عام",
+  "collections": {
+    "post-prayer": [
+      {
+        "id": "istighfar-thalathan",
+        "num": 1,
+        "fadl": "يقال بعد السلام من الصلاة مباشرة"
+      },
+      {
+        "id": "anta-as-salam",
+        "num": 1,
+        "evidence": {
+          "source": "صحيح مسلم"
+        }
+      },
+      {
+        "id": "la-mania-lima-atayt",
+        "num": 1,
+        "evidence": {
+          "source": "متفق عليه"
+        }
+      },
+      {
+        "id": "subhanallah",
+        "num": 33
+      },
+      {
+        "id": "alhamdulillah",
+        "num": 33
+      },
+      {
+        "id": "allahu-akbar",
+        "num": 33
+      },
+      {
+        "id": "tahleel",
+        "num": 1,
+        "fadl": "تمام المائة"
+      },
+      {
+        "id": "ayat-al-kursi",
+        "num": 1,
+        "fadl": "من قرأها دبر كل صلاة لم يمنعه من دخول الجنة إلا الموت"
+      }
+    ],
+    "sleep": [
+      {
+        "id": "ayat-al-kursi",
+        "num": 1
+      },
+      {
+        "id": "baqarah-ending",
+        "num": 1
+      },
+      {
+        "id": "al-ikhlas",
+        "num": 3
+      },
+      {
+        "id": "al-falaq",
+        "num": 3
+      },
+      {
+        "id": "an-nas",
+        "num": 3
+      },
+      {
+        "id": "aslamtu-wajhi",
+        "num": 1
+      },
+      {
+        "id": "bismika-amutu",
+        "num": 1
+      }
+    ]
+  }
+}
