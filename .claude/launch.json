@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "athkar-editor",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/editor/server.mjs"],
+      "port": 4321
+    }
+  ]
+}

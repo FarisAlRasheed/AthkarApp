@@ -44,4 +44,22 @@ module.exports = [
     },
     rules,
   },
+  {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 2024,
+      sourceType: 'module',
+      globals: { process: 'readonly', console: 'readonly', Buffer: 'readonly', URL: 'readonly' },
+    },
+    rules,
+  },
+  {
+    files: ['scripts/editor/editor.js'],
+    languageOptions: {
+      ...languageOptions,
+      ecmaVersion: 2024,
+      globals: { ...browser, Node: 'readonly', confirm: 'readonly', prompt: 'readonly', structuredClone: 'readonly' },
+    },
+    rules,
+  },
 ];
