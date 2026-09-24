@@ -75,16 +75,16 @@ export function IconButton({ name, onPress, label, size = 24, color, filled }: {
 export function Pill({ label, onPress, active }: { label: string; onPress?: () => void; active?: boolean }) {
   const theme = useTheme();
   const text = <T variant="caption" color={active ? theme.onAccent : theme.text} style={{ fontWeight: '600' }}>{label}</T>;
-  if (!onPress) return <View style={[styles.pill, { backgroundColor: active ? theme.accent : theme.surfaceAlt }]}>{text}</View>;
+  // Inactive pills get a border so they stay visible on any card background.
+  const look = active
+    ? { backgroundColor: theme.accent, borderColor: theme.accent }
+    : { backgroundColor: 'transparent', borderColor: theme.border };
+  if (!onPress) return <View style={[styles.pill, look]}>{text}</View>;
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      style={({ pressed }) => [
-        styles.pill,
-        { backgroundColor: active ? theme.accent : theme.surfaceAlt },
-        pressed && { opacity: 0.7 },
-      ]}
+      style={({ pressed }) => [styles.pill, look, pressed && { opacity: 0.7 }]}
     >
       {text}
     </Pressable>
@@ -133,6 +133,6 @@ export function Ring({ size, stroke, progress, color, track, children }: {
 const styles = StyleSheet.create({
   card: { borderRadius: radius.lg, padding: space.lg },
   icon: { width: 44, height: 44, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
-  pill: { paddingHorizontal: space.md, paddingVertical: 6, borderRadius: radius.pill },
+  pill: { paddingHorizontal: space.md, paddingVertical: 6, borderRadius: radius.pill, borderWidth: 1 },
   button: { minHeight: 52, borderRadius: radius.md, paddingHorizontal: space.lg, justifyContent: 'center' },
 });

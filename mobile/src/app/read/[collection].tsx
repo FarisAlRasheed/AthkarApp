@@ -1,7 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
-import { useKeepAwake } from 'expo-keep-awake';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,7 +8,7 @@ import { PlayerBar, useReaderAudio } from '@/components/reader/AudioPlayer';
 import { Sheet } from '@/components/Sheet';
 import { Button, Card, IconButton, Pill, Ring, Row, T } from '@/components/ui';
 import { booksFor, collections, recitersFor, resolveBookId, type ResolvedEntry } from '@/content';
-import { useCollection, useNow, useTheme } from '@/hooks';
+import { goBack, useCollection, useNow, useScreenAwake, useTheme } from '@/hooks';
 import { toArabicDigits } from '@/lib/arabic';
 import { useProgress } from '@/store/progress';
 import { FONT_SIZES, useSettings } from '@/store/settings';
@@ -18,7 +17,7 @@ import { radius, space } from '@/theme';
 type Tab = 'translation' | 'thiker' | 'fadl';
 
 export default function Reader() {
-  useKeepAwake();
+  useScreenAwake();
   const { collection: collectionId, play } = useLocalSearchParams<{ collection: string; play?: string }>();
   const theme = useTheme();
   const now = useNow(30_000);
@@ -76,7 +75,7 @@ export default function Reader() {
           <T variant="title" center>تقبّل الله منك</T>
           <T muted center>أتممت {collections[collectionId].title}</T>
           <View style={{ alignSelf: 'stretch', gap: space.md, marginTop: space.xl }}>
-            <Button label="العودة للرئيسية" onPress={() => router.back()} />
+            <Button label="العودة للرئيسية" onPress={() => goBack()} />
             <Button label="ابدأ من جديد" kind="secondary" onPress={() => resetList(key)} />
           </View>
         </View>
@@ -178,7 +177,7 @@ export default function Reader() {
 function TopBar({ title, onMenu }: { title: string; onMenu: () => void }) {
   return (
     <Row style={styles.topbar}>
-      <IconButton name="chevron-forward" label="رجوع" onPress={() => router.back()} />
+      <IconButton name="chevron-forward" label="رجوع" onPress={() => goBack()} />
       <T variant="heading" center style={{ flex: 1 }}>{title}</T>
       <IconButton name="menu" label="الخيارات" onPress={onMenu} />
     </Row>
@@ -200,9 +199,8 @@ function Tabs({ tab, setTab, hasTranslation }: { tab: Tab; setTab: (t: Tab) => v
         return (
           <Pressable key={it.id} onPress={() => setTab(it.id)} hitSlop={8} accessibilityRole="tab" accessibilityState={{ selected: active }}>
             <T
-              variant={active ? 'heading' : 'caption'}
               color={active ? theme.text : theme.muted}
-              style={!active && { opacity: 0.7 }}
+              style={[{ fontSize: 16, fontWeight: active ? '700' : '400' }, !active && { opacity: 0.7 }]}
             >
               {it.label}
             </T>

@@ -4,7 +4,7 @@ import { Alert, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RATES } from '@/components/reader/AudioPlayer';
 import { Card, IconButton, Pill, Row, T } from '@/components/ui';
-import { useTheme } from '@/hooks';
+import { goBack, useTheme } from '@/hooks';
 import { toArabicDigits } from '@/lib/arabic';
 import { METHODS } from '@/lib/prayer';
 import { useProgress } from '@/store/progress';
@@ -27,7 +27,7 @@ export default function Settings() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
       <Row style={styles.topbar}>
-        <IconButton name="chevron-forward" label="رجوع" onPress={() => router.back()} />
+        <IconButton name="chevron-forward" label="رجوع" onPress={() => goBack()} />
         <T variant="heading" center style={{ flex: 1 }}>الإعدادات</T>
         <View style={{ width: 44 }} />
       </Row>

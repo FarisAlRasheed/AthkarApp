@@ -41,11 +41,13 @@ export function getEntries(collectionId: string, bookId: string): ResolvedEntry[
   return list.map((e) => ({ ...e, thiker: athkar[e.id] }));
 }
 
-/** Reciters with at least one recording in this list, with how much of it they cover. */
+/** Reciters with at least one recording in this list, with how many of its entries they cover. */
 export function recitersFor(entries: BookEntry[]): { id: string; name: string; covered: number; total: number }[] {
-  const ids = new Set(entries.map((e) => e.id));
   return Object.entries(reciters)
-    .map(([id, r]) => ({ id, name: r.name, covered: r.recorded.filter((t) => ids.has(t)).length, total: ids.size }))
+    .map(([id, r]) => {
+      const recorded = new Set(r.recorded);
+      return { id, name: r.name, covered: entries.filter((e) => recorded.has(e.id)).length, total: entries.length };
+    })
     .filter((r) => r.covered > 0);
 }
 

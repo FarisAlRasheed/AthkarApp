@@ -1,3 +1,5 @@
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
+import { router } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { collections, getEntries, resolveBookId } from '@/content';
 import { addDays, computeDayTimes, type DayTimes, type Place } from '@/lib/prayer';
@@ -68,4 +70,21 @@ export function useCollection(collectionId: string, now: Date) {
   const progress = useMemo(() => forPeriod(raw, pk), [raw, pk]);
   const state: ListState = listState(progress, entries.map((e) => e.num));
   return { bookId, entries, key, progress, state };
+}
+
+/** Back, or home when the screen was opened directly (deep link, notification, reload). */
+export function goBack() {
+  if (router.canGoBack()) router.back();
+  else router.replace('/');
+}
+
+/** Keeps the screen on while mounted. Failures (e.g. unsupported browsers) are ignored. */
+export function useScreenAwake() {
+  useEffect(() => {
+    const tag = 'reader';
+    activateKeepAwakeAsync(tag).catch(() => {});
+    return () => {
+      deactivateKeepAwake(tag).catch(() => {});
+    };
+  }, []);
 }

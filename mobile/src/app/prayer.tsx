@@ -1,12 +1,11 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Location from 'expo-location';
-import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Sheet } from '@/components/Sheet';
 import { Button, Card, IconButton, Row, T } from '@/components/ui';
-import { useNow, usePrayerTimes, useTheme } from '@/hooks';
+import { goBack, useNow, usePrayerTimes, useTheme } from '@/hooks';
 import { formatCountdown, formatTime } from '@/lib/arabic';
 import { CITIES, defaultMethodFor, METHODS, nextTime, PRAYER_LABELS, TIME_NAMES, type MethodId } from '@/lib/prayer';
 import { useSettings } from '@/store/settings';
@@ -60,7 +59,7 @@ export default function PrayerScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
       <Row style={styles.topbar}>
-        <IconButton name="chevron-forward" label="رجوع" onPress={() => router.back()} />
+        <IconButton name="chevron-forward" label="رجوع" onPress={() => goBack()} />
         <T variant="heading" center style={{ flex: 1 }}>مواقيت الصلاة</T>
         <View style={{ width: 44 }} />
       </Row>

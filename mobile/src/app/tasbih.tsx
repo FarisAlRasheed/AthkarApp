@@ -1,5 +1,4 @@
 import * as Haptics from 'expo-haptics';
-import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, TextInput, useWindowDimensions, View } from 'react-native';
 import Animated, {
@@ -15,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Sheet } from '@/components/Sheet';
 import { Button, IconButton, Pill, Row, T } from '@/components/ui';
 import { tasbih as content } from '@/content';
-import { useTheme } from '@/hooks';
+import { goBack, useTheme } from '@/hooks';
 import { toArabicDigits } from '@/lib/arabic';
 import { useTasbih } from '@/store/tasbih';
 import { radius, space, type Theme } from '@/theme';
@@ -66,7 +65,9 @@ export default function Tasbih() {
   };
 
   const rounds = t.target ? Math.floor(t.count / t.target) : 0;
-  const inRound = t.target ? t.count % t.target : t.count;
+  // Right after finishing a round, keep showing the full target until the next tap.
+  const justFinished = !!t.target && t.count > 0 && t.count % t.target === 0;
+  const shown = !t.target ? t.count : justFinished ? t.target : t.count % t.target;
   const pulseStyle = useAnimatedStyle(() => ({
     opacity: pulse.value * 0.35,
     transform: [{ scale: interpolate(pulse.value, [0, 1], [0.8, 1.15]) }],
@@ -75,7 +76,7 @@ export default function Tasbih() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
       <Row style={styles.topbar}>
-        <IconButton name="chevron-forward" label="رجوع" onPress={() => router.back()} />
+        <IconButton name="chevron-forward" label="رجوع" onPress={() => goBack()} />
         <T variant="heading" center style={{ flex: 1 }}>المسبحة</T>
         <IconButton name="refresh" label="تصفير" onPress={reset} color={theme.muted} />
       </Row>
@@ -88,12 +89,11 @@ export default function Tasbih() {
       <Pressable onPress={onTap} style={styles.tapArea} accessibilityRole="button" accessibilityLabel={`سبّح، العدد ${t.count}`}>
         <View style={styles.counter}>
           <Animated.View style={[styles.pulse, { backgroundColor: theme.accent }, pulseStyle]} />
-          <T variant="display" center style={{ fontSize: 72, lineHeight: 88 }}>{toArabicDigits(t.target ? inRound : t.count)}</T>
-          <T muted center>
-            {t.target
-              ? `من ${toArabicDigits(t.target)}${rounds ? `  ·  ${toArabicDigits(rounds)} × ${toArabicDigits(t.target)}` : ''}`
-              : 'بلا حدّ'}
+          <T variant="display" center style={{ fontSize: 72, lineHeight: 88 }} color={justFinished ? theme.success : undefined}>
+            {toArabicDigits(shown)}
           </T>
+          <T muted center>{t.target ? `من ${toArabicDigits(t.target)}` : 'بلا حدّ'}</T>
+          {rounds ? <T variant="caption" muted center>{`أتممت ${toArabicDigits(rounds)} × ${toArabicDigits(t.target!)}`}</T> : null}
         </View>
 
         <View style={[styles.string, { width }]} pointerEvents="none">
