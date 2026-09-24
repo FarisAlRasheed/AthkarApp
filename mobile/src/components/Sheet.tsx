@@ -13,7 +13,7 @@ export function Sheet({ visible, onClose, title, children }: {
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel="إغلاق" />
-      <View style={[styles.sheet, { backgroundColor: theme.surface, paddingBottom: insets.bottom + space.lg }]}>
+      <View style={[styles.sheet, { backgroundColor: theme.sheet, paddingBottom: insets.bottom + space.lg }]}>
         <Row style={{ justifyContent: 'space-between', marginBottom: space.sm }}>
           <T variant="heading">{title}</T>
           <IconButton name="close" label="إغلاق" onPress={onClose} />

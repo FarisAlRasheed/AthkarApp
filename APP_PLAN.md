@@ -25,8 +25,9 @@
 | Home card tap | Tapping a collection **resumes**. "Start over" is a small secondary button. |
 | Suggestion windows | See §5.1. Evening starts after Asr. When nothing is due, suggest **المسبحة**. |
 | المسبحة | Back as a full feature, designed to be the most satisfying screen in the app (§3.3). |
-| Animations | None, **except المسبحة**, where motion is the point. |
-| Themes | Colors change automatically with the time of day. Reduced from the web app's 9 to **5**: الفجر، الصباح، العصر، المغرب، الليل. User can pin one in settings. |
+| Visual direction | **Living sky** (chosen 2026-09-25): every screen sits on a sky gradient that follows the prayer times (dawn, day, golden Asr, sunset, starry night) with glass cards on it; athkar are read on a calm paper card whose tone matches the sky. Titles in Amiri, UI in IBM Plex Sans Arabic, athkar in Noto Naskh. |
+| Animations | **Smooth and satisfying throughout** (replaces the earlier no-animation rule): springy presses, staggered entrances, animated count ring with a bump per tap, gliding athkar changes, spring-in completion, fading screen transitions, and the tasbih beads. |
+| Themes | 5 skies, automatic by time of day: الفجر، الصباح، العصر، المغرب، الليل. User can pin one in settings. |
 | Back button | On the **right** (Arabic app convention). |
 | Moving between athkar | Tap «٥ / ٢٦» to open a list and jump; vertical swipe as shortcut; player next/previous. |
 | Progress reset | Automatic when the collection's time window starts (§5.2). |

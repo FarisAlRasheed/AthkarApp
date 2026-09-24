@@ -2,7 +2,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Location from 'expo-location';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import { SkyScreen } from '@/components/Sky';
 import { Sheet } from '@/components/Sheet';
 import { Button, Card, IconButton, Row, T } from '@/components/ui';
 import { goBack, useNow, usePrayerTimes, useTheme } from '@/hooks';
@@ -57,13 +58,14 @@ export default function PrayerScreen() {
   const cities = CITIES.filter((c) => c.name.includes(query.trim()));
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
+    <SkyScreen>
       <Row style={styles.topbar}>
         <IconButton name="chevron-forward" label="رجوع" onPress={() => goBack()} />
-        <T variant="heading" center style={{ flex: 1 }}>مواقيت الصلاة</T>
+        <T variant="title" center style={{ flex: 1, fontSize: 22, lineHeight: 36 }}>مواقيت الصلاة</T>
         <View style={{ width: 44 }} />
       </Row>
       <ScrollView contentContainerStyle={styles.content}>
+        <Animated.View entering={FadeInDown.duration(450).springify().damping(18)} style={{ gap: styles.content.gap }}>
         {hasPlace ? (
           <Card style={{ gap: space.xs, alignItems: 'center' }}>
             <T muted center>بقي على {PRAYER_LABELS[next.name]}</T>
@@ -124,6 +126,7 @@ export default function PrayerScreen() {
             </Row>
           </Card>
         ) : null}
+        </Animated.View>
       </ScrollView>
 
       <Sheet visible={cityOpen} onClose={() => setCityOpen(false)} title="اختر مدينتك">
@@ -166,7 +169,7 @@ export default function PrayerScreen() {
           </Pressable>
         ))}
       </Sheet>
-    </SafeAreaView>
+    </SkyScreen>
   );
 }
 

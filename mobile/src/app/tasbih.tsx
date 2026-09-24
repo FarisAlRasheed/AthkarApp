@@ -10,14 +10,14 @@ import Animated, {
   withTiming,
   type SharedValue,
 } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SkyScreen } from '@/components/Sky';
 import { Sheet } from '@/components/Sheet';
 import { Button, IconButton, Pill, Row, T } from '@/components/ui';
 import { tasbih as content } from '@/content';
 import { goBack, useTheme } from '@/hooks';
 import { toArabicDigits } from '@/lib/arabic';
 import { useTasbih } from '@/store/tasbih';
-import { radius, space, type Theme } from '@/theme';
+import { fonts, radius, space, type Theme } from '@/theme';
 
 const BEADS = 11;
 const SPACING = 44;
@@ -40,16 +40,19 @@ export default function Tasbih() {
   // so rapid taps queue smoothly instead of jumping.
   const shift = useSharedValue(t.count * SPACING);
   const pulse = useSharedValue(0);
+  const pop = useSharedValue(1);
+  const popStyle = useAnimatedStyle(() => ({ transform: [{ scale: pop.value }] }));
 
   useEffect(() => {
-    shift.value = withSpring(t.count * SPACING, { damping: 14, stiffness: 180, mass: 0.6 });
+    shift.set(withSpring(t.count * SPACING, { damping: 14, stiffness: 180, mass: 0.6 }));
   }, [t.count, shift]);
 
   const onTap = () => {
     const n = t.tap();
+    pop.set(withSequence(withTiming(1.1, { duration: 70 }), withSpring(1, { damping: 10, stiffness: 260 })));
     if (t.target && n % t.target === 0) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      pulse.value = withSequence(withTiming(1, { duration: 180 }), withTiming(0, { duration: 700 }));
+      pulse.set(withSequence(withTiming(1, { duration: 180 }), withTiming(0, { duration: 700 })));
     } else {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
     }
@@ -74,24 +77,26 @@ export default function Tasbih() {
   }));
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
+    <SkyScreen>
       <Row style={styles.topbar}>
         <IconButton name="chevron-forward" label="رجوع" onPress={() => goBack()} />
-        <T variant="heading" center style={{ flex: 1 }}>المسبحة</T>
+        <T variant="title" center style={{ flex: 1, fontSize: 22, lineHeight: 36 }}>المسبحة</T>
         <IconButton name="refresh" label="تصفير" onPress={reset} color={theme.muted} />
       </Row>
 
       <Pressable onPress={() => setPhraseOpen(true)} style={styles.phrase} accessibilityHint="تغيير الذكر">
-        <T variant="title" center style={{ fontFamily: 'NotoNaskhArabic_400Regular', fontSize: 30, lineHeight: 56 }}>{text}</T>
+        <T variant="title" center style={{ fontFamily: fonts.athkar, fontSize: 32, lineHeight: 60 }}>{text}</T>
         <T variant="caption" muted center>اضغط لتغيير الذكر</T>
       </Pressable>
 
       <Pressable onPress={onTap} style={styles.tapArea} accessibilityRole="button" accessibilityLabel={`سبّح، العدد ${t.count}`}>
         <View style={styles.counter}>
           <Animated.View style={[styles.pulse, { backgroundColor: theme.accent }, pulseStyle]} />
-          <T variant="display" center style={{ fontSize: 72, lineHeight: 88 }} color={justFinished ? theme.success : undefined}>
-            {toArabicDigits(shown)}
-          </T>
+          <Animated.View style={popStyle}>
+            <T variant="display" center style={{ fontSize: 76, lineHeight: 96 }} color={justFinished ? theme.success : undefined}>
+              {toArabicDigits(shown)}
+            </T>
+          </Animated.View>
           <T muted center>{t.target ? `من ${toArabicDigits(t.target)}` : 'بلا حدّ'}</T>
           {rounds ? <T variant="caption" muted center>{`أتممت ${toArabicDigits(rounds)} × ${toArabicDigits(t.target!)}`}</T> : null}
         </View>
@@ -125,7 +130,7 @@ export default function Tasbih() {
             }}
             style={[styles.option, t.phraseId === p.id && { backgroundColor: theme.surfaceAlt }]}
           >
-            <T style={{ fontFamily: 'NotoNaskhArabic_400Regular', fontSize: 20, lineHeight: 38 }}>{p.text}</T>
+            <T style={{ fontFamily: fonts.athkar, fontSize: 20, lineHeight: 38 }}>{p.text}</T>
           </Pressable>
         ))}
         <T variant="caption" muted>ذكر مخصص</T>
@@ -165,7 +170,7 @@ export default function Tasbih() {
           }}
         />
       </Sheet>
-    </SafeAreaView>
+    </SkyScreen>
   );
 }
 
@@ -183,14 +188,11 @@ function Bead({ index, shift, width, theme }: { index: number; shift: SharedValu
       opacity: interpolate(Math.abs(fromCentre), [width / 2 - 30, width / 2 + 10], [1, 0], 'clamp'),
     };
   });
+  // A shine spot and a soft rim give each bead some roundness.
   return (
-    <Animated.View
-      style={[
-        styles.bead,
-        { backgroundColor: theme.accent, borderColor: theme.dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.12)' },
-        style,
-      ]}
-    />
+    <Animated.View style={[styles.bead, { backgroundColor: theme.accent, borderColor: 'rgba(0,0,0,0.18)' }, style]}>
+      <View style={styles.shine} />
+    </Animated.View>
   );
 }
 
@@ -201,7 +203,8 @@ const styles = StyleSheet.create({
   counter: { alignItems: 'center', justifyContent: 'center', gap: space.xs, marginBottom: space.xl },
   pulse: { position: 'absolute', width: 220, height: 220, borderRadius: 110 },
   string: { height: 90, position: 'relative' },
-  bead: { position: 'absolute', top: 10, left: 0, width: BEAD, height: BEAD, borderRadius: BEAD / 2, borderWidth: 1 },
+  bead: { position: 'absolute', top: 10, left: 0, width: BEAD, height: BEAD, borderRadius: BEAD / 2, borderWidth: 1.5 },
+  shine: { position: 'absolute', top: 5, left: 7, width: 9, height: 6, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.55)', transform: [{ rotate: '-30deg' }] },
   targets: { justifyContent: 'center', flexWrap: 'wrap', padding: space.lg },
   option: { paddingVertical: space.sm, paddingHorizontal: space.sm, borderRadius: radius.sm },
   input: { borderRadius: radius.md, paddingHorizontal: space.md, paddingVertical: space.md, fontSize: 18, textAlign: 'right' },

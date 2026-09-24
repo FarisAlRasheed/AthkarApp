@@ -129,7 +129,7 @@ export function PlayerBar({ audio, index, total, goTo }: {
   const nextRate = RATES[(RATES.indexOf(settings.playbackRate) + 1) % RATES.length];
 
   return (
-    <View style={[styles.bar, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+    <View style={[styles.bar, { backgroundColor: theme.glass, borderColor: theme.border }]}>
       <Row style={{ justifyContent: 'space-between' }}>
         {/* Right to left: one/all · previous · play · next · stop */}
         <IconButton

@@ -1,24 +1,34 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import type { ComponentProps, ReactNode } from 'react';
+import { useEffect, type ComponentProps, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type TextProps, type TextStyle, type ViewStyle } from 'react-native';
+import Animated, {
+  Easing,
+  useAnimatedProps,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
 import { useTheme } from '@/hooks';
-import { radius, space } from '@/theme';
+import { fonts, radius, space } from '@/theme';
 
 // Layout is right-to-left by construction (automatic RTL flipping is off in app.json):
 // rows use row-reverse and text is right-aligned, so it looks the same on every platform.
 
+// Custom fonts need one family per weight (fontWeight would fake-bold on Android).
 type Variant = 'display' | 'title' | 'heading' | 'body' | 'caption';
 const SIZES: Record<Variant, TextStyle> = {
-  display: { fontSize: 40, fontWeight: '700', fontVariant: ['tabular-nums'] },
-  title: { fontSize: 24, fontWeight: '700' },
-  heading: { fontSize: 18, fontWeight: '600' },
-  body: { fontSize: 16 },
-  caption: { fontSize: 13 },
+  display: { fontSize: 40, fontFamily: fonts.semibold, fontVariant: ['tabular-nums'] },
+  title: { fontSize: 26, fontFamily: fonts.title, lineHeight: 42 },
+  heading: { fontSize: 17, fontFamily: fonts.semibold },
+  body: { fontSize: 16, fontFamily: fonts.regular },
+  caption: { fontSize: 13, fontFamily: fonts.regular },
 };
 
-export function T({ variant = 'body', muted, color, center, style, ...rest }: TextProps & {
-  variant?: Variant; muted?: boolean; color?: string; center?: boolean;
+export function T({ variant = 'body', muted, color, center, bold, style, ...rest }: TextProps & {
+  variant?: Variant; muted?: boolean; color?: string; center?: boolean; bold?: boolean;
 }) {
   const theme = useTheme();
   return (
@@ -26,6 +36,7 @@ export function T({ variant = 'body', muted, color, center, style, ...rest }: Te
       {...rest}
       style={[
         SIZES[variant],
+        bold && { fontFamily: fonts.semibold },
         { color: color ?? (muted ? theme.muted : theme.text), textAlign: center ? 'center' : 'right', writingDirection: 'rtl' },
         style,
       ]}
@@ -37,17 +48,50 @@ export function Row({ style, children, gap = space.sm }: { style?: StyleProp<Vie
   return <View style={[{ flexDirection: 'row-reverse', alignItems: 'center', gap }, style]}>{children}</View>;
 }
 
-export function Card({ style, children, onPress, alt }: {
-  style?: StyleProp<ViewStyle>; children: ReactNode; onPress?: () => void; alt?: boolean;
+/**
+ * Pressable that sinks slightly and springs back — the tactile feel used by every control.
+ * Spring values are tuned to feel quick but soft; `depth` is how far it shrinks.
+ */
+export function Press({ onPress, style, children, depth = 0.96, disabled, hitSlop, ...a11y }: {
+  onPress?: () => void; style?: StyleProp<ViewStyle>; children: ReactNode; depth?: number; disabled?: boolean;
+  hitSlop?: number; accessibilityLabel?: string; accessibilityHint?: string;
+  accessibilityRole?: 'button' | 'tab'; accessibilityState?: { selected?: boolean };
 }) {
-  const theme = useTheme();
-  const base = [styles.card, { backgroundColor: alt ? theme.surfaceAlt : theme.surface }, style];
-  if (!onPress) return <View style={base}>{children}</View>;
+  const scale = useSharedValue(1);
+  const animated = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [base, pressed && { opacity: 0.85 }]} accessibilityRole="button">
-      {children}
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      hitSlop={hitSlop}
+      accessibilityRole={a11y.accessibilityRole ?? 'button'}
+      accessibilityLabel={a11y.accessibilityLabel}
+      accessibilityHint={a11y.accessibilityHint}
+      accessibilityState={a11y.accessibilityState}
+      onPressIn={() => { scale.set(withSpring(depth, SPRING_IN)); }}
+      onPressOut={() => { scale.set(withSpring(1, SPRING_OUT)); }}
+    >
+      <Animated.View style={[style, animated]}>{children}</Animated.View>
     </Pressable>
   );
+}
+
+const SPRING_IN = { damping: 20, stiffness: 420, mass: 0.6 };
+const SPRING_OUT = { damping: 12, stiffness: 260, mass: 0.6 };
+
+/** Glass card on the sky; `alt` is a flat tint for use inside sheets, `paper` the reading surface. */
+export function Card({ style, children, onPress, alt, paper }: {
+  style?: StyleProp<ViewStyle>; children: ReactNode; onPress?: () => void; alt?: boolean; paper?: boolean;
+}) {
+  const theme = useTheme();
+  const look = paper
+    ? { backgroundColor: theme.paper, borderColor: theme.paperBorder }
+    : alt
+      ? { backgroundColor: theme.surfaceAlt, borderColor: 'transparent' }
+      : { backgroundColor: theme.glass, borderColor: theme.border };
+  const base = [styles.card, look, style];
+  if (!onPress) return <View style={base}>{children}</View>;
+  return <Press onPress={onPress} style={base} depth={0.975}>{children}</Press>;
 }
 
 export function IconButton({ name, onPress, label, size = 24, color, filled }: {
@@ -56,39 +100,22 @@ export function IconButton({ name, onPress, label, size = 24, color, filled }: {
 }) {
   const theme = useTheme();
   return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      hitSlop={8}
-      style={({ pressed }) => [
-        styles.icon,
-        filled && { backgroundColor: theme.accent },
-        pressed && { opacity: 0.6 },
-      ]}
-    >
+    <Press onPress={onPress} accessibilityLabel={label} hitSlop={8} depth={0.86} style={[styles.icon, filled && { backgroundColor: theme.accent }]}>
       <Ionicons name={name} size={size} color={color ?? (filled ? theme.onAccent : theme.text)} />
-    </Pressable>
+    </Press>
   );
 }
 
-export function Pill({ label, onPress, active }: { label: string; onPress?: () => void; active?: boolean }) {
+export function Pill({ label, onPress, active, onPaper }: { label: string; onPress?: () => void; active?: boolean; onPaper?: boolean }) {
   const theme = useTheme();
-  const text = <T variant="caption" color={active ? theme.onAccent : theme.text} style={{ fontWeight: '600' }}>{label}</T>;
-  // Inactive pills get a border so they stay visible on any card background.
+  const fg = active ? theme.onAccent : onPaper ? theme.paperText : theme.text;
+  const text = <T variant="caption" bold color={fg}>{label}</T>;
+  // Inactive pills get a border so they stay visible on any background.
   const look = active
     ? { backgroundColor: theme.accent, borderColor: theme.accent }
-    : { backgroundColor: 'transparent', borderColor: theme.border };
+    : { backgroundColor: 'transparent', borderColor: onPaper ? theme.paperBorder : theme.border };
   if (!onPress) return <View style={[styles.pill, look]}>{text}</View>;
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      style={({ pressed }) => [styles.pill, look, pressed && { opacity: 0.7 }]}
-    >
-      {text}
-    </Pressable>
-  );
+  return <Press onPress={onPress} depth={0.92} style={[styles.pill, look]}>{text}</Press>;
 }
 
 export function Button({ label, onPress, kind = 'primary', icon }: {
@@ -96,43 +123,57 @@ export function Button({ label, onPress, kind = 'primary', icon }: {
   icon?: ComponentProps<typeof Ionicons>['name'];
 }) {
   const theme = useTheme();
-  const bg = kind === 'primary' ? theme.accent : theme.surfaceAlt;
-  const fg = kind === 'primary' ? theme.onAccent : kind === 'danger' ? '#d0473b' : theme.text;
+  const bg = kind === 'primary' ? theme.accent : theme.glass;
+  const fg = kind === 'primary' ? theme.onAccent : kind === 'danger' ? '#e0584b' : theme.text;
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" style={({ pressed }) => [styles.button, { backgroundColor: bg }, pressed && { opacity: 0.8 }]}>
+    <Press onPress={onPress} style={[styles.button, { backgroundColor: bg, borderColor: kind === 'primary' ? theme.accent : theme.border }]}>
       <Row gap={space.sm} style={{ justifyContent: 'center' }}>
         {icon ? <Ionicons name={icon} size={20} color={fg} /> : null}
         <T variant="heading" color={fg}>{label}</T>
       </Row>
-    </Pressable>
+    </Press>
   );
 }
 
-/** Circular progress ring; fills clockwise from the top. */
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
+/** Circular progress ring; fills clockwise from the top, easing to each new value with a small bump. */
 export function Ring({ size, stroke, progress, color, track, children }: {
   size: number; stroke: number; progress: number; color: string; track: string; children?: ReactNode;
 }) {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
-  const p = Math.max(0, Math.min(1, progress));
+  const target = Math.max(0, Math.min(1, progress));
+  const p = useSharedValue(target);
+  const bump = useSharedValue(1);
+
+  useEffect(() => {
+    const grew = target > p.value;
+    p.set(withTiming(target, { duration: 420, easing: Easing.out(Easing.cubic) }));
+    if (grew) bump.set(withSequence(withTiming(1.08, { duration: 90 }), withSpring(1, { damping: 9, stiffness: 220 })));
+  }, [target, p, bump]);
+
+  const circleProps = useAnimatedProps(() => ({ strokeDashoffset: c * (1 - p.value) }));
+  const bumpStyle = useAnimatedStyle(() => ({ transform: [{ scale: bump.value }] }));
+
   return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+    <Animated.View style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }, bumpStyle]}>
       <Svg width={size} height={size} style={StyleSheet.absoluteFill}>
         <Circle cx={size / 2} cy={size / 2} r={r} stroke={track} strokeWidth={stroke} fill="none" />
-        <Circle
+        <AnimatedCircle
           cx={size / 2} cy={size / 2} r={r} stroke={color} strokeWidth={stroke} fill="none"
-          strokeDasharray={`${c} ${c}`} strokeDashoffset={c * (1 - p)} strokeLinecap="round"
+          strokeDasharray={`${c} ${c}`} strokeLinecap="round" animatedProps={circleProps}
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
       </Svg>
       {children}
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: radius.lg, padding: space.lg },
+  card: { borderRadius: radius.lg, padding: space.lg, borderWidth: StyleSheet.hairlineWidth },
   icon: { width: 44, height: 44, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
   pill: { paddingHorizontal: space.md, paddingVertical: 6, borderRadius: radius.pill, borderWidth: 1 },
-  button: { minHeight: 52, borderRadius: radius.md, paddingHorizontal: space.lg, justifyContent: 'center' },
+  button: { minHeight: 52, borderRadius: radius.md, paddingHorizontal: space.lg, justifyContent: 'center', borderWidth: StyleSheet.hairlineWidth },
 });

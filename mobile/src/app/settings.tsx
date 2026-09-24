@@ -1,7 +1,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { Alert, ScrollView, StyleSheet, Switch, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import { SkyScreen } from '@/components/Sky';
 import { RATES } from '@/components/reader/AudioPlayer';
 import { Card, IconButton, Pill, Row, T } from '@/components/ui';
 import { goBack, useTheme } from '@/hooks';
@@ -25,13 +26,14 @@ export default function Settings() {
     ]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
+    <SkyScreen>
       <Row style={styles.topbar}>
         <IconButton name="chevron-forward" label="رجوع" onPress={() => goBack()} />
-        <T variant="heading" center style={{ flex: 1 }}>الإعدادات</T>
+        <T variant="title" center style={{ flex: 1, fontSize: 22, lineHeight: 36 }}>الإعدادات</T>
         <View style={{ width: 44 }} />
       </Row>
       <ScrollView contentContainerStyle={styles.content}>
+        <Animated.View entering={FadeInDown.duration(450).springify().damping(18)} style={{ gap: styles.content.gap }}>
         <Card onPress={() => router.push('/prayer')}>
           <Row style={{ justifyContent: 'space-between' }}>
             <View style={{ flex: 1, gap: 2 }}>
@@ -92,8 +94,9 @@ export default function Settings() {
             <T variant="caption" muted>شاشة الاختبار (للمطور)</T>
           </Card>
         ) : null}
+        </Animated.View>
       </ScrollView>
-    </SafeAreaView>
+    </SkyScreen>
   );
 }
 

@@ -4,6 +4,7 @@
   "main": "expo-router/entry",
   "dependencies": {
     "@expo-google-fonts/amiri": "^0.4.1",
+    "@expo-google-fonts/ibm-plex-sans-arabic": "^0.4.2",
     "@expo-google-fonts/noto-naskh-arabic": "^0.4.5",
     "@expo-google-fonts/scheherazade-new": "^0.4.3",
     "@expo/vector-icons": "^15.0.2",
@@ -17,6 +18,7 @@
     "expo-haptics": "~57.0.3",
     "expo-image": "~57.0.5",
     "expo-keep-awake": "~57.0.2",
+    "expo-linear-gradient": "~57.0.2",
     "expo-linking": "~57.0.11",
     "expo-localization": "~57.0.2",
     "expo-location": "~57.0.20",

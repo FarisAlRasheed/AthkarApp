@@ -3,16 +3,17 @@ import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, { FadeIn, FadeInUp, FadeOut, ZoomIn } from 'react-native-reanimated';
 import { PlayerBar, useReaderAudio } from '@/components/reader/AudioPlayer';
 import { Sheet } from '@/components/Sheet';
-import { Button, Card, IconButton, Pill, Ring, Row, T } from '@/components/ui';
+import { SkyScreen } from '@/components/Sky';
+import { Button, Card, IconButton, Pill, Press, Ring, Row, T } from '@/components/ui';
 import { booksFor, collections, recitersFor, resolveBookId, type ResolvedEntry } from '@/content';
 import { goBack, useCollection, useNow, useScreenAwake, useTheme } from '@/hooks';
 import { toArabicDigits } from '@/lib/arabic';
 import { useProgress } from '@/store/progress';
 import { FONT_SIZES, useSettings } from '@/store/settings';
-import { radius, space } from '@/theme';
+import { fonts, radius, space } from '@/theme';
 
 type Tab = 'translation' | 'thiker' | 'fadl';
 
@@ -68,19 +69,23 @@ export default function Reader() {
 
   if (state === 'done') {
     return (
-      <SafeAreaView style={[styles.screen, { backgroundColor: theme.bg }]}>
+      <SkyScreen>
         <TopBar title={collections[collectionId].title} onMenu={() => setMenuOpen(true)} />
         <View style={styles.complete}>
-          <Ionicons name="checkmark-circle" size={72} color={theme.success} />
-          <T variant="title" center>تقبّل الله منك</T>
-          <T muted center>أتممت {collections[collectionId].title}</T>
-          <View style={{ alignSelf: 'stretch', gap: space.md, marginTop: space.xl }}>
+          <Animated.View entering={ZoomIn.springify().damping(11).stiffness(140)} style={[styles.doneBadge, { backgroundColor: theme.success }]}>
+            <Ionicons name="checkmark" size={56} color="#ffffff" />
+          </Animated.View>
+          <Animated.View entering={FadeInUp.delay(250).duration(500)} style={{ alignItems: 'center' }}>
+            <T variant="title" center style={{ fontSize: 34, lineHeight: 56 }}>تقبّل الله منك</T>
+            <T muted center>أتممت {collections[collectionId].title}</T>
+          </Animated.View>
+          <Animated.View entering={FadeInUp.delay(450).duration(500)} style={{ alignSelf: 'stretch', gap: space.md, marginTop: space.xl }}>
             <Button label="العودة للرئيسية" onPress={() => goBack()} />
             <Button label="ابدأ من جديد" kind="secondary" onPress={() => resetList(key)} />
-          </View>
+          </Animated.View>
         </View>
         <ReaderMenu visible={menuOpen} onClose={() => setMenuOpen(false)} collectionId={collectionId} entries={entries} />
-      </SafeAreaView>
+      </SkyScreen>
     );
   }
 
@@ -89,7 +94,7 @@ export default function Reader() {
   const hasTranslation = !!entry.thiker.translations && Object.keys(entry.thiker.translations).length > 0;
 
   return (
-    <SafeAreaView style={[styles.screen, { backgroundColor: theme.bg }]}>
+    <SkyScreen>
       <TopBar title={collections[collectionId].title} onMenu={() => setMenuOpen(true)} />
       <Tabs tab={tab} setTab={setTab} hasTranslation={hasTranslation} />
 
@@ -105,41 +110,50 @@ export default function Reader() {
       >
         {(guardTap) => (<>
         <View style={styles.position}>
-          <Pill label={`${toArabicDigits(index + 1)} / ${toArabicDigits(entries.length)}`} onPress={() => setListOpen(true)} />
+          <Pill onPaper label={`${toArabicDigits(index + 1)} / ${toArabicDigits(entries.length)}`} onPress={() => setListOpen(true)} />
         </View>
 
         <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.textWrap}>
           <Pressable onPress={guardTap(onTap)} style={{ flexGrow: 1, justifyContent: 'center' }} accessibilityHint="اضغط للعد">
-            {tab === 'thiker' ? (
-              <T
-                style={{ fontFamily: 'NotoNaskhArabic_400Regular', fontSize, lineHeight: fontSize * 2 }}
-                color={entry.thiker.quran ? theme.quran : theme.text}
-                center
-              >
-                {entry.thiker.text}
-              </T>
-            ) : tab === 'fadl' ? (
-              <FadlView entry={entry} />
-            ) : (
-              <T center muted>الترجمة قريبًا</T>
-            )}
+            {/* Keyed so each new thiker or tab glides in softly. */}
+            <Animated.View key={`${index}-${tab}`} entering={FadeInUp.duration(380)} exiting={FadeOut.duration(120)}>
+              {tab === 'thiker' ? (
+                <T
+                  style={{ fontFamily: fonts.athkar, fontSize, lineHeight: fontSize * 2 }}
+                  color={entry.thiker.quran ? theme.quran : theme.paperText}
+                  center
+                >
+                  {entry.thiker.text}
+                </T>
+              ) : tab === 'fadl' ? (
+                <FadlView entry={entry} />
+              ) : (
+                <T center color={theme.paperMuted}>الترجمة قريبًا</T>
+              )}
+            </Animated.View>
           </Pressable>
         </ScrollView>
 
         <Row style={styles.controls}>
           <View style={styles.side}>
             {!audio.open && audio.hasAudio ? (
-              <IconButton name="volume-high-outline" label="تشغيل الصوت" onPress={audio.start} color={theme.accent} />
+              <Animated.View entering={FadeIn}>
+                <IconButton name="volume-high-outline" label="تشغيل الصوت" onPress={audio.start} color={theme.accent} />
+              </Animated.View>
             ) : null}
           </View>
           <Pressable onPress={guardTap(onTap)} accessibilityRole="button" accessibilityLabel={`المتبقي ${remaining}`}>
-            <Ring size={96} stroke={7} progress={count / entry.num} color={theme.accent} track={theme.surfaceAlt}>
-              <T variant="title" center style={{ fontSize: 30 }}>{toArabicDigits(remaining)}</T>
+            <Ring size={96} stroke={7} progress={count / entry.num} color={theme.accent} track={theme.paperBorder}>
+              <Animated.View key={remaining} entering={ZoomIn.duration(220)}>
+                <T variant="display" center color={theme.paperText} style={{ fontSize: 30, lineHeight: 40 }}>{toArabicDigits(remaining)}</T>
+              </Animated.View>
             </Ring>
           </Pressable>
           <View style={styles.side}>
             {count > 0 ? (
-              <IconButton name="refresh" label="إعادة عدّ هذا الذكر" color={theme.muted} onPress={() => setCount(key, index, 0)} />
+              <Animated.View entering={FadeIn}>
+                <IconButton name="refresh" label="إعادة عدّ هذا الذكر" color={theme.paperMuted} onPress={() => setCount(key, index, 0)} />
+              </Animated.View>
             ) : null}
           </View>
         </Row>
@@ -147,9 +161,9 @@ export default function Reader() {
       </SwipeCard>
 
       {audio.open ? (
-        <View style={{ paddingHorizontal: space.lg, paddingBottom: space.sm }}>
+        <Animated.View entering={FadeInUp.springify().damping(16)} exiting={FadeOut.duration(150)} style={{ paddingHorizontal: space.lg, paddingBottom: space.sm }}>
           <PlayerBar audio={audio} index={index} total={entries.length} goTo={goTo} />
-        </View>
+        </Animated.View>
       ) : null}
 
       <ReaderMenu visible={menuOpen} onClose={() => setMenuOpen(false)} collectionId={collectionId} entries={entries} />
@@ -170,7 +184,7 @@ export default function Reader() {
           );
         })}
       </Sheet>
-    </SafeAreaView>
+    </SkyScreen>
   );
 }
 
@@ -178,7 +192,7 @@ function TopBar({ title, onMenu }: { title: string; onMenu: () => void }) {
   return (
     <Row style={styles.topbar}>
       <IconButton name="chevron-forward" label="رجوع" onPress={() => goBack()} />
-      <T variant="heading" center style={{ flex: 1 }}>{title}</T>
+      <T variant="title" center style={{ flex: 1, fontSize: 22, lineHeight: 36 }}>{title}</T>
       <IconButton name="menu" label="الخيارات" onPress={onMenu} />
     </Row>
   );
@@ -197,14 +211,10 @@ function Tabs({ tab, setTab, hasTranslation }: { tab: Tab; setTab: (t: Tab) => v
       {items.map((it) => {
         const active = it.id === tab;
         return (
-          <Pressable key={it.id} onPress={() => setTab(it.id)} hitSlop={8} accessibilityRole="tab" accessibilityState={{ selected: active }}>
-            <T
-              color={active ? theme.text : theme.muted}
-              style={[{ fontSize: 16, fontWeight: active ? '700' : '400' }, !active && { opacity: 0.7 }]}
-            >
-              {it.label}
-            </T>
-          </Pressable>
+          <Press key={it.id} onPress={() => setTab(it.id)} hitSlop={8} depth={0.94} accessibilityRole="tab" accessibilityState={{ selected: active }} style={{ alignItems: 'center' }}>
+            <T bold={active} color={active ? theme.text : theme.muted} style={{ fontSize: 15 }}>{it.label}</T>
+            {active ? <Animated.View entering={ZoomIn.duration(200)} style={[styles.tabLine, { backgroundColor: theme.text }]} /> : <View style={styles.tabLine} />}
+          </Press>
         );
       })}
     </Row>
@@ -246,7 +256,7 @@ function SwipeCard({ children, onSwipe }: {
         else if (Math.abs(dy) > 90 && Math.abs(dy) > Math.abs(dx) * 2 && dt < 300) onSwipe(dy < 0 ? 'up' : 'down');
       }}
     >
-      <View style={[styles.card, { backgroundColor: theme.surface }]}>{children(guardTap)}</View>
+      <View style={[styles.card, { backgroundColor: theme.paper, borderColor: theme.paperBorder }]}>{children(guardTap)}</View>
     </View>
   );
 }
@@ -254,27 +264,27 @@ function SwipeCard({ children, onSwipe }: {
 function FadlView({ entry }: { entry: ResolvedEntry }) {
   const theme = useTheme();
   const ev = entry.evidence;
-  if (!entry.fadl && !ev) return <T center muted>لم يُضف فضل هذا الذكر بعد.</T>;
+  if (!entry.fadl && !ev) return <T center color={theme.paperMuted}>لم يُضف فضل هذا الذكر بعد.</T>;
   return (
     <View style={{ gap: space.lg }}>
       {entry.fadl ? (
         <View style={{ gap: space.xs }}>
-          <T variant="caption" muted>الفضل</T>
-          <T style={{ fontSize: 19, lineHeight: 34 }}>{entry.fadl}</T>
+          <T variant="caption" color={theme.paperMuted}>الفضل</T>
+          <T color={theme.paperText} style={{ fontSize: 19, lineHeight: 34 }}>{entry.fadl}</T>
         </View>
       ) : null}
       {ev?.text ? (
         <View style={{ gap: space.xs }}>
-          <T variant="caption" muted>الدليل</T>
-          <T style={{ fontFamily: 'NotoNaskhArabic_400Regular', fontSize: 19, lineHeight: 36 }}>{ev.text}</T>
+          <T variant="caption" color={theme.paperMuted}>الدليل</T>
+          <T color={theme.paperText} style={{ fontFamily: fonts.athkar, fontSize: 19, lineHeight: 36 }}>{ev.text}</T>
         </View>
       ) : null}
       {ev?.source || ev?.grade ? (
         <Row gap={space.sm} style={{ flexWrap: 'wrap' }}>
-          {ev.source ? <T muted style={{ flexShrink: 1 }}>{ev.source}</T> : null}
+          {ev.source ? <T color={theme.paperMuted} style={{ flexShrink: 1 }}>{ev.source}</T> : null}
           {ev.grade ? (
-            <View style={[styles.grade, { backgroundColor: theme.surfaceAlt }]}>
-              <T variant="caption" style={{ fontWeight: '600' }}>{ev.grade}{ev.gradeNote ? ` — ${ev.gradeNote}` : ''}</T>
+            <View style={[styles.grade, { backgroundColor: theme.success }]}>
+              <T variant="caption" bold color="#ffffff">{ev.grade}{ev.gradeNote ? ` — ${ev.gradeNote}` : ''}</T>
             </View>
           ) : null}
         </Row>
@@ -339,7 +349,9 @@ function ReaderMenu({ visible, onClose, collectionId, entries }: {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   topbar: { paddingHorizontal: space.sm, paddingTop: space.xs, justifyContent: 'space-between' },
-  card: { flex: 1, borderRadius: radius.lg, paddingHorizontal: space.lg, paddingTop: space.md, paddingBottom: space.lg },
+  card: { flex: 1, borderRadius: radius.lg, paddingHorizontal: space.lg, paddingTop: space.md, paddingBottom: space.lg, borderWidth: StyleSheet.hairlineWidth },
+  tabLine: { width: 22, height: 2, borderRadius: 1, marginTop: 4 },
+  doneBadge: { width: 104, height: 104, borderRadius: 52, alignItems: 'center', justifyContent: 'center', marginBottom: space.md },
   position: { alignSelf: 'center' },
   textWrap: { flexGrow: 1, paddingVertical: space.lg },
   controls: { justifyContent: 'space-between', paddingTop: space.sm },
