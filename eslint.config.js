@@ -24,6 +24,7 @@ const rules = {
 const languageOptions = { ecmaVersion: 2022, sourceType: 'script' };
 
 module.exports = [
+  { ignores: ['mobile/**'] },
   {
     // Loaded first; owns the shared helpers and publishes window.AthkarApp.
     files: ['script.js'],

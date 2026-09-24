@@ -362,7 +362,18 @@ Every save is validated and bumps `contentVersion`.
 **Done when:** validator passes and you've reviewed the report. ✅ Validator passes; report is in
 `content/REPORT.md`.
 
-### Phase 1 — Core app (internal testing)
+### Phase 1 — Core app (internal testing) — in progress
+
+**Status (2026-09-24):** app in `mobile/` (Expo SDK 57). Built: home, reading page (tabs, tap
+anywhere to count, ring, reset, list sheet, ☰ menu with book / font size / reciter, virtue +
+evidence tab, completion), audio player (one/all, repeat, speed, seek, lock-screen metadata),
+المسبحة (spring-animated beads, targets, custom phrase), prayer times (on-device `adhan`, GPS or
+city, method picker), settings, automatic time-of-day themes, a device test screen (`/lab`).
+Logic in `mobile/src/lib` is unit-tested (`npm test`). Verified in the web build; **native builds
+need Xcode 26.4+** (SDK 57 requirement).
+
+Commands (in `mobile/`): `npm run ios` / `npm run android` (dev build), `npx expo start` (Expo Go),
+`npm run web`, `npm test`, `npm run typecheck`, `npm run lint`.
 
 **Start with a 1–2 day test app** before building screens: the longest thiker in the chosen Arabic
 font with full tashkeel on a real iPhone **and** Android phone, one recording playing with the

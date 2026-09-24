@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "أذكارنا",
+    "slug": "athkarna",
+    "scheme": "athkarna",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.farisalrasheed.athkarna"
+    },
+    "android": {
+      "package": "com.farisalrasheed.athkarna",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-audio",
+        {
+          "enableBackgroundPlayback": true
+        }
+      ],
+      "expo-font",
+      "expo-notifications",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "يستخدم التطبيق موقعك لحساب مواقيت الصلاة على جهازك فقط، ولا يُرسل إلى أي جهة."
+        }
+      ],
+      [
+        "expo-localization",
+        {
+          "supportsRTL": false
+        }
+      ],
+      "expo-image"
+    ]
+  }
+}
