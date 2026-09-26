@@ -7,7 +7,7 @@ export const GRADES = ['صحيح', 'حسن', 'ضعيف', 'موضوع'];
 export const RESET_POINTS = ['fajr', 'asr', 'isha', 'each-prayer'];
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
-const THIKR_KEYS = new Set(['title', 'text', 'quran', 'translations']);
+const THIKR_KEYS = new Set(['title', 'text', 'quran', 'ayahs', 'basmalah', 'translations']);
 const ENTRY_KEYS = new Set(['id', 'num', 'fadl', 'evidence']);
 const EVIDENCE_KEYS = new Set(['text', 'source', 'grade', 'gradeNote']);
 
@@ -29,6 +29,7 @@ export function loadContent(dir) {
     books,
     reciters: read('reciters.json'),
     tasbih: read('tasbih.json'),
+    calendar: existsSync(join(dir, 'calendar.json')) ? read('calendar.json') : { days: {} },
   };
 }
 
@@ -58,6 +59,16 @@ export function validateData(content, audioRoot, pendingDeletes = new Set()) {
     if (!isNonEmptyString(t.title)) errors.push(`${at}: title is required`);
     if (!isNonEmptyString(t.text)) errors.push(`${at}: text is required`);
     if (t.quran !== undefined && typeof t.quran !== 'boolean') errors.push(`${at}: quran must be true/false`);
+    if (t.ayahs !== undefined) {
+      const { sura, from, to } = t.ayahs;
+      if (t.quran !== true) errors.push(`${at}: ayahs is only for Quranic athkar (quran: true)`);
+      if (!(isPositiveInt(sura) && sura <= 114 && isPositiveInt(from) && isPositiveInt(to) && from <= to)) {
+        errors.push(`${at}: ayahs must be { sura: 1–114, from, to } with from ≤ to`);
+      }
+    } else if (t.quran === true) {
+      warnings.push(`${at}: Quranic text without ayahs — add ayahs and run npm run content:quran`);
+    }
+    if (t.basmalah !== undefined && (t.basmalah !== true || !t.ayahs)) errors.push(`${at}: basmalah must be true and needs ayahs`);
     if (t.translations !== undefined) {
       for (const [lang, tr] of Object.entries(t.translations)) {
         if (!isNonEmptyString(tr)) errors.push(`${at}: translation "${lang}" is empty`);
@@ -68,6 +79,13 @@ export function validateData(content, audioRoot, pendingDeletes = new Set()) {
   for (const [id, c] of Object.entries(collections)) {
     if (!isNonEmptyString(c.title)) errors.push(`collections/${id}: title is required`);
     if (!RESET_POINTS.includes(c.resetAt)) errors.push(`collections/${id}: resetAt must be one of ${RESET_POINTS.join(', ')}`);
+    if (c.opening !== undefined) {
+      const a = c.opening.ayahs ?? {};
+      if (!(isPositiveInt(a.sura) && a.sura <= 114 && isPositiveInt(a.from) && isPositiveInt(a.to) && a.from <= a.to)) {
+        errors.push(`collections/${id}: opening.ayahs must be { sura: 1–114, from, to } with from ≤ to`);
+      }
+      if (!isNonEmptyString(c.opening.text)) errors.push(`collections/${id}: opening.text is empty — run npm run content:quran`);
+    }
   }
 
   for (const bookId of manifest.books ?? []) {
@@ -141,6 +159,24 @@ export function validateData(content, audioRoot, pendingDeletes = new Set()) {
     phraseIds.add(p.id);
     if (!isNonEmptyString(p.text)) errors.push(`${at}: text is required`);
     if (!isPositiveInt(p.target)) errors.push(`${at}: target must be a whole number ≥ 1`);
+  }
+
+  for (const [i, s] of (tasbih.sequences ?? []).entries()) {
+    const at = `tasbih/sequences[${i + 1}]`;
+    if (!ID_PATTERN.test(s.id ?? '')) errors.push(`${at}: id must be lowercase-kebab`);
+    if (!isNonEmptyString(s.title)) errors.push(`${at}: title is required`);
+    if (!s.steps?.length) errors.push(`${at}: needs at least one step`);
+    for (const [j, step] of (s.steps ?? []).entries()) {
+      if (!phraseIds.has(step.phrase)) errors.push(`${at}/steps[${j + 1}]: phrase "${step.phrase}" does not exist`);
+      if (!isPositiveInt(step.count)) errors.push(`${at}/steps[${j + 1}]: count must be a whole number ≥ 1`);
+    }
+  }
+
+  // Special days (DESIGN_PLAN §8): texts for the home card, optionally opening the tasbih on a phrase.
+  for (const [id, d] of Object.entries(content.calendar?.days ?? {})) {
+    const at = `calendar/${id}`;
+    if (!isNonEmptyString(d.title) || !isNonEmptyString(d.text)) errors.push(`${at}: title and text are required`);
+    if (d.tasbih !== undefined && !phraseIds.has(d.tasbih)) errors.push(`${at}: tasbih phrase "${d.tasbih}" does not exist`);
   }
 
   return { errors, warnings };

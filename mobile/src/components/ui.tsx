@@ -2,7 +2,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useEffect, type ComponentProps, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type TextProps, type TextStyle, type ViewStyle } from 'react-native';
 import Animated, {
-  Easing,
   useAnimatedProps,
   useAnimatedStyle,
   useSharedValue,
@@ -12,7 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
 import { useTheme } from '@/hooks';
-import { fonts, radius, space } from '@/theme';
+import { fonts, motion, radius, space } from '@/theme';
 
 // Layout is right-to-left by construction (automatic RTL flipping is off in app.json):
 // rows use row-reverse and text is right-aligned, so it looks the same on every platform.
@@ -49,11 +48,13 @@ export function Row({ style, children, gap = space.sm }: { style?: StyleProp<Vie
 }
 
 /**
- * Pressable that sinks slightly and springs back — the tactile feel used by every control.
- * Spring values are tuned to feel quick but soft; `depth` is how far it shrinks.
+ * Pressable that sinks slightly and settles back — the tactile feel used by every control.
+ * `style` is the look (it shrinks with the press); `containerStyle` is layout for the pressable
+ * itself (flex, alignSelf) — put flex there, or it never reaches the row.
  */
-export function Press({ onPress, style, children, depth = 0.96, disabled, hitSlop, ...a11y }: {
-  onPress?: () => void; style?: StyleProp<ViewStyle>; children: ReactNode; depth?: number; disabled?: boolean;
+export function Press({ onPress, style, containerStyle, children, depth = motion.press.button, disabled, hitSlop, ...a11y }: {
+  onPress?: () => void; style?: StyleProp<ViewStyle>; containerStyle?: StyleProp<ViewStyle>; children: ReactNode;
+  depth?: number; disabled?: boolean;
   hitSlop?: number; accessibilityLabel?: string; accessibilityHint?: string;
   accessibilityRole?: 'button' | 'tab'; accessibilityState?: { selected?: boolean };
 }) {
@@ -62,22 +63,22 @@ export function Press({ onPress, style, children, depth = 0.96, disabled, hitSlo
   return (
     <Pressable
       onPress={onPress}
+      style={containerStyle}
       disabled={disabled}
       hitSlop={hitSlop}
       accessibilityRole={a11y.accessibilityRole ?? 'button'}
       accessibilityLabel={a11y.accessibilityLabel}
       accessibilityHint={a11y.accessibilityHint}
       accessibilityState={a11y.accessibilityState}
-      onPressIn={() => { scale.set(withSpring(depth, SPRING_IN)); }}
-      onPressOut={() => { scale.set(withSpring(1, SPRING_OUT)); }}
+      onPressIn={() => { scale.set(withTiming(depth, PRESS_IN)); }}
+      onPressOut={() => { scale.set(withSpring(1, motion.spring.settle)); }}
     >
       <Animated.View style={[style, animated]}>{children}</Animated.View>
     </Pressable>
   );
 }
 
-const SPRING_IN = { damping: 20, stiffness: 420, mass: 0.6 };
-const SPRING_OUT = { damping: 12, stiffness: 260, mass: 0.6 };
+const PRESS_IN = { duration: motion.duration.tap, easing: motion.easing.enter };
 
 /** Glass card on the sky; `alt` is a flat tint for use inside sheets, `paper` the reading surface. */
 export function Card({ style, children, onPress, alt, paper }: {
@@ -91,7 +92,7 @@ export function Card({ style, children, onPress, alt, paper }: {
       : { backgroundColor: theme.glass, borderColor: theme.border };
   const base = [styles.card, look, style];
   if (!onPress) return <View style={base}>{children}</View>;
-  return <Press onPress={onPress} style={base} depth={0.975}>{children}</Press>;
+  return <Press onPress={onPress} style={base} depth={motion.press.card}>{children}</Press>;
 }
 
 export function IconButton({ name, onPress, label, size = 24, color, filled }: {
@@ -100,7 +101,7 @@ export function IconButton({ name, onPress, label, size = 24, color, filled }: {
 }) {
   const theme = useTheme();
   return (
-    <Press onPress={onPress} accessibilityLabel={label} hitSlop={8} depth={0.86} style={[styles.icon, filled && { backgroundColor: theme.accent }]}>
+    <Press onPress={onPress} accessibilityLabel={label} hitSlop={8} depth={motion.press.icon} style={[styles.icon, filled && { backgroundColor: theme.accent }]}>
       <Ionicons name={name} size={size} color={color ?? (filled ? theme.onAccent : theme.text)} />
     </Press>
   );
@@ -115,7 +116,7 @@ export function Pill({ label, onPress, active, onPaper }: { label: string; onPre
     ? { backgroundColor: theme.accent, borderColor: theme.accent }
     : { backgroundColor: 'transparent', borderColor: onPaper ? theme.paperBorder : theme.border };
   if (!onPress) return <View style={[styles.pill, look]}>{text}</View>;
-  return <Press onPress={onPress} depth={0.92} style={[styles.pill, look]}>{text}</Press>;
+  return <Press onPress={onPress} depth={motion.press.icon} style={[styles.pill, look]}>{text}</Press>;
 }
 
 export function Button({ label, onPress, kind = 'primary', icon }: {
@@ -149,8 +150,8 @@ export function Ring({ size, stroke, progress, color, track, children }: {
 
   useEffect(() => {
     const grew = target > p.value;
-    p.set(withTiming(target, { duration: 420, easing: Easing.out(Easing.cubic) }));
-    if (grew) bump.set(withSequence(withTiming(1.08, { duration: 90 }), withSpring(1, { damping: 9, stiffness: 220 })));
+    p.set(withTiming(target, { duration: 420, easing: motion.easing.enter }));
+    if (grew) bump.set(withSequence(withTiming(1.03, { duration: 90 }), withSpring(1, motion.spring.settle)));
   }, [target, p, bump]);
 
   const circleProps = useAnimatedProps(() => ({ strokeDashoffset: c * (1 - p.value) }));

@@ -1,15 +1,17 @@
 import athkarJson from '@content/athkar.json';
+import calendarJson from '@content/calendar.json';
 import collectionsJson from '@content/collections.json';
 import manifestJson from '@content/manifest.json';
+import quranJson from '@content/quran.json';
 import recitersJson from '@content/reciters.json';
 import tasbihJson from '@content/tasbih.json';
 import baz from '@content/books/baz.json';
 import general from '@content/books/general.json';
 import uthaymeen from '@content/books/uthaymeen.json';
 import { audioIndex } from './audio-index';
-import type { Book, BookEntry, Collection, Evidence, Grade, Reciter, ResetAt, ResolvedEntry, TasbihPhrase, Thiker } from './types';
+import type { Ayahs, Book, BookEntry, Collection, Evidence, Grade, Reciter, ResetAt, ResolvedEntry, SpecialDayText, TasbihPhrase, TasbihSequence, Thiker } from './types';
 
-export type { Book, BookEntry, Collection, Evidence, Grade, Reciter, ResetAt, ResolvedEntry, TasbihPhrase, Thiker };
+export type { Ayahs, Book, BookEntry, Collection, Evidence, Grade, Reciter, ResetAt, ResolvedEntry, SpecialDayText, TasbihPhrase, TasbihSequence, Thiker };
 
 // Books must be listed here as well as in manifest.json: Metro needs static imports.
 const BOOK_FILES: Record<string, Book> = { baz, uthaymeen, general } as Record<string, Book>;
@@ -18,7 +20,11 @@ export const manifest = manifestJson as { schemaVersion: number; contentVersion:
 export const athkar = athkarJson as Record<string, Thiker>;
 export const collections = collectionsJson as Record<string, Collection>;
 export const reciters = recitersJson as Record<string, Reciter>;
-export const tasbih = tasbihJson as { targets: number[]; phrases: TasbihPhrase[] };
+/** KFGQPC source name and the basmalah drawn above a surah's opening. */
+export const quran = quranJson as { source: string; basmalah: string };
+export const tasbih = tasbihJson as { targets: number[]; phrases: TasbihPhrase[]; sequences: TasbihSequence[] };
+/** Special days' texts (content/calendar.json); which day it is comes from lib/calendar. */
+export const calendar = calendarJson as { days: Record<string, SpecialDayText> };
 
 export const collectionIds = Object.keys(collections);
 

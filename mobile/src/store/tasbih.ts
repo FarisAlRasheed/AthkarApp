@@ -8,7 +8,10 @@ interface TasbihState {
   /** null = no limit */
   target: number | null;
   count: number;
-  set: (patch: Partial<Pick<TasbihState, 'phraseId' | 'customText' | 'target' | 'count'>>) => void;
+  /** A running sequence (تسبيح دبر الصلاة) and the step it's on; null when counting one phrase. */
+  sequenceId: string | null;
+  step: number;
+  set: (patch: Partial<Pick<TasbihState, 'phraseId' | 'customText' | 'target' | 'count' | 'sequenceId' | 'step'>>) => void;
   tap: () => number;
 }
 
@@ -19,6 +22,8 @@ export const useTasbih = create<TasbihState>()(
       customText: '',
       target: 33,
       count: 0,
+      sequenceId: null,
+      step: 0,
       set: (patch) => set(patch),
       tap: () => {
         const next = get().count + 1;
@@ -30,7 +35,7 @@ export const useTasbih = create<TasbihState>()(
       name: 'tasbih',
       version: 1,
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: ({ phraseId, customText, target, count }) => ({ phraseId, customText, target, count }),
+      partialize: ({ phraseId, customText, target, count, sequenceId, step }) => ({ phraseId, customText, target, count, sequenceId, step }),
     },
   ),
 );

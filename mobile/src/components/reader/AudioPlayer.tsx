@@ -1,11 +1,12 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
+import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 import { IconButton, Pill, Row, T } from '@/components/ui';
 import { getAudio, reciters, type ResolvedEntry } from '@/content';
 import { useTheme } from '@/hooks';
 import { toArabicDigits } from '@/lib/arabic';
+import { useAudioState } from '@/lib/sound';
 import { useSettings } from '@/store/settings';
 import { radius, space } from '@/theme';
 
@@ -84,9 +85,18 @@ export function useReaderAudio({ entries, index, counts, count, goTo }: Options)
     return () => sub.remove();
   }, [player]);
 
+  // Lock-screen controls need exclusive audio while a recitation plays; otherwise the app mixes
+  // with the user's own audio (DESIGN_PLAN §5).
+  useEffect(() => () => {
+    setAudioModeAsync({ interruptionMode: 'mixWithOthers' }).catch(() => {});
+    useAudioState.setState({ recitation: false });
+  }, []);
+
   const start = () => {
     setOpen(true);
     setWantsPlay(true);
+    setAudioModeAsync({ interruptionMode: 'doNotMix' }).catch(() => {});
+    useAudioState.setState({ recitation: true });
     if (source) {
       if (!open) player.replace(source);
       player.setPlaybackRate(rate);
@@ -107,6 +117,8 @@ export function useReaderAudio({ entries, index, counts, count, goTo }: Options)
     player.clearLockScreenControls();
     setWantsPlay(false);
     setOpen(false);
+    setAudioModeAsync({ interruptionMode: 'mixWithOthers' }).catch(() => {});
+    useAudioState.setState({ recitation: false });
   };
 
   const seek = (fraction: number) => {

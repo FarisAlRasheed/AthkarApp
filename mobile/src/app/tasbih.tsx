@@ -1,65 +1,164 @@
-import * as Haptics from 'expo-haptics';
-import { useEffect, useState } from 'react';
+import { useIsFocused, useLocalSearchParams } from 'expo-router';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Pressable, StyleSheet, TextInput, useWindowDimensions, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
-  interpolate,
+  FadeIn,
+  FadeInDown,
+  FadeOut,
+  FadeOutUp,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withSpring,
   withTiming,
-  type SharedValue,
 } from 'react-native-reanimated';
-import { SkyScreen } from '@/components/Sky';
+import { scheduleOnRN } from 'react-native-worklets';
 import { Sheet } from '@/components/Sheet';
-import { Button, IconButton, Pill, Row, T } from '@/components/ui';
+import { SkyScreen } from '@/components/Sky';
+import { Misbaha, MISBAHA_HEIGHT } from '@/components/tasbih/Misbaha';
+import { Button, IconButton, Pill, Press, Row, T } from '@/components/ui';
 import { tasbih as content } from '@/content';
 import { goBack, useTheme } from '@/hooks';
 import { toArabicDigits } from '@/lib/arabic';
+import { feel } from '@/lib/feel';
+import { crossed, stringFor } from '@/lib/misbaha';
+import { useTier } from '@/lib/quality';
+import { sound, useAmbient } from '@/lib/sound';
+import { BEAD_MATERIALS, useSettings, type BeadMaterial } from '@/store/settings';
+import { useSkyScene } from '@/store/sky';
 import { useTasbih } from '@/store/tasbih';
-import { fonts, radius, space, type Theme } from '@/theme';
+import { ATHKAR_FONTS, motion, radius, space } from '@/theme';
 
-const BEADS = 11;
-const SPACING = 44;
-const BEAD = 30;
-const SAG = 0.0009; // how much the string hangs
+const phraseById = (id: string) => content.phrases.find((p) => p.id === id);
 
+/** المسبحة — the most satisfying screen in the app (DESIGN_PLAN §7.4). */
 export default function Tasbih() {
+  useSkyScene({ kind: 'clock', shooting: true });
   const theme = useTheme();
+  const tier = useTier();
   const { width } = useWindowDimensions();
   const t = useTasbih();
-  const phrase = content.phrases.find((p) => p.id === t.phraseId);
-  const text = t.phraseId === 'custom' ? t.customText || '…' : phrase?.text ?? '';
+  const material = useSettings((s) => s.beadMaterial);
+  const params = useLocalSearchParams<{ phrase?: string }>();
+  useAmbient(useIsFocused());
 
   const [phraseOpen, setPhraseOpen] = useState(false);
   const [targetOpen, setTargetOpen] = useState(false);
+  const [materialOpen, setMaterialOpen] = useState(false);
+  const [focus, setFocus] = useState(false);
   const [custom, setCustom] = useState(t.customText);
   const [customTarget, setCustomTarget] = useState('');
+  const [finished, setFinished] = useState(false);
 
-  // Beads live on a loop; `shift` grows by one spacing per tap and springs to its target,
-  // so rapid taps queue smoothly instead of jumping.
-  const shift = useSharedValue(t.count * SPACING);
-  const pulse = useSharedValue(0);
-  const pop = useSharedValue(1);
-  const popStyle = useAnimatedStyle(() => ({ transform: [{ scale: pop.value }] }));
-
+  // Opened from a special day's card: count that phrase.
   useEffect(() => {
-    shift.set(withSpring(t.count * SPACING, { damping: 14, stiffness: 180, mass: 0.6 }));
-  }, [t.count, shift]);
+    const p = params.phrase ? phraseById(params.phrase) : undefined;
+    if (p && p.id !== useTasbih.getState().phraseId) useTasbih.getState().set({ phraseId: p.id, target: p.target, count: 0, sequenceId: null, step: 0 });
+    sound.prepare('tasbih');
+  }, [params.phrase]);
+
+  // Focus mode keeps the screen on.
+  useEffect(() => {
+    if (!focus) return;
+    activateKeepAwakeAsync('tasbih').catch(() => {});
+    return () => {
+      deactivateKeepAwake('tasbih').catch(() => {});
+    };
+  }, [focus]);
+
+  const sequence = t.sequenceId ? content.sequences.find((s) => s.id === t.sequenceId) : undefined;
+  const step = sequence?.steps[t.step];
+  const phraseId = step?.phrase ?? t.phraseId;
+  const target = step ? step.count : t.target;
+  const text = phraseId === 'custom' ? t.customText || '…' : phraseById(phraseId)?.text ?? '';
+  const string = useMemo(() => stringFor(target), [target]);
+
+  const pull = useSharedValue(0);
+  const wave = useSharedValue(0);
+  const kick = useSharedValue(0);
+  const pop = useSharedValue(1);
+  const glow = useSharedValue(0);
+  const popStyle = useAnimatedStyle(() => ({ transform: [{ scale: pop.get() }] }));
+  const glowStyle = useAnimatedStyle(() => ({ opacity: glow.get() }));
 
   const onTap = () => {
-    const n = t.tap();
-    pop.set(withSequence(withTiming(1.1, { duration: 70 }), withSpring(1, { damping: 10, stiffness: 260 })));
-    if (t.target && n % t.target === 0) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      pulse.set(withSequence(withTiming(1, { duration: 180 }), withTiming(0, { duration: 700 })));
+    if (finished) return;
+    const n = useTasbih.getState().tap();
+    const round = !!target && n % target === 0;
+    const piece = crossed(n, stringFor(target));
+    if (round) {
+      feel.round();
+      sound.bead('imam');
+    } else if (piece !== 'bead') {
+      feel.separator();
+      sound.bead(piece);
     } else {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+      feel.bead();
+      sound.bead('bead');
+    }
+    if (tier !== 'still') {
+      pop.set(withSequence(withTiming(1.03, { duration: 70 }), withSpring(1, motion.spring.settle)));
+      if (tier === 'full') kick.set(withSequence(withTiming(1, { duration: 60 }), withTiming(0, { duration: 420, easing: motion.easing.enter })));
+    }
+    if (round) {
+      if (tier === 'full') {
+        wave.set(0);
+        wave.set(withTiming(1, { duration: 900, easing: motion.easing.drift }));
+      }
+      if (tier !== 'still') glow.set(withSequence(withTiming(1, { duration: 200 }), withTiming(0, { duration: 700 })));
+      if (sequence) advanceSequence();
     }
   };
 
+  /** After a step of تسبيح دبر الصلاة, the next phrase rises in; after the last, a quiet ending. */
+  const advanceSequence = () => {
+    if (!sequence) return;
+    const next = t.step + 1;
+    setTimeout(() => {
+      if (next < sequence.steps.length) useTasbih.getState().set({ step: next, count: 0 });
+      else setFinished(true);
+    }, 700);
+  };
+
+  const endSequence = () => {
+    setFinished(false);
+    useTasbih.getState().set({ sequenceId: null, step: 0, count: 0 });
+  };
+
+  // The gesture is built once and calls the latest tap handler through a ref.
+  const latest = useRef(onTap);
+  useEffect(() => {
+    latest.current = onTap;
+  });
+  const callTap = useCallback(() => latest.current(), []);
+
+  // Dragging a bead leftwards by one bead-width counts it — a shortcut for the tap.
+  /* eslint-disable react-hooks/refs -- gesture callbacks run on touch events, never during render */
+  const gesture = useMemo(() => {
+    const tap = Gesture.Tap().maxDistance(12).onEnd((_e, ok) => {
+      if (ok) scheduleOnRN(callTap);
+    });
+    const drag = Gesture.Pan().activeOffsetX([-14, 14]).failOffsetY([-20, 20])
+      .onChange((e) => {
+        pull.set(Math.max(0, Math.min(1, -e.translationX / 70)));
+      })
+      .onEnd(() => {
+        if (pull.get() > 0.5) {
+          pull.set(0);
+          scheduleOnRN(callTap);
+        } else pull.set(withSpring(0, motion.spring.settle));
+      });
+    return Gesture.Race(drag, tap);
+  }, [pull, callTap]);
+  /* eslint-enable react-hooks/refs */
+
   const reset = () => {
-    const doReset = () => t.set({ count: 0 });
+    const doReset = () => {
+      setFinished(false);
+      useTasbih.getState().set({ count: 0, step: 0 });
+    };
     if (t.count < 34) return doReset();
     Alert.alert('تصفير العداد؟', `العدد الحالي ${toArabicDigits(t.count)}`, [
       { text: 'إلغاء', style: 'cancel' },
@@ -67,14 +166,10 @@ export default function Tasbih() {
     ]);
   };
 
-  const rounds = t.target ? Math.floor(t.count / t.target) : 0;
+  const rounds = target ? Math.floor(t.count / target) : 0;
   // Right after finishing a round, keep showing the full target until the next tap.
-  const justFinished = !!t.target && t.count > 0 && t.count % t.target === 0;
-  const shown = !t.target ? t.count : justFinished ? t.target : t.count % t.target;
-  const pulseStyle = useAnimatedStyle(() => ({
-    opacity: pulse.value * 0.35,
-    transform: [{ scale: interpolate(pulse.value, [0, 1], [0.8, 1.15]) }],
-  }));
+  const justFinished = !!target && t.count > 0 && t.count % target === 0;
+  const shown = !target ? t.count : justFinished ? target : t.count % target;
 
   return (
     <SkyScreen>
@@ -84,53 +179,106 @@ export default function Tasbih() {
         <IconButton name="refresh" label="تصفير" onPress={reset} color={theme.muted} />
       </Row>
 
-      <Pressable onPress={() => setPhraseOpen(true)} style={styles.phrase} accessibilityHint="تغيير الذكر">
-        <T variant="title" center style={{ fontFamily: fonts.athkar, fontSize: 32, lineHeight: 60 }}>{text}</T>
-        <T variant="caption" muted center>اضغط لتغيير الذكر</T>
+      <Pressable onPress={() => setPhraseOpen(true)} style={styles.phrase} accessibilityRole="button" accessibilityHint="تغيير الذكر">
+        {sequence ? (
+          <Row gap={6} style={{ justifyContent: 'center' }}>
+            <T variant="caption" muted>{sequence.title}</T>
+            {sequence.steps.map((_, i) => (
+              <View key={i} style={[styles.stepDot, { backgroundColor: i < t.step || finished ? theme.accent : i === t.step ? theme.text : theme.border }]} />
+            ))}
+          </Row>
+        ) : null}
+        <Animated.View key={`${phraseId}-${t.step}`} entering={FadeInDown.duration(motion.duration.base).easing(motion.easing.enter)} exiting={FadeOutUp.duration(motion.duration.quick)}>
+          <Animated.View style={[styles.phraseGlow, { backgroundColor: theme.glow }, glowStyle]} />
+          <T variant="title" center style={{ fontFamily: ATHKAR_FONTS.naskh.family, fontSize: text.length > 40 ? 22 : 30, lineHeight: text.length > 40 ? 44 : 56 }}>{text}</T>
+        </Animated.View>
       </Pressable>
 
-      <Pressable onPress={onTap} style={styles.tapArea} accessibilityRole="button" accessibilityLabel={`سبّح، العدد ${t.count}`}>
-        <View style={styles.counter}>
-          <Animated.View style={[styles.pulse, { backgroundColor: theme.accent }, pulseStyle]} />
-          <Animated.View style={popStyle}>
-            <T variant="display" center style={{ fontSize: 76, lineHeight: 96 }} color={justFinished ? theme.success : undefined}>
-              {toArabicDigits(shown)}
-            </T>
-          </Animated.View>
-          <T muted center>{t.target ? `من ${toArabicDigits(t.target)}` : 'بلا حدّ'}</T>
-          {rounds ? <T variant="caption" muted center>{`أتممت ${toArabicDigits(rounds)} × ${toArabicDigits(t.target!)}`}</T> : null}
+      <GestureDetector gesture={gesture}>
+        <View style={styles.tapArea} collapsable={false} accessibilityRole="button" accessibilityLabel={`سبّح، العدد ${t.count}`}>
+          {finished ? (
+            <Animated.View entering={FadeIn.duration(motion.duration.calm)} style={styles.counter}>
+              <T variant="title" center style={{ fontSize: 34, lineHeight: 56 }}>تقبّل الله</T>
+              <T muted center>{`أتممت ${sequence?.title ?? ''}`}</T>
+              <View style={{ marginTop: space.md }}><Button label="حسنًا" kind="secondary" onPress={endSequence} /></View>
+            </Animated.View>
+          ) : (
+            <View style={styles.counter}>
+              <Animated.View style={popStyle}>
+                {t.count === 0 ? (
+                  <T variant="title" center color={theme.muted} style={{ fontSize: 44, lineHeight: 96 }}>ابدأ</T>
+                ) : (
+                  <T variant="display" center style={{ fontSize: 76, lineHeight: 96 }} color={justFinished ? theme.success : undefined}>
+                    {toArabicDigits(shown)}
+                  </T>
+                )}
+              </Animated.View>
+              <T muted center>{target ? `من ${toArabicDigits(target)}` : 'بلا حدّ'}</T>
+              {rounds && !sequence ? <T variant="caption" muted center>{`أتممت ${toArabicDigits(rounds)} × ${toArabicDigits(target!)}`}</T> : null}
+            </View>
+          )}
+          <Misbaha string={string} count={t.count} pull={pull} wave={wave} kick={kick} material={material} tier={tier} width={width} />
+          <T variant="caption" muted center style={{ marginTop: space.xs }}>اضغط في أي مكان للتسبيح</T>
         </View>
+      </GestureDetector>
 
-        <View style={[styles.string, { width }]} pointerEvents="none">
-          {Array.from({ length: BEADS }, (_, i) => (
-            <Bead key={i} index={i} shift={shift} width={width} theme={theme} />
-          ))}
-        </View>
-        <T variant="caption" muted center style={{ marginTop: space.lg }}>اضغط في أي مكان للتسبيح</T>
-      </Pressable>
+      <View style={styles.bottom}>
+        {!sequence ? (
+          <Row style={{ justifyContent: 'center', flexWrap: 'wrap' }} gap={space.sm}>
+            {[...content.targets.map((n) => ({ label: toArabicDigits(n), value: n as number | null })), { label: 'بلا حد', value: null }].map((o) => (
+              <Pill key={o.label} label={o.label} active={t.target === o.value} onPress={() => useTasbih.getState().set({ target: o.value })} />
+            ))}
+            <Pill
+              label={t.target && !content.targets.includes(t.target) ? `${toArabicDigits(t.target)} ✎` : 'مخصص'}
+              active={!!t.target && !content.targets.includes(t.target)}
+              onPress={() => setTargetOpen(true)}
+            />
+          </Row>
+        ) : null}
+        <Row style={{ justifyContent: 'center' }} gap={space.xl}>
+          <IconButton name="ellipse-outline" label="حبات المسبحة" onPress={() => setMaterialOpen(true)} color={theme.muted} />
+          <IconButton name="eye-off-outline" label="وضع التركيز" onPress={() => setFocus(true)} color={theme.muted} />
+        </Row>
+      </View>
 
-      <Row style={styles.targets} gap={space.sm}>
-        {[...content.targets.map((n) => ({ label: toArabicDigits(n), value: n as number | null })), { label: 'بلا حد', value: null }].map((o) => (
-          <Pill key={o.label} label={o.label} active={t.target === o.value} onPress={() => t.set({ target: o.value })} />
-        ))}
-        <Pill
-          label={t.target && !content.targets.includes(t.target) ? `${toArabicDigits(t.target)} ✎` : 'مخصص'}
-          active={!!t.target && !content.targets.includes(t.target)}
-          onPress={() => setTargetOpen(true)}
-        />
-      </Row>
+      {focus ? (
+        <Animated.View entering={FadeIn.duration(motion.duration.calm)} exiting={FadeOut.duration(motion.duration.quick)} style={[StyleSheet.absoluteFill, styles.focus]}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={onTap} accessibilityRole="button" accessibilityLabel={`سبّح، العدد ${t.count}`} />
+          <Press onPress={() => setFocus(false)} style={styles.focusEnd} accessibilityLabel="إنهاء وضع التركيز">
+            <T muted color="rgba(255,255,255,0.4)">إنهاء</T>
+          </Press>
+          <View pointerEvents="none" style={styles.focusCount}>
+            <T variant="display" center color="rgba(255,255,255,0.22)" style={{ fontSize: 56, lineHeight: 72 }}>{toArabicDigits(shown)}</T>
+          </View>
+        </Animated.View>
+      ) : null}
 
       <Sheet visible={phraseOpen} onClose={() => setPhraseOpen(false)} title="اختر الذكر">
+        {content.sequences.map((s) => (
+          <Pressable
+            key={s.id}
+            onPress={() => {
+              setFinished(false);
+              useTasbih.getState().set({ sequenceId: s.id, step: 0, count: 0 });
+              setPhraseOpen(false);
+            }}
+            style={[styles.option, { backgroundColor: theme.surfaceAlt }]}
+          >
+            <T variant="heading">{s.title}</T>
+            <T variant="caption" muted>{s.steps.map((st) => `${phraseById(st.phrase)?.text.split('،')[0]} ×${toArabicDigits(st.count)}`).join(' · ')}</T>
+          </Pressable>
+        ))}
         {content.phrases.map((p) => (
           <Pressable
             key={p.id}
             onPress={() => {
-              t.set({ phraseId: p.id, target: p.target, count: 0 });
+              useTasbih.getState().set({ phraseId: p.id, target: p.target, count: 0, sequenceId: null, step: 0 });
+              setFinished(false);
               setPhraseOpen(false);
             }}
-            style={[styles.option, t.phraseId === p.id && { backgroundColor: theme.surfaceAlt }]}
+            style={[styles.option, !sequence && t.phraseId === p.id && { backgroundColor: theme.surfaceAlt }]}
           >
-            <T style={{ fontFamily: fonts.athkar, fontSize: 20, lineHeight: 38 }}>{p.text}</T>
+            <T style={{ fontFamily: ATHKAR_FONTS.naskh.family, fontSize: 20, lineHeight: 38 }}>{p.text}</T>
           </Pressable>
         ))}
         <T variant="caption" muted>ذكر مخصص</T>
@@ -146,7 +294,7 @@ export default function Tasbih() {
           kind="secondary"
           onPress={() => {
             if (!custom.trim()) return;
-            t.set({ phraseId: 'custom', customText: custom.trim(), count: 0 });
+            useTasbih.getState().set({ phraseId: 'custom', customText: custom.trim(), count: 0, sequenceId: null, step: 0 });
             setPhraseOpen(false);
           }}
         />
@@ -165,47 +313,37 @@ export default function Tasbih() {
           label="حفظ"
           onPress={() => {
             const n = parseInt(customTarget.replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))), 10);
-            if (n > 0) t.set({ target: n });
+            if (n > 0) useTasbih.getState().set({ target: n });
             setTargetOpen(false);
           }}
         />
+      </Sheet>
+
+      <Sheet visible={materialOpen} onClose={() => setMaterialOpen(false)} title="حبات المسبحة">
+        <Row style={{ flexWrap: 'wrap' }}>
+          {(Object.keys(BEAD_MATERIALS) as BeadMaterial[]).map((m) => (
+            <Pill key={m} label={BEAD_MATERIALS[m]} active={material === m} onPress={() => useSettings.getState().set({ beadMaterial: m })} />
+          ))}
+        </Row>
+        <View style={{ height: MISBAHA_HEIGHT, borderRadius: radius.md, overflow: 'hidden' }}>
+          <Misbaha string={string} count={t.count} pull={pull} wave={wave} kick={kick} material={material} tier={tier} width={width - space.lg * 2} />
+        </View>
       </Sheet>
     </SkyScreen>
   );
 }
 
-function Bead({ index, shift, width, theme }: { index: number; shift: SharedValue<number>; width: number; theme: Theme }) {
-  const loop = BEADS * SPACING;
-  const style = useAnimatedStyle(() => {
-    // Position on the loop, centred on screen; beads leaving one edge re-enter from the other.
-    const raw = (index * SPACING + shift.value) % loop;
-    const x = raw - loop / 2 + width / 2;
-    const fromCentre = x - width / 2;
-    const y = SAG * ((width / 2) ** 2 - fromCentre * fromCentre); // lowest in the middle, like a hanging string
-    const scale = interpolate(Math.abs(fromCentre), [0, width / 2], [1.25, 0.8], 'clamp');
-    return {
-      transform: [{ translateX: x - BEAD / 2 }, { translateY: y }, { scale }],
-      opacity: interpolate(Math.abs(fromCentre), [width / 2 - 30, width / 2 + 10], [1, 0], 'clamp'),
-    };
-  });
-  // A shine spot and a soft rim give each bead some roundness.
-  return (
-    <Animated.View style={[styles.bead, { backgroundColor: theme.accent, borderColor: 'rgba(0,0,0,0.18)' }, style]}>
-      <View style={styles.shine} />
-    </Animated.View>
-  );
-}
-
 const styles = StyleSheet.create({
   topbar: { paddingHorizontal: space.sm, paddingTop: space.xs },
-  phrase: { paddingHorizontal: space.xl, paddingTop: space.md, gap: space.xs },
+  phrase: { paddingHorizontal: space.xl, paddingTop: space.sm, gap: space.xs, minHeight: 110, justifyContent: 'center' },
+  phraseGlow: { position: 'absolute', left: '10%', right: '10%', top: '10%', bottom: '10%', borderRadius: 999 },
+  stepDot: { width: 7, height: 7, borderRadius: 4 },
   tapArea: { flex: 1, justifyContent: 'center' },
-  counter: { alignItems: 'center', justifyContent: 'center', gap: space.xs, marginBottom: space.xl },
-  pulse: { position: 'absolute', width: 220, height: 220, borderRadius: 110 },
-  string: { height: 90, position: 'relative' },
-  bead: { position: 'absolute', top: 10, left: 0, width: BEAD, height: BEAD, borderRadius: BEAD / 2, borderWidth: 1.5 },
-  shine: { position: 'absolute', top: 5, left: 7, width: 9, height: 6, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.55)', transform: [{ rotate: '-30deg' }] },
-  targets: { justifyContent: 'center', flexWrap: 'wrap', padding: space.lg },
-  option: { paddingVertical: space.sm, paddingHorizontal: space.sm, borderRadius: radius.sm },
+  counter: { alignItems: 'center', justifyContent: 'center', gap: space.xs, marginBottom: space.md },
+  bottom: { padding: space.lg, gap: space.sm },
+  option: { paddingVertical: space.sm, paddingHorizontal: space.sm, borderRadius: radius.sm, gap: 2 },
   input: { borderRadius: radius.md, paddingHorizontal: space.md, paddingVertical: space.md, fontSize: 18, textAlign: 'right' },
+  focus: { backgroundColor: 'rgba(0,0,0,0.92)' },
+  focusEnd: { position: 'absolute', top: 56, alignSelf: 'center', padding: space.md },
+  focusCount: { position: 'absolute', left: 0, right: 0, bottom: 120 },
 });

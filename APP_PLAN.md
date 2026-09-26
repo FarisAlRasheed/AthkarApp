@@ -1,6 +1,7 @@
 # أذكارنا — Complete App Plan (Expo rebuild)
 
-> Last updated 2026-09-24. Self-contained: can be pasted into a new chat as full context.
+> Last updated 2026-09-26. Self-contained: can be pasted into a new chat as full context.
+> How the app looks, moves, sounds and performs: `DESIGN_PLAN.md`.
 > Supersedes `EXPO_REWRITE_BRIEF.md`. Built from the Notion page «تطوير تطبيق الأذكار», the two
 > earlier briefs, and the decisions made while discussing them.
 
@@ -26,7 +27,12 @@
 | Suggestion windows | See §5.1. Evening starts after Asr. When nothing is due, suggest **المسبحة**. |
 | المسبحة | Back as a full feature, designed to be the most satisfying screen in the app (§3.3). |
 | Visual direction | **Living sky** (chosen 2026-09-25): every screen sits on a sky gradient that follows the prayer times (dawn, day, golden Asr, sunset, starry night) with glass cards on it; athkar are read on a calm paper card whose tone matches the sky. Titles in Amiri, UI in IBM Plex Sans Arabic, athkar in Noto Naskh. |
-| Animations | **Smooth and satisfying throughout** (replaces the earlier no-animation rule): springy presses, staggered entrances, animated count ring with a bump per tap, gliding athkar changes, spring-in completion, fading screen transitions, and the tasbih beads. |
+| Animations | **Smooth and satisfying throughout** (replaces the earlier no-animation rule): springy presses, staggered entrances, animated count ring with a bump per tap, gliding athkar changes, spring-in completion, fading screen transitions, and the tasbih beads. **Refined 2026-09-26:** calm and weighty rather than bouncy — tokens and rules in `DESIGN_PLAN.md` §3. |
+| Design identity | (2026-09-26) The sky follows the time *and*, in the reader, the collection's progress; the bead is the shared visual unit; the eight-point star «الخاتم» as a sparse line ornament; finished athkar rise, moves only slide. Full spec: `DESIGN_PLAN.md`. |
+| Performance | (2026-09-26) Comes before every effect. Quality tiers (full / lite / still) chosen by device and reduce-motion; one clock and one sky for the whole app. `DESIGN_PLAN.md` §6. |
+| Sound | (2026-09-26) Optional natural sounds only (misbaha clicks, birds, breeze, rain), each with its own off switch. No musical tones, chimes or bells. `DESIGN_PLAN.md` §5. |
+| Hijri calendar | (2026-09-26) Hijri date on home (Umm al-Qura, ±2-day adjustment) and special-day cards (Friday, الأيام البيض، Ramadan, العشر، عرفة، العيد). `DESIGN_PLAN.md` §8. |
+| Book & reciter on home | (2026-09-26) Home rows *show* the chosen book; choosing is in onboarding, Settings and the reader's ☰ — not pickers on the rows. |
 | Themes | 5 skies, automatic by time of day: الفجر، الصباح، العصر، المغرب، الليل. User can pin one in settings. |
 | Back button | On the **right** (Arabic app convention). |
 | Moving between athkar | Tap «٥ / ٢٦» to open a list and jump; vertical swipe as shortcut; player next/previous. |
@@ -301,7 +307,8 @@ progress[collectionId][bookId] = { periodKey, index, counts: { [thikerId]: numbe
 - Expo SDK 57, TypeScript, `expo-router`. Install every package with `npx expo install`.
 - Packages: `expo-router`, `expo-audio`, `expo-font`, `expo-haptics`, `expo-keep-awake`,
   `expo-location`, `expo-notifications`, `@react-native-async-storage/async-storage`,
-  `zustand`, `adhan`, `react-native-reanimated` (المسبحة only).
+  `zustand`, `adhan`, `react-native-reanimated`. Added by `DESIGN_PLAN.md` §11 D0:
+  `@shopify/react-native-skia`, `react-native-gesture-handler`, `expo-device`, `expo-splash-screen`.
 
 ```
 app/
@@ -339,14 +346,14 @@ store/
 |---|---|
 | `npm run editor` | Opens the editor at http://localhost:4321 |
 | `npm run content:validate` | Checks `content/` (the editor also checks on every save) |
-| `npm run content:convert` | The one-time conversion. Refuses to overwrite `content/` without `--force` |
+| `npm run content:quran` | Fills Quranic athkar from the KFGQPC Hafs V30 text (added 2026-09-26) |
 
 **Editor** (`scripts/editor/`): search/create/edit/delete athkar; per-entry count, virtue and
 evidence; copy virtue+evidence to the thiker's other entries; upload/replace/delete recordings;
 books: reorder, add/remove athkar, add collections, add books, choose the default book.
-Every save is validated and bumps `contentVersion`.
+Every save is validated and bumps `contentVersion`. Quranic text is read-only there.
 
-**Conversion** — one-time script `scripts/convert-content.mjs`:
+**Conversion** — one-time script, now `history/scripts/convert-content.mjs` (it ran once; not meant to run again):
 
 1. Read `Morning_pool.json`, `Evening_pool.json`, `sheikh_configs.json`, `post-prayer.json`, `sleep.json`.
 2. Merge identical texts (compared without diacritics). Near-identical texts that differ only in
@@ -376,6 +383,13 @@ need Xcode 26.4+** (SDK 57 requirement).
 Commands (in `mobile/`): `npm run ios` / `npm run android` (dev build), `npx expo start` (Expo Go),
 `npm run web`, `npm test`, `npm run typecheck`, `npm run lint`.
 
+**Status (2026-09-26):** the design plan is built (`DESIGN_PLAN.md` §11, D0–D6, branch
+`feat/design-system`): one clock and one Skia sky for the whole app, quality tiers, the new reader
+(journey sky, counting feel, completion, opening and ending moments, KFGQPC Quran text), the living
+sky, home with the day/night arc, Hijri date and special days, onboarding, the rebuilt misbaha,
+sound engine, full settings, and local reminders. Verified in the web build; still to check on
+real phones (release builds) — see `DESIGN_PLAN.md` §15.
+
 **Start with a 1–2 day test app** before building screens: the longest thiker in the chosen Arabic
 font with full tashkeel on a real iPhone **and** Android phone, one recording playing with the
 screen locked, and one scheduled notification. If all three work, continue.
@@ -392,6 +406,13 @@ without losing progress.
 
 Notification settings and scheduling, permission flow, app icon, splash screen, Arabic store
 listing and screenshots, privacy policy, release.
+
+**Status (2026-09-26):** ✅ notifications — local only, rolling 7 days (≤ 60 pending, under iOS's
+64), rebuilt on open and when reminders or the location change; per-prayer toggles and morning /
+evening / sleep reminders; permission asked only when the first reminder is turned on; tapping a
+reminder opens its collection (`mobile/src/lib/notify.ts`, `app/notifications.tsx`). ✅ splash —
+your logo on the night sky. Still to do: a real **app icon** (the current one is Expo's
+placeholder), store listing and screenshots, privacy policy, release.
 
 **Done when:** live on the App Store and Google Play.
 
@@ -421,12 +442,17 @@ All in the editor; `content/REPORT.md` has the full lists.
   أصبحنا/أمسينا pairs), so one of each pair plays the wrong words. Re-record or re-assign.
 - **Decide 4 near-duplicates** (e.g. two wordings of سيد الاستغفار) — keep one wording or both.
 - **Record 16 entries with no audio** (evening أمسينا وأمسى الملك لله، Ibn Baz's فطرة الإسلام /
-  عافني في بدني / الكفر والفقر، most post-prayer and two sleep athkar).
+  عافني في بدني / الكفر والفقر، most post-prayer and two sleep athkar). For the evening أمسينا, an
+  old recording exists: `voices/012E.m4a` (the conversion missed it) — it covers the first part
+  of the text; listen and attach it if it fits (`history/README.md`).
 - **Write virtue + evidence** for each entry (35 entries have no virtue yet; none has evidence).
 - Add back whichever thiker `e_020` was meant to be.
-- Choose a Quran text source for Quranic athkar.
+- ✅ Quran text source: KFGQPC Hafs V30 (`content/sources/`, `npm run content:quran`).
+- **Record the misbaha** — `DESIGN_PLAN.md` §12. The clicks in the app now are synthesized placeholders.
+- **Ambient loops** (CC0 recordings: fajr birds, night crickets, rain) — `DESIGN_PLAN.md` §5.
+- **Approve the texts** of the opening verses, ending lines and special days (`DESIGN_PLAN.md` §8, §12).
 - Translations (Phase 3).
 
 ## 10. Open questions
 
-None right now.
+Design questions are listed in `DESIGN_PLAN.md` §13.
