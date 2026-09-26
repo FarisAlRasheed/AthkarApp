@@ -17,6 +17,9 @@ type Key = { collectionId: string; bookId: string; periodKey: string };
 
 interface ProgressState {
   lists: Record<string, ListProgress>;
+  /** Day (dateKey) each collection's opening moment was last shown — it shows once a day. */
+  openedOn: Record<string, string>;
+  markOpened: (collectionId: string, day: string) => void;
   increment: (k: Key, position: number, max: number) => number;
   setCount: (k: Key, position: number, count: number) => void;
   setIndex: (k: Key, index: number) => void;
@@ -45,6 +48,8 @@ export const useProgress = create<ProgressState>()(
 
       return {
         lists: {},
+        openedOn: {},
+        markOpened: (collectionId, day) => set((s) => ({ openedOn: { ...s.openedOn, [collectionId]: day } })),
         increment: (k, position, max) => {
           const current = readList(get().lists, k).counts[position] ?? 0;
           const next = Math.min(max, current + 1);
@@ -70,7 +75,7 @@ export const useProgress = create<ProgressState>()(
       name: 'progress',
       version: 1,
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (s) => ({ lists: s.lists }),
+      partialize: (s) => ({ lists: s.lists, openedOn: s.openedOn }),
     },
   ),
 );

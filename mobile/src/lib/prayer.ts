@@ -1,4 +1,5 @@
 import { CalculationMethod, Coordinates, PrayerTimes } from 'adhan';
+import { toHijri } from './hijri.ts';
 
 export const PRAYERS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
 export type Prayer = (typeof PRAYERS)[number];
@@ -36,14 +37,16 @@ export interface Place {
   method: MethodId;
 }
 
-/** Whether a date falls in Ramadan (Umm al-Qura calendar). False if the runtime lacks the calendar. */
-export function isRamadan(date: Date): boolean {
-  try {
-    const month = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { month: 'numeric' }).format(date);
-    return parseInt(month, 10) === 9;
-  } catch {
-    return false;
-  }
+/** Whether a date falls in Ramadan (Umm al-Qura calendar, from the bundled table). */
+export const isRamadan = (date: Date): boolean => toHijri(date)?.month === 9;
+
+/**
+ * The night between Maghrib and the next Fajr, as the Sunnah counts it: its middle, and the start
+ * of its last third (the time of qiyam). Same arithmetic as adhan's SunnahTimes.
+ */
+export function nightTimes(maghrib: Date, nextFajr: Date): { middle: Date; lastThird: Date } {
+  const night = nextFajr.getTime() - maghrib.getTime();
+  return { middle: new Date(maghrib.getTime() + night / 2), lastThird: new Date(maghrib.getTime() + (night * 2) / 3) };
 }
 
 export function computeDayTimes(place: Place, date: Date): DayTimes {

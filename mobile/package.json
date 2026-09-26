@@ -1,19 +1,22 @@
 {
   "name": "athkarna",
   "version": "1.0.0",
-  "main": "expo-router/entry",
+  "main": "index",
   "dependencies": {
     "@expo-google-fonts/amiri": "^0.4.1",
     "@expo-google-fonts/ibm-plex-sans-arabic": "^0.4.2",
     "@expo-google-fonts/noto-naskh-arabic": "^0.4.5",
     "@expo-google-fonts/scheherazade-new": "^0.4.3",
+    "@expo/metro-runtime": "~57.0.16",
     "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@shopify/react-native-skia": "2.6.2",
     "adhan": "^4.4.6",
     "eslint-config-expo": "~57.0.2",
     "expo": "~57.0.25",
     "expo-audio": "~57.0.5",
     "expo-constants": "~57.0.19",
+    "expo-device": "~57.0.2",
     "expo-font": "~57.0.4",
     "expo-haptics": "~57.0.3",
     "expo-image": "~57.0.5",
@@ -24,10 +27,12 @@
     "expo-location": "~57.0.20",
     "expo-notifications": "~57.0.21",
     "expo-router": "~57.0.23",
+    "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
+    "react-native-gesture-handler": "~2.32.0",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
@@ -47,12 +52,17 @@
     "ios": "expo run:ios",
     "android": "expo run:android",
     "web": "expo start --web",
-    "prestart": "node scripts/gen-audio-index.mjs",
-    "preios": "node scripts/gen-audio-index.mjs",
-    "preandroid": "node scripts/gen-audio-index.mjs",
+    "prestart": "node scripts/gen-audio-index.mjs && node scripts/gen-sound-index.mjs",
+    "preios": "node scripts/gen-audio-index.mjs && node scripts/gen-sound-index.mjs",
+    "preandroid": "node scripts/gen-audio-index.mjs && node scripts/gen-sound-index.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",
-    "test": "node --test \"src/lib/*.test.ts\""
+    "test": "node --test \"src/lib/*.test.ts\"",
+    "preweb": "node scripts/gen-audio-index.mjs && node scripts/gen-sound-index.mjs && setup-skia-web public",
+    "build:web": "node scripts/gen-audio-index.mjs && node scripts/gen-sound-index.mjs && setup-skia-web public && expo export -p web"
   },
-  "private": true
+  "private": true,
+  "allowScripts": {
+    "@shopify/react-native-skia@2.6.2": true
+  }
 }

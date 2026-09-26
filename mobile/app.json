@@ -49,7 +49,15 @@
           "supportsRTL": false
         }
       ],
-      "expo-image"
+      "expo-image",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#04050d",
+          "image": "./assets/logo.png",
+          "imageWidth": 240
+        }
+      ]
     ]
   }
 }

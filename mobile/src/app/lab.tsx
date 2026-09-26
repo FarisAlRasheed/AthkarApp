@@ -2,8 +2,13 @@ import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import * as Notifications from 'expo-notifications';
 import { useState } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useFrameCallback, useSharedValue } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { scheduleOnRN } from 'react-native-worklets';
 import { athkar, getAudio } from '@/content';
+import { PATTERNS, playPattern, type Feel } from '@/lib/feel';
+import { detectTier, useTier } from '@/lib/quality';
+import { useSettings } from '@/store/settings';
 
 // Phase 1 test screen: checks the three risks before building real screens —
 // Arabic text with full tashkeel, audio with the screen locked, and a local notification.
@@ -13,11 +18,15 @@ const FONTS = [
   { label: 'Noto Naskh', family: 'NotoNaskhArabic_400Regular' },
   { label: 'Amiri', family: 'Amiri_400Regular' },
   { label: 'Scheherazade', family: 'ScheherazadeNew_400Regular' },
+  { label: 'مصحف المدينة (KFGQPC)', family: 'KFGQPCHafs' },
 ];
 const SAMPLE_IDS = ['baqarah-ending', 'sayyid-al-istighfar', 'ayat-al-kursi'];
 const RECITER = 'faris-alrasheed';
 
 export default function Lab() {
+  const tier = useTier();
+  const quality = useSettings((s) => s.quality);
+  const autoTier = useSettings((s) => s.autoTier);
   const [fontIndex, setFontIndex] = useState(1);
   const [size, setSize] = useState(24);
   const [sampleIndex, setSampleIndex] = useState(0);
@@ -97,9 +106,44 @@ export default function Lab() {
           <Chip label="إشعار تجريبي بعد ١٠ ثوانٍ" active onPress={scheduleTest} />
         </View>
         {notice ? <Text style={styles.hint}>{notice}</Text> : null}
+
+        <Text style={styles.label}>٤) الأداء (DESIGN_PLAN §6)</Text>
+        <Fps />
+        <Text style={styles.hint}>{`الجودة الآن: ${tier} · الإعداد: ${quality} · الكشف التلقائي: ${autoTier ?? '—'}`}</Text>
+        <View style={styles.row}>
+          {(['auto', 'full', 'lite'] as const).map((q) => (
+            <Chip key={q} label={q === 'auto' ? 'تلقائي' : q === 'full' ? 'كاملة' : 'خفيفة (إجبار)'} active={quality === q} onPress={() => useSettings.getState().set({ quality: q })} />
+          ))}
+          <Chip label="إعادة الكشف" onPress={() => useSettings.getState().set({ autoTier: detectTier() })} />
+        </View>
+        <Text style={styles.hint}>اختر «خفيفة» لترى ما يراه أصحاب الأجهزة الأبطأ، وراقب عدد الإطارات أثناء العدّ والمسبحة.</Text>
+
+        <Text style={styles.label}>٥) الاهتزاز — جرّب كل نمط واختر الأنسب</Text>
+        <View style={styles.row}>
+          {(Object.keys(PATTERNS) as Feel[]).map((name) => (
+            <Chip key={name} label={name} onPress={() => playPattern(name)} />
+          ))}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
+}
+
+/** Frames per second on the UI thread, updated once a second. */
+function Fps() {
+  const [fps, setFps] = useState(0);
+  const frames = useSharedValue(0);
+  const since = useSharedValue(0);
+  useFrameCallback((info) => {
+    frames.set(frames.get() + 1);
+    since.set(since.get() + (info.timeSincePreviousFrame ?? 0));
+    if (since.get() >= 1000) {
+      scheduleOnRN(setFps, Math.round((frames.get() * 1000) / since.get()));
+      frames.set(0);
+      since.set(0);
+    }
+  });
+  return <Text style={[styles.value, { textAlign: 'right' }]}>{`${fps} إطارًا في الثانية`}</Text>;
 }
 
 function Chip({ label, active, onPress }: { label: string; active?: boolean; onPress: () => void }) {

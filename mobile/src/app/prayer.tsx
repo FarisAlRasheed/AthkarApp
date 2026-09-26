@@ -1,21 +1,26 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import * as Location from 'expo-location';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { SkyScreen } from '@/components/Sky';
+import { Countdown } from '@/components/Countdown';
+import { DayArc } from '@/components/home/DayArc';
 import { Sheet } from '@/components/Sheet';
+import { SkyScreen } from '@/components/Sky';
 import { Button, Card, IconButton, Row, T } from '@/components/ui';
-import { goBack, useNow, usePrayerTimes, useTheme } from '@/hooks';
-import { formatCountdown, formatTime } from '@/lib/arabic';
-import { CITIES, defaultMethodFor, METHODS, nextTime, PRAYER_LABELS, TIME_NAMES, type MethodId } from '@/lib/prayer';
+import { goBack, usePrayerTimes, useTheme } from '@/hooks';
+import { formatTime } from '@/lib/arabic';
+import { locateMe } from '@/lib/location';
+import { addDays, CITIES, defaultMethodFor, METHODS, nextTime, nightTimes, PRAYER_LABELS, TIME_NAMES, type MethodId } from '@/lib/prayer';
+import { useTier } from '@/lib/quality';
 import { useSettings } from '@/store/settings';
-import { radius, space } from '@/theme';
+import { useSkyScene } from '@/store/sky';
+import { motion, radius, space } from '@/theme';
 
 export default function PrayerScreen() {
   const theme = useTheme();
-  const now = useNow(1000);
-  const { today, tomorrow, hasPlace } = usePrayerTimes(now);
+  useSkyScene({ kind: 'clock' });
+  const { now, today, tomorrow, timesFor, hasPlace } = usePrayerTimes();
+  const tier = useTier();
   const place = useSettings((s) => s.place);
   const set = useSettings((s) => s.set);
 
@@ -28,34 +33,22 @@ export default function PrayerScreen() {
   const useMyLocation = async () => {
     setBusy(true);
     setMessage('');
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setMessage('لم يُسمح بالوصول إلى الموقع. يمكنك اختيار مدينتك من القائمة.');
-        setCityOpen(true);
-        return;
-      }
-      const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
-      const { latitude, longitude } = pos.coords;
-      let name = 'موقعي';
-      let countryCode: string | undefined;
-      try {
-        const [addr] = await Location.reverseGeocodeAsync({ latitude, longitude });
-        name = addr?.city ?? addr?.region ?? name;
-        countryCode = addr?.isoCountryCode ?? undefined;
-      } catch {
-        // Offline: keep the generic name; times are still computed on the device.
-      }
-      set({ place: { name, latitude, longitude, countryCode, method: place?.method ?? defaultMethodFor(countryCode), source: 'gps' } });
-    } catch {
-      setMessage('تعذّر تحديد الموقع. حاول مرة أخرى أو اختر مدينتك.');
-    } finally {
-      setBusy(false);
+    const r = await locateMe();
+    setBusy(false);
+    if (!r.ok) {
+      setMessage(r.message);
+      if (r.denied) setCityOpen(true);
     }
   };
 
   const next = nextTime(now, today, tomorrow);
   const cities = CITIES.filter((c) => c.name.includes(query.trim()));
+  const isNight = now >= today.maghrib || now < today.fajr;
+  const night = isNight
+    ? now >= today.maghrib
+      ? nightTimes(today.maghrib, tomorrow.fajr)
+      : nightTimes(timesFor(addDays(now, -1)).maghrib, today.fajr)
+    : null;
 
   return (
     <SkyScreen>
@@ -65,15 +58,18 @@ export default function PrayerScreen() {
         <View style={{ width: 44 }} />
       </Row>
       <ScrollView contentContainerStyle={styles.content}>
-        <Animated.View entering={FadeInDown.duration(450).springify().damping(18)} style={{ gap: styles.content.gap }}>
+        <Animated.View entering={FadeInDown.duration(motion.duration.calm).easing(motion.easing.enter)} style={{ gap: styles.content.gap }}>
         {hasPlace ? (
           <Card style={{ gap: space.xs, alignItems: 'center' }}>
             <T muted center>بقي على {PRAYER_LABELS[next.name]}</T>
-            <T variant="display" center>{formatCountdown(next.at.getTime() - now.getTime())}</T>
+            <Countdown target={next.at} />
             <Row gap={6}>
               <Ionicons name={place?.source === 'gps' ? 'location' : 'business-outline'} size={16} color={theme.muted} />
               <T variant="caption" muted>{place?.name}</T>
             </Row>
+            <View style={{ alignSelf: 'stretch', marginTop: space.sm }}>
+              <DayArc tier={tier} nextAt={next.at} />
+            </View>
           </Card>
         ) : (
           <Card style={{ gap: space.md }}>
@@ -103,6 +99,15 @@ export default function PrayerScreen() {
                 </Row>
               );
             })}
+            {/* The night's middle and last third (the time of qiyam), from Maghrib to the next Fajr. */}
+            {night
+              ? ([['منتصف الليل', night.middle], ['الثلث الأخير من الليل', night.lastThird]] as const).map(([label, at]) => (
+                <Row key={label} style={[styles.timeRow, { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: theme.border }]}>
+                  <T style={{ flex: 1 }} muted>{label}</T>
+                  <T muted>{formatTime(at)}</T>
+                </Row>
+              ))
+              : null}
           </Card>
         ) : null}
 
