@@ -2,12 +2,12 @@
   "name": "athkar-app",
   "version": "1.0.0",
   "private": true,
-  "description": "تطبيق الأذكار — Arabic athkar web app",
+  "description": "أذكارنا — content, editor and tooling for the Expo app in mobile/ (and the legacy web app, live until the app ships)",
   "scripts": {
     "lint": "eslint .",
     "start": "python3 -m http.server 8000",
-    "content:convert": "node scripts/convert-content.mjs",
     "content:validate": "node scripts/validate-content.mjs",
+    "content:quran": "node scripts/quran-text.mjs",
     "editor": "node scripts/editor/server.mjs"
   },
   "devDependencies": {

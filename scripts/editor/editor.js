@@ -226,9 +226,14 @@ function renderThikerEditor() {
       h('div', {},
         h('label', {}, 'النص'),
         h('textarea', {
-          class: 'arabic', rows: 6, value: t.text,
+          class: 'arabic', rows: 6, value: t.text, readOnly: !!t.ayahs,
           oninput: (e) => { t.text = e.target.value; preview.textContent = t.text || '…'; markDirty(); },
-        })),
+        }),
+        // Quranic text comes from the KFGQPC Hafs data (npm run content:quran), never typed by hand.
+        t.ayahs
+          ? h('p', { class: 'muted' },
+            `نص قرآني من مصحف مجمع الملك فهد (سورة ${toArabicDigits(t.ayahs.sura)}، الآيات ${toArabicDigits(t.ayahs.from)}–${toArabicDigits(t.ayahs.to)}) — يُحدَّث بالأمر npm run content:quran`)
+          : null),
       h('label', { class: 'row' },
         h('input', {
           type: 'checkbox', class: 'fit', checked: !!t.quran,
