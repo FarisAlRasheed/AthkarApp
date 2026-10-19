@@ -446,6 +446,27 @@ placeholder), store listing and screenshots, privacy policy, release.
 - Home-screen widget (next prayer + suggested athkar; needs native code)
 - More collections (waking up, entering home, travel, …)
 - More reciters
+- **Web Push for the web app (on hold, 2026-10-19).** The web app (PWA) can only show reminders
+  while it's open or was recently in the background (`mobile/src/lib/notify.web.ts`: timers and the
+  service worker). A browser can't schedule a notification for later, so reaching a fully closed
+  PWA needs a push server. That breaks the "no server" rule in §5.5, so it waits until you decide
+  it's worth it. Suggested design if it goes ahead:
+  - VAPID keys. After permission, `notify.web.ts` subscribes with `PushManager` and sends the
+    subscription plus the reminder times from `lib/reminders.ts` (time, title, url) to a Vercel
+    function. Turning every reminder off deletes the record on the server.
+  - Storage: Upstash Redis (free tier, from the Vercel Marketplace), with a sorted set of due times.
+    Store only the subscription and the times: no location, no account.
+  - Sender: something calls `/api/push/tick` every minute and it sends what's due with `web-push`.
+    Vercel Hobby cron runs only once a day, so use Upstash QStash (signed calls), cron-job.org, or
+    Vercel Pro.
+  - Store about 30 days of times. If the app isn't opened in that window, pushes stop until it's
+    opened again.
+  - Add a `push` handler to the service worker (`scripts/gen-sw.mjs`); the `notificationclick`
+    handler already opens the right screen.
+  - iPhone: only a home-screen app gets push (iOS 16.4+). The privacy policy (§8) would have to say
+    that reminder times are sent to the server.
+  - Done when a reminder arrives on a closed installed PWA on Android Chrome and on iPhone, and
+    turning reminders off removes the server schedule.
 
 ## 8. Release checklist
 
