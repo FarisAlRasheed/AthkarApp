@@ -52,6 +52,7 @@ function saveContent(next) {
   next.manifest.contentVersion = current.manifest.contentVersion + 1;
   writeJson('manifest.json', next.manifest);
   writeJson('athkar.json', next.athkar);
+  writeJson('hadiths.json', next.hadiths);
   writeJson('reciters.json', next.reciters);
   for (const [bookId, book] of Object.entries(next.books)) writeJson(join('books', `${bookId}.json`), book);
   for (const f of readdirSync(join(CONTENT, 'books'))) {

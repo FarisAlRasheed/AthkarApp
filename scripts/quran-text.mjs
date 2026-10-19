@@ -114,10 +114,10 @@ const athkarPath = join(CONTENT, 'athkar.json');
 const athkar = JSON.parse(readFileSync(athkarPath, 'utf8'));
 for (const [id, t] of Object.entries(athkar)) if (t.ayahs) fill(id, t, t.ayahs);
 
-// The verse shown when a collection opens (DESIGN_PLAN §7.3).
-const collectionsPath = join(CONTENT, 'collections.json');
-const collections = JSON.parse(readFileSync(collectionsPath, 'utf8'));
-for (const [id, c] of Object.entries(collections)) if (c.opening) fill(`collections/${id}`, c.opening, c.opening.ayahs);
+// The verse shown when a wird opens (DESIGN_PLAN §7.3).
+const sectionsPath = join(CONTENT, 'sections.json');
+const sectionsFile = JSON.parse(readFileSync(sectionsPath, 'utf8'));
+for (const [id, c] of Object.entries(sectionsFile.sections)) if (c.opening) fill(`sections/${id}`, c.opening, c.opening.ayahs);
 
 const quranPath = join(CONTENT, 'quran.json');
 const quran = `${JSON.stringify({ source: SOURCE_NAME, basmalah }, null, 2)}\n`;
@@ -126,7 +126,7 @@ try { quranChanged = readFileSync(quranPath, 'utf8') !== quran; } catch { /* fir
 
 if (changed || quranChanged) {
   writeFileSync(athkarPath, `${JSON.stringify(athkar, null, 2)}\n`);
-  writeFileSync(collectionsPath, `${JSON.stringify(collections, null, 2)}\n`);
+  writeFileSync(sectionsPath, `${JSON.stringify(sectionsFile, null, 2)}\n`);
   writeFileSync(quranPath, quran);
   const manifestPath = join(CONTENT, 'manifest.json');
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));

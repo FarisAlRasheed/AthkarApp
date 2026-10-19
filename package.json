@@ -8,7 +8,9 @@
     "start": "python3 -m http.server 8000",
     "content:validate": "node scripts/validate-content.mjs",
     "content:quran": "node scripts/quran-text.mjs",
-    "editor": "node scripts/editor/server.mjs"
+    "editor": "node scripts/editor/server.mjs",
+    "content:books": "node scripts/books/parse-hisn.mjs && node scripts/books/build-book.mjs hisn && node scripts/books/build-book.mjs baz && node scripts/books/build-book.mjs qasim",
+    "content:fetch": "node scripts/fetch-turath.mjs"
   },
   "devDependencies": {
     "eslint": "^9.15.0"

@@ -8,7 +8,7 @@ import { DayArc } from '@/components/home/DayArc';
 import { Khatam } from '@/components/Khatam';
 import { SkyScreen } from '@/components/Sky';
 import { Button, Card, IconButton, Pill, Press, Row, T } from '@/components/ui';
-import { booksFor, calendar, collectionIds, collections, tasbih as tasbihContent } from '@/content';
+import { bookName, booksFor, calendar, collectionIds, collections, libraryBooks, sectionGroups, tasbih as tasbihContent } from '@/content';
 import { collectionState, useCollection, useMinute, usePrayerTimes, useTheme } from '@/hooks';
 import { formatIn, formatTime, toArabicDigits } from '@/lib/arabic';
 import { specialDay } from '@/lib/calendar';
@@ -32,11 +32,10 @@ const ICONS: Record<string, React.ComponentProps<typeof Ionicons>['name']> = {
   sleep: 'moon-outline',
 };
 
-/** «ابن باز» from «الشيخ ابن باز», shown only where there is more than one book to choose from. */
+/** The chosen book's title («تحفة الأخيار»), shown only where there is more than one book to choose from. */
 function bookCaption(collectionId: string, bookId: string): string | null {
-  const books = booksFor(collectionId);
-  if (books.length < 2) return null;
-  return books.find((b) => b.id === bookId)?.name.replace(/^الشيخ\s+/, '') ?? null;
+  if (booksFor(collectionId).length < 2) return null;
+  return bookName(bookId).split(' — ')[0] || null;
 }
 
 export default function Home() {
@@ -69,7 +68,7 @@ export default function Home() {
         <SpecialDayCard />
         <Animated.View entering={enter(2)}><SuggestionCard /></Animated.View>
         <Animated.View entering={enter(3)}>
-          <T variant="heading" style={{ marginTop: space.md }}>جميع الأذكار</T>
+          <T variant="heading" style={{ marginTop: space.md }}>الأوراد اليومية</T>
         </Animated.View>
         {collectionIds.map((id, i) => (
           <Animated.View key={id} entering={enter(4 + i)}>
@@ -77,6 +76,7 @@ export default function Home() {
           </Animated.View>
         ))}
         <Animated.View entering={enter(4 + collectionIds.length)}><TasbihRow /></Animated.View>
+        <Animated.View entering={enter(5 + collectionIds.length)}><MoreRows /></Animated.View>
       </ScrollView>
     </SkyScreen>
   );
@@ -242,6 +242,36 @@ function CollectionRow({ collectionId }: { collectionId: string }) {
       </Press>
       <IconButton name="headset-outline" label={`استمع إلى ${collections[collectionId].title}`} size={20} onPress={() => router.push(`/read/${collectionId}?play=1`)} />
     </Row>
+  );
+}
+
+const SECTION_COUNT = sectionGroups().reduce((n, g) => n + g.sections.length, 0);
+const BOOK_COUNT = libraryBooks().length;
+
+/** The way into everything that is not a daily wird: all sections, and the books themselves. */
+function MoreRows() {
+  const theme = useTheme();
+  const rows = [
+    { icon: 'grid-outline' as const, title: 'جميع الأذكار', caption: `${toArabicDigits(SECTION_COUNT)} قسمًا: الصلاة، السفر، الكرب، المرض…`, href: '/sections' as const },
+    { icon: 'library-outline' as const, title: 'المكتبة', caption: `${toArabicDigits(BOOK_COUNT)} كتب: حصن المسلم، تحفة الأخيار…`, href: '/library' as const },
+  ];
+  return (
+    <View style={{ gap: space.md, marginTop: space.md }}>
+      {rows.map((r) => (
+        <Press key={r.href} onPress={() => router.push(r.href)} depth={motion.press.card} style={[styles.row, { backgroundColor: theme.glass, borderColor: theme.border }]}>
+          <Row gap={space.md}>
+            <View style={[styles.icon, { backgroundColor: theme.surfaceAlt }]}>
+              <Ionicons name={r.icon} size={20} color={theme.text} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <T variant="heading" style={{ fontFamily: fonts.title, fontSize: 19 }}>{r.title}</T>
+              <T variant="caption" muted numberOfLines={1}>{r.caption}</T>
+            </View>
+            <Ionicons name="chevron-back" size={18} color={theme.muted} />
+          </Row>
+        </Press>
+      ))}
+    </View>
   );
 }
 

@@ -1,0 +1,2363 @@
+{
+  "title": "حصن المسلم",
+  "author": "سعيد بن وهف القحطاني",
+  "source": {
+    "turath": 31307
+  },
+  "chapters": [
+    {
+      "title": "أذكار الاستيقاظ من النوم",
+      "sections": [
+        "waking"
+      ],
+      "entries": [
+        {
+          "id": "hamd-ahyana",
+          "hadith": "hisn-1"
+        },
+        {
+          "id": "taarr-min-allayl",
+          "hadith": "hisn-2",
+          "note": "إذا استيقظ من الليل"
+        },
+        {
+          "id": "hamd-afani-fi-jasadi",
+          "hadith": "hisn-3"
+        },
+        {
+          "id": "al-imran-ending",
+          "hadith": "hisn-4"
+        }
+      ]
+    },
+    {
+      "title": "دعاء لبس الثوب",
+      "sections": [
+        "clothes"
+      ],
+      "entries": [
+        {
+          "id": "labs-thawb",
+          "hadith": "hisn-5"
+        }
+      ]
+    },
+    {
+      "title": "دعاء لبس الثوب الجديد",
+      "sections": [
+        "clothes"
+      ],
+      "entries": [
+        {
+          "id": "thawb-jadid",
+          "hadith": "hisn-6"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء لمن لبس ثوبا جديدا",
+      "sections": [
+        "clothes",
+        "for-others"
+      ],
+      "entries": [
+        {
+          "id": "tubli-wa-yukhlif",
+          "hadith": "hisn-7"
+        },
+        {
+          "id": "ilbas-jadidan",
+          "hadith": "hisn-8"
+        }
+      ]
+    },
+    {
+      "title": "ما يقول إذا وضع ثوبه",
+      "sections": [
+        "clothes"
+      ],
+      "entries": [
+        {
+          "id": "bismillah",
+          "hadith": "hisn-9",
+          "note": "إذا وضع ثوبه"
+        }
+      ]
+    },
+    {
+      "title": "دعاء دخول الخلاء",
+      "sections": [
+        "toilet"
+      ],
+      "entries": [
+        {
+          "id": "dukhul-al-khala",
+          "hadith": "hisn-10"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الخروج من الخلاء",
+      "sections": [
+        "toilet"
+      ],
+      "entries": [
+        {
+          "id": "ghufranak",
+          "hadith": "hisn-11"
+        }
+      ]
+    },
+    {
+      "title": "الذكر قبل الوضوء",
+      "sections": [
+        "wudu"
+      ],
+      "entries": [
+        {
+          "id": "bismillah",
+          "hadith": "hisn-12",
+          "note": "قبل الوضوء"
+        }
+      ]
+    },
+    {
+      "title": "الذكر بعد الفراغ من الوضوء",
+      "sections": [
+        "wudu"
+      ],
+      "entries": [
+        {
+          "id": "wudu-shahada",
+          "hadith": "hisn-13"
+        },
+        {
+          "id": "wudu-tawwabin",
+          "hadith": "hisn-14"
+        },
+        {
+          "id": "subhanaka-allahumma-wa-bihamdik",
+          "hadith": "hisn-15"
+        }
+      ]
+    },
+    {
+      "title": "الذكر عند الخروج من المنزل",
+      "sections": [
+        "home"
+      ],
+      "entries": [
+        {
+          "id": "khuruj-bismillah-tawakkaltu",
+          "hadith": "hisn-16"
+        },
+        {
+          "id": "audhu-an-adilla",
+          "hadith": "hisn-17"
+        }
+      ]
+    },
+    {
+      "title": "الذكر عند دخول المنزل",
+      "sections": [
+        "home"
+      ],
+      "entries": [
+        {
+          "id": "bismillah-walajna",
+          "hadith": "hisn-18",
+          "note": "ثم يسلّم على أهله"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الذهاب إلى المسجد",
+      "sections": [
+        "mosque"
+      ],
+      "entries": [
+        {
+          "id": "duaa-an-nur",
+          "hadith": "hisn-19"
+        }
+      ]
+    },
+    {
+      "title": "دعاء دخول المسجد",
+      "sections": [
+        "mosque"
+      ],
+      "entries": [
+        {
+          "id": "dukhul-al-masjid",
+          "hadith": "hisn-20",
+          "note": "يبدأ برجله اليمنى، ويقول"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الخروج من المسجد",
+      "sections": [
+        "mosque"
+      ],
+      "entries": [
+        {
+          "id": "khuruj-min-al-masjid",
+          "hadith": "hisn-21",
+          "note": "يبدأ برجله اليسرى، ويقول"
+        }
+      ]
+    },
+    {
+      "title": "أذكار الأذان",
+      "sections": [
+        "adhan"
+      ],
+      "entries": [
+        {
+          "id": "hawqala",
+          "hadith": "hisn-22",
+          "note": "يقول مثل ما يقول المؤذن، إلا في «حيّ على الصلاة» و«حيّ على الفلاح» فيقول"
+        },
+        {
+          "id": "adhan-wa-ana-ashhad",
+          "hadith": "hisn-23",
+          "note": "يقوله عقب تشهد المؤذن"
+        },
+        {
+          "guide": "يصلي على النبي ﷺ بعد فراغه من إجابة المؤذن",
+          "hadith": "hisn-24"
+        },
+        {
+          "id": "adhan-al-wasila",
+          "hadith": "hisn-25"
+        },
+        {
+          "guide": "يدعو لنفسه بين الأذان والإقامة؛ فإن الدعاء حينئذ لا يُرد",
+          "hadith": "hisn-26"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الاستفتاح",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "istiftah-baid",
+          "hadith": "hisn-27"
+        },
+        {
+          "id": "istiftah-subhanak",
+          "hadith": "hisn-28"
+        },
+        {
+          "id": "istiftah-wajjahtu",
+          "hadith": "hisn-29"
+        },
+        {
+          "id": "istiftah-jibrail",
+          "hadith": "hisn-30"
+        },
+        {
+          "id": "istiftah-kabiran",
+          "hadith": "hisn-31",
+          "note": "يقول التكبير والتحميد والتسبيح ثلاثًا، ثم يستعيذ"
+        },
+        {
+          "id": "istiftah-nur-as-samawat",
+          "hadith": "hisn-32",
+          "note": "كان النبي ﷺ يقوله إذا قام من الليل يتهجد"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الركوع",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "subhana-rabbiyal-azim",
+          "num": 3,
+          "hadith": "hisn-33"
+        },
+        {
+          "id": "subhanaka-allahumma-rabbana",
+          "hadith": "hisn-34"
+        },
+        {
+          "id": "subbuhun-quddus",
+          "hadith": "hisn-35"
+        },
+        {
+          "id": "ruku-allahumma-laka",
+          "hadith": "hisn-36"
+        },
+        {
+          "id": "subhana-dhil-jabarut",
+          "hadith": "hisn-37"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الرفع من الركوع",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "samiallahu-liman-hamidah",
+          "hadith": "hisn-38"
+        },
+        {
+          "id": "rabbana-wa-lakal-hamd",
+          "hadith": "hisn-39"
+        },
+        {
+          "id": "mil-as-samawat",
+          "hadith": "hisn-40"
+        }
+      ]
+    },
+    {
+      "title": "دعاء السجود",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "subhana-rabbiyal-ala",
+          "num": 3,
+          "hadith": "hisn-41"
+        },
+        {
+          "id": "subhanaka-allahumma-rabbana",
+          "hadith": "hisn-42"
+        },
+        {
+          "id": "subbuhun-quddus",
+          "hadith": "hisn-43"
+        },
+        {
+          "id": "sujud-allahumma-laka",
+          "hadith": "hisn-44"
+        },
+        {
+          "id": "subhana-dhil-jabarut",
+          "hadith": "hisn-45"
+        },
+        {
+          "id": "ighfir-li-dhanbi-kullah",
+          "hadith": "hisn-46"
+        },
+        {
+          "id": "audhu-biridak",
+          "hadith": "hisn-47"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الجلسة بين السجدتين",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "rabbighfir-li",
+          "hadith": "hisn-48"
+        },
+        {
+          "id": "jalsa-ighfir-li-warhamni",
+          "hadith": "hisn-49"
+        }
+      ]
+    },
+    {
+      "title": "دعاء سجود التلاوة",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "sajada-wajhi",
+          "hadith": "hisn-50"
+        },
+        {
+          "id": "tilawa-uktub-li",
+          "hadith": "hisn-51"
+        }
+      ]
+    },
+    {
+      "title": "التشهد",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "at-tahiyyat",
+          "hadith": "hisn-52"
+        }
+      ]
+    },
+    {
+      "title": "الصلاة على النبي - ﷺ - بعد التشهد",
+      "sections": [
+        "prayer",
+        "salat-nabi"
+      ],
+      "entries": [
+        {
+          "id": "as-salat-al-ibrahimiyya",
+          "hadith": "hisn-53"
+        },
+        {
+          "id": "salat-azwajihi",
+          "hadith": "hisn-54"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء بعد التشهد الأخير قبل السلام",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "audhu-min-adhab-al-qabr",
+          "hadith": "hisn-55"
+        },
+        {
+          "id": "audhu-min-al-maatham",
+          "hadith": "hisn-56"
+        },
+        {
+          "id": "zalamtu-nafsi",
+          "hadith": "hisn-57"
+        },
+        {
+          "id": "ighfir-li-ma-qaddamt",
+          "hadith": "hisn-58"
+        },
+        {
+          "id": "ainni-ala-dhikrik",
+          "hadith": "hisn-59"
+        },
+        {
+          "id": "audhu-min-al-bukhl",
+          "hadith": "hisn-60"
+        },
+        {
+          "id": "asaluka-al-jannah",
+          "hadith": "hisn-61"
+        },
+        {
+          "id": "bi-ilmika-al-ghayb",
+          "hadith": "hisn-62"
+        },
+        {
+          "id": "ya-allah-al-ahad",
+          "hadith": "hisn-63"
+        },
+        {
+          "id": "bianna-lakal-hamd",
+          "hadith": "hisn-64"
+        },
+        {
+          "id": "bianni-ashhadu",
+          "hadith": "hisn-65"
+        }
+      ]
+    },
+    {
+      "title": "الأذكار بعد السلام من الصلاة",
+      "sections": [
+        "post-prayer"
+      ],
+      "entries": [
+        {
+          "id": "astaghfirullah",
+          "num": 3,
+          "hadith": "hisn-66"
+        },
+        {
+          "id": "anta-as-salam",
+          "hadith": "hisn-66"
+        },
+        {
+          "id": "la-mania-lima-atayt",
+          "hadith": "hisn-67"
+        },
+        {
+          "id": "la-nabudu-illa-iyyah",
+          "hadith": "hisn-68"
+        },
+        {
+          "id": "subhanallah",
+          "num": 33,
+          "hadith": "hisn-69"
+        },
+        {
+          "id": "alhamdulillah",
+          "num": 33,
+          "hadith": "hisn-69"
+        },
+        {
+          "id": "allahu-akbar",
+          "num": 33,
+          "hadith": "hisn-69"
+        },
+        {
+          "id": "tahleel",
+          "hadith": "hisn-69",
+          "note": "تمام المائة"
+        },
+        {
+          "id": "al-ikhlas",
+          "hadith": "hisn-70",
+          "note": "بعد كل صلاة"
+        },
+        {
+          "id": "al-falaq",
+          "hadith": "hisn-70"
+        },
+        {
+          "id": "an-nas",
+          "hadith": "hisn-70"
+        },
+        {
+          "id": "ayat-al-kursi",
+          "hadith": "hisn-71"
+        },
+        {
+          "id": "tahleel-yuhyi-wa-yumit",
+          "num": 10,
+          "hadith": "hisn-72",
+          "note": "بعد صلاة المغرب والصبح"
+        },
+        {
+          "id": "ilman-nafian",
+          "hadith": "hisn-73",
+          "note": "بعد السلام من صلاة الفجر"
+        }
+      ]
+    },
+    {
+      "title": "دعاء صلاة الاستخارة",
+      "sections": [
+        "istikhara"
+      ],
+      "entries": [
+        {
+          "id": "istikhara",
+          "hadith": "hisn-74",
+          "note": "إذا همّ أحدكم بالأمر فليركع ركعتين من غير الفريضة، ثم ليقل"
+        }
+      ]
+    },
+    {
+      "title": "أذكار الصباح والمساء",
+      "sections": [
+        "morning",
+        "evening"
+      ],
+      "entries": [
+        {
+          "id": "ayat-al-kursi",
+          "hadith": "hisn-75",
+          "note": "يستعيذ بالله من الشيطان الرجيم، ثم يقرأ"
+        },
+        {
+          "id": "al-ikhlas",
+          "num": 3,
+          "hadith": "hisn-76"
+        },
+        {
+          "id": "al-falaq",
+          "num": 3,
+          "hadith": "hisn-76"
+        },
+        {
+          "id": "an-nas",
+          "num": 3,
+          "hadith": "hisn-76"
+        },
+        {
+          "id": "asbahna-almulk-long",
+          "hadith": "hisn-77",
+          "only": "morning"
+        },
+        {
+          "id": "amsayna-almulk-long",
+          "hadith": "hisn-77",
+          "only": "evening"
+        },
+        {
+          "id": "bika-asbahna",
+          "hadith": "hisn-78",
+          "only": "morning"
+        },
+        {
+          "id": "bika-amsayna",
+          "hadith": "hisn-78",
+          "only": "evening"
+        },
+        {
+          "id": "sayyid-al-istighfar",
+          "hadith": "hisn-79"
+        },
+        {
+          "id": "asbahtu-ushhiduk-wahdak",
+          "num": 4,
+          "hadith": "hisn-80",
+          "only": "morning"
+        },
+        {
+          "id": "amsaytu-ushhiduk-wahdak",
+          "num": 4,
+          "hadith": "hisn-80",
+          "only": "evening"
+        },
+        {
+          "id": "ma-asbaha-bi",
+          "hadith": "hisn-81",
+          "only": "morning"
+        },
+        {
+          "id": "ma-amsa-bi-aw-biahad",
+          "hadith": "hisn-81",
+          "only": "evening"
+        },
+        {
+          "id": "afini-fi-badani-wal-kufr",
+          "num": 3,
+          "hadith": "hisn-82"
+        },
+        {
+          "id": "hasbiyallah",
+          "num": 7,
+          "hadith": "hisn-83"
+        },
+        {
+          "id": "afw-wal-afiyah",
+          "hadith": "hisn-84"
+        },
+        {
+          "id": "alim-al-ghayb-fatir",
+          "hadith": "hisn-85"
+        },
+        {
+          "id": "bismillah-la-yadurr",
+          "num": 3,
+          "hadith": "hisn-86"
+        },
+        {
+          "id": "raditu-billah",
+          "num": 3,
+          "hadith": "hisn-87"
+        },
+        {
+          "id": "ya-hayyu-ya-qayyum",
+          "hadith": "hisn-88"
+        },
+        {
+          "id": "asbahna-rabb-al-alamin",
+          "hadith": "hisn-89",
+          "only": "morning"
+        },
+        {
+          "id": "amsayna-rabb-al-alamin",
+          "hadith": "hisn-89",
+          "only": "evening"
+        },
+        {
+          "id": "asbahna-ala-fitrah",
+          "hadith": "hisn-90",
+          "only": "morning"
+        },
+        {
+          "id": "amsayna-ala-fitrah",
+          "hadith": "hisn-90",
+          "only": "evening"
+        },
+        {
+          "id": "subhanallah-wa-bihamdih",
+          "num": 100,
+          "hadith": "hisn-91"
+        },
+        {
+          "id": "tahleel",
+          "num": 10,
+          "hadith": "hisn-92",
+          "note": "أو مرة واحدة عند الكسل"
+        },
+        {
+          "id": "tahleel",
+          "num": 100,
+          "hadith": "hisn-93",
+          "only": "morning"
+        },
+        {
+          "id": "adada-khalqih",
+          "num": 3,
+          "hadith": "hisn-94",
+          "only": "morning"
+        },
+        {
+          "id": "ilman-nafian",
+          "hadith": "hisn-95",
+          "only": "morning"
+        },
+        {
+          "id": "astaghfirullah-wa-atubu",
+          "num": 100,
+          "hadith": "hisn-96",
+          "note": "مائة مرة في اليوم"
+        },
+        {
+          "id": "kalimat-allah",
+          "num": 3,
+          "hadith": "hisn-97",
+          "only": "evening"
+        },
+        {
+          "id": "salli-wa-sallim-ala-nabiyyina",
+          "num": 10,
+          "hadith": "hisn-98"
+        }
+      ]
+    },
+    {
+      "title": "أذكار النوم",
+      "sections": [
+        "sleep"
+      ],
+      "entries": [
+        {
+          "id": "al-ikhlas",
+          "num": 3,
+          "hadith": "hisn-99",
+          "note": "يجمع كفيه ثم ينفث فيهما فيقرأ المعوذات، ثم يمسح بهما ما استطاع من جسده، يبدأ برأسه ووجهه وما أقبل من جسده، يفعل ذلك ثلاث مرات"
+        },
+        {
+          "id": "al-falaq",
+          "num": 3,
+          "hadith": "hisn-99"
+        },
+        {
+          "id": "an-nas",
+          "num": 3,
+          "hadith": "hisn-99"
+        },
+        {
+          "id": "ayat-al-kursi",
+          "hadith": "hisn-100"
+        },
+        {
+          "id": "baqarah-ending",
+          "hadith": "hisn-101"
+        },
+        {
+          "id": "bismika-rabbi-wadatu",
+          "hadith": "hisn-102",
+          "note": "إذا أوى إلى فراشه نفضه بطرف إزاره ثلاثًا، وسمّى الله"
+        },
+        {
+          "id": "khalaqta-nafsi",
+          "hadith": "hisn-103"
+        },
+        {
+          "id": "qini-adhabak",
+          "num": 3,
+          "hadith": "hisn-104",
+          "note": "يضع يده اليمنى تحت خده"
+        },
+        {
+          "id": "bismika-amutu",
+          "hadith": "hisn-105"
+        },
+        {
+          "id": "subhanallah",
+          "num": 33,
+          "hadith": "hisn-106"
+        },
+        {
+          "id": "alhamdulillah",
+          "num": 33,
+          "hadith": "hisn-106"
+        },
+        {
+          "id": "allahu-akbar",
+          "num": 34,
+          "hadith": "hisn-106"
+        },
+        {
+          "id": "rabb-as-samawat-as-sab",
+          "hadith": "hisn-107"
+        },
+        {
+          "id": "atamana-wa-saqana",
+          "hadith": "hisn-108"
+        },
+        {
+          "id": "alim-al-ghayb-fatir",
+          "hadith": "hisn-109"
+        },
+        {
+          "id": "surat-as-sajdah",
+          "hadith": "hisn-110",
+          "note": "كان النبي ﷺ لا ينام حتى يقرأ «الم تنزيل» السجدة و«تبارك الذي بيده الملك»"
+        },
+        {
+          "id": "surat-al-mulk",
+          "hadith": "hisn-110"
+        },
+        {
+          "id": "aslamtu-nafsi",
+          "hadith": "hisn-111",
+          "note": "يتوضأ وضوءه للصلاة، ثم يضطجع على شقه الأيمن، ويجعلهن آخر ما يقول"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء إذا تقلب ليلا",
+      "sections": [
+        "night"
+      ],
+      "entries": [
+        {
+          "id": "al-wahid-al-qahhar",
+          "hadith": "hisn-112",
+          "note": "إذا تقلب من جنب إلى جنب في الليل"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الفزع في النوم ومن بلي بالوحشة",
+      "sections": [
+        "night",
+        "fear"
+      ],
+      "entries": [
+        {
+          "id": "audhu-min-ghadabihi",
+          "hadith": "hisn-113"
+        }
+      ]
+    },
+    {
+      "title": "ما يفعل من رأى الرؤيا أو الحلم",
+      "sections": [
+        "night"
+      ],
+      "entries": [
+        {
+          "guide": "ينفث عن يساره ثلاثًا",
+          "hadith": "hisn-114"
+        },
+        {
+          "guide": "يستعيذ بالله من الشيطان ومن شر ما رأى ثلاث مرات",
+          "hadith": "hisn-114"
+        },
+        {
+          "guide": "لا يحدّث بها أحدًا",
+          "hadith": "hisn-114"
+        },
+        {
+          "guide": "يتحول عن جنبه الذي كان عليه",
+          "hadith": "hisn-114"
+        },
+        {
+          "guide": "يقوم يصلي إن أراد ذلك",
+          "hadith": "hisn-115"
+        }
+      ]
+    },
+    {
+      "title": "دعاء قنوت الوتر",
+      "sections": [
+        "witr"
+      ],
+      "entries": [
+        {
+          "id": "qunut-ihdini",
+          "hadith": "hisn-116"
+        },
+        {
+          "id": "audhu-biridak",
+          "hadith": "hisn-117"
+        },
+        {
+          "id": "qunut-umar",
+          "hadith": "hisn-118"
+        }
+      ]
+    },
+    {
+      "title": "الذكر عقب السلام من الوتر",
+      "sections": [
+        "witr"
+      ],
+      "entries": [
+        {
+          "id": "subhana-al-malik-al-quddus",
+          "num": 3,
+          "hadith": "hisn-119",
+          "note": "يجهر بالثالثة ويمد بها صوته، ويقول: ربِّ الملائكة والروح"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الهم والحزن",
+      "sections": [
+        "distress"
+      ],
+      "entries": [
+        {
+          "id": "inni-abduka",
+          "hadith": "hisn-120"
+        },
+        {
+          "id": "audhu-min-al-hamm",
+          "hadith": "hisn-121"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الكرب",
+      "sections": [
+        "distress"
+      ],
+      "entries": [
+        {
+          "id": "karb-al-azim-al-halim",
+          "hadith": "hisn-122"
+        },
+        {
+          "id": "rahmataka-arju",
+          "hadith": "hisn-123"
+        },
+        {
+          "id": "dua-dhin-nun",
+          "hadith": "hisn-124"
+        },
+        {
+          "id": "allahu-rabbi",
+          "hadith": "hisn-125"
+        }
+      ]
+    },
+    {
+      "title": "دعاء لقاء العدو وذي السلطان",
+      "sections": [
+        "fear"
+      ],
+      "entries": [
+        {
+          "id": "najaluka-fi-nuhurihim",
+          "hadith": "hisn-126"
+        },
+        {
+          "id": "anta-adudi",
+          "hadith": "hisn-127"
+        },
+        {
+          "id": "hasbunallah",
+          "hadith": "hisn-128"
+        }
+      ]
+    },
+    {
+      "title": "دعاء من خاف ظلم السلطان",
+      "sections": [
+        "fear"
+      ],
+      "entries": [
+        {
+          "id": "kun-li-jaran",
+          "hadith": "hisn-129"
+        },
+        {
+          "id": "allahu-aazzu",
+          "num": 3,
+          "hadith": "hisn-130"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء على العدو",
+      "sections": [
+        "fear"
+      ],
+      "entries": [
+        {
+          "id": "ihzim-al-ahzab",
+          "hadith": "hisn-131"
+        }
+      ]
+    },
+    {
+      "title": "ما يقول من خاف قوما",
+      "sections": [
+        "fear"
+      ],
+      "entries": [
+        {
+          "id": "ikfinihim",
+          "hadith": "hisn-132"
+        }
+      ]
+    },
+    {
+      "title": "دعاء من أصابه وسوسة في الإيمان",
+      "sections": [
+        "waswas"
+      ],
+      "entries": [
+        {
+          "guide": "يستعيذ بالله",
+          "hadith": "hisn-133"
+        },
+        {
+          "guide": "ينتهي عما وسوس فيه",
+          "hadith": "hisn-133"
+        },
+        {
+          "id": "amantu-billahi-wa-rusulih",
+          "hadith": "hisn-134"
+        },
+        {
+          "id": "huwa-al-awwal",
+          "hadith": "hisn-135",
+          "note": "يقرأ قوله تعالى"
+        }
+      ]
+    },
+    {
+      "title": "دعاء قضاء الدين",
+      "sections": [
+        "debt"
+      ],
+      "entries": [
+        {
+          "id": "ikfini-bihalalik",
+          "hadith": "hisn-136"
+        },
+        {
+          "id": "audhu-min-al-hamm",
+          "hadith": "hisn-137"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الوسوسة في الصلاة والقراءة",
+      "sections": [
+        "waswas",
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "taawwudh",
+          "hadith": "hisn-138",
+          "note": "ويتفل عن يساره ثلاثًا"
+        }
+      ]
+    },
+    {
+      "title": "دعاء من استصعب عليه أمر",
+      "sections": [
+        "distress"
+      ],
+      "entries": [
+        {
+          "id": "la-sahla",
+          "hadith": "hisn-139"
+        }
+      ]
+    },
+    {
+      "title": "ما يقول ويفعل من أذنب ذنبا",
+      "sections": [
+        "istighfar"
+      ],
+      "entries": [
+        {
+          "guide": "ما من عبد يذنب ذنبًا فيحسن الطهور، ثم يقوم فيصلي ركعتين، ثم يستغفر الله إلا غفر الله له",
+          "hadith": "hisn-140"
+        }
+      ]
+    },
+    {
+      "title": "دعاء طرد الشيطان ووساوسه",
+      "sections": [
+        "waswas"
+      ],
+      "entries": [
+        {
+          "guide": "الاستعاذة بالله منه",
+          "hadith": "hisn-141"
+        },
+        {
+          "guide": "الأذان",
+          "hadith": "hisn-142"
+        },
+        {
+          "guide": "الأذكار وقراءة القرآن",
+          "hadith": "hisn-143"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء حينما يقع ما لا يرضاه أو غلب على أمره",
+      "sections": [
+        "distress"
+      ],
+      "entries": [
+        {
+          "id": "qaddarallah",
+          "hadith": "hisn-144"
+        }
+      ]
+    },
+    {
+      "title": "ما يعوذ به الأولاد",
+      "sections": [
+        "ruqyah",
+        "family"
+      ],
+      "entries": [
+        {
+          "id": "uidhukuma",
+          "hadith": "hisn-146",
+          "note": "كان رسول الله ﷺ يعوّذ الحسن والحسين"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء للمريض في عيادته",
+      "sections": [
+        "sick"
+      ],
+      "entries": [
+        {
+          "id": "la-bas-tahur",
+          "hadith": "hisn-147"
+        },
+        {
+          "id": "asalullah-an-yashfiyak",
+          "num": 7,
+          "hadith": "hisn-148"
+        }
+      ]
+    },
+    {
+      "title": "فضل عيادة المريض",
+      "sections": [
+        "sick"
+      ],
+      "entries": [
+        {
+          "guide": "إِذَا عَادَ الرَّجُلُ أَخَاهُ الْمُسْلِمَ مَشَى فِي خِرَافَةِ الْجَنَّةِ حَتَّى يَجْلِسَ، فَإِذَا جَلَسَ غَمَرَتْهُ الرَّحْمَةُ، فَإِنْ كَانَ غُدْوَةً صَلَّى عَلَيْهِ سَبْعُونَ أَلْفَ مَلَكٍ حَتَّى يُمْسِيَ، وَإِنْ كَانَ مَسَاءً صَلَّى عَلَيْهِ سَبْعُونَ أَلْفَ مَلَكٍ حَتَّى يُصْبِحَ",
+          "hadith": "hisn-149"
+        }
+      ]
+    },
+    {
+      "title": "دعاء المريض الذي يئس من حياته",
+      "sections": [
+        "sick"
+      ],
+      "entries": [
+        {
+          "id": "alhiqni-bir-rafiq",
+          "hadith": "hisn-150"
+        },
+        {
+          "id": "inna-lil-mawti-sakarat",
+          "hadith": "hisn-151",
+          "note": "جعل النبي ﷺ عند موته يُدخل يديه في الماء فيمسح بهما وجهه ويقول"
+        },
+        {
+          "id": "tahleel-al-marid",
+          "hadith": "hisn-152"
+        }
+      ]
+    },
+    {
+      "title": "تلقين المحتضر",
+      "sections": [
+        "sick"
+      ],
+      "entries": [
+        {
+          "guide": "مَنْ كَانَ آخِرُ كَلاَمِهِ لاَ إِلَهَ إِلاَّ اللَّهُ دَخَلَ الْجَنَّةَ",
+          "hadith": "hisn-153"
+        }
+      ]
+    },
+    {
+      "title": "دعاء من أصيب بمصيبة",
+      "sections": [
+        "calamity"
+      ],
+      "entries": [
+        {
+          "id": "inna-lillah-ujurni",
+          "hadith": "hisn-154"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء عند إغماض الميت",
+      "sections": [
+        "funeral"
+      ],
+      "entries": [
+        {
+          "id": "ighmad-al-mayyit",
+          "hadith": "hisn-155"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء للميت في الصلاة عليه",
+      "sections": [
+        "funeral"
+      ],
+      "entries": [
+        {
+          "id": "janaza-ighfir-lahu-warhamhu",
+          "hadith": "hisn-156"
+        },
+        {
+          "id": "janaza-hayyina-wa-mayyitina",
+          "hadith": "hisn-157"
+        },
+        {
+          "id": "janaza-fi-dhimmatik",
+          "hadith": "hisn-158"
+        },
+        {
+          "id": "janaza-abduka",
+          "hadith": "hisn-159"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء للفرط في الصلاة عليه",
+      "sections": [
+        "funeral"
+      ],
+      "entries": [
+        {
+          "id": "aidhhu-min-adhab-al-qabr",
+          "hadith": "hisn-160",
+          "note": "في الصلاة على الطفل، وكان أبو هريرة رضي الله عنه يقوله"
+        }
+      ]
+    },
+    {
+      "title": "دعاء التعزية",
+      "sections": [
+        "funeral"
+      ],
+      "entries": [
+        {
+          "id": "inna-lillahi-ma-akhadh",
+          "hadith": "hisn-162"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء عند إدخال الميت القبر",
+      "sections": [
+        "funeral"
+      ],
+      "entries": [
+        {
+          "id": "bismillah-wa-ala-sunnah",
+          "hadith": "hisn-163"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء بعد دفن الميت",
+      "sections": [
+        "funeral"
+      ],
+      "entries": [
+        {
+          "id": "ighfir-lahu-thabbithu",
+          "hadith": "hisn-164",
+          "note": "بعد دفن الميت"
+        }
+      ]
+    },
+    {
+      "title": "دعاء زيارة القبور",
+      "sections": [
+        "graves"
+      ],
+      "entries": [
+        {
+          "id": "ziyarat-al-qubur",
+          "hadith": "hisn-165"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الريح",
+      "sections": [
+        "weather"
+      ],
+      "entries": [
+        {
+          "id": "ar-rih-khayraha",
+          "hadith": "hisn-166"
+        },
+        {
+          "id": "ar-rih-ma-ursilat-bih",
+          "hadith": "hisn-167"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الرعد",
+      "sections": [
+        "weather"
+      ],
+      "entries": [
+        {
+          "id": "ar-raad",
+          "hadith": "hisn-168"
+        }
+      ]
+    },
+    {
+      "title": "من أدعية الاستسقاء",
+      "sections": [
+        "weather"
+      ],
+      "entries": [
+        {
+          "id": "isqina-ghaythan",
+          "hadith": "hisn-169"
+        },
+        {
+          "id": "aghithna",
+          "hadith": "hisn-170"
+        },
+        {
+          "id": "isqi-ibadak",
+          "hadith": "hisn-171"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء إذا رأى المطر",
+      "sections": [
+        "weather"
+      ],
+      "entries": [
+        {
+          "id": "sayyiban-nafian",
+          "hadith": "hisn-172"
+        }
+      ]
+    },
+    {
+      "title": "الذكر بعد نزول المطر",
+      "sections": [
+        "weather"
+      ],
+      "entries": [
+        {
+          "id": "mutirna",
+          "hadith": "hisn-173"
+        }
+      ]
+    },
+    {
+      "title": "من أدعية الاستصحاء",
+      "sections": [
+        "weather"
+      ],
+      "entries": [
+        {
+          "id": "hawalayna",
+          "hadith": "hisn-174"
+        }
+      ]
+    },
+    {
+      "title": "دعاء رؤية الهلال",
+      "sections": [
+        "hilal"
+      ],
+      "entries": [
+        {
+          "id": "ruyat-al-hilal",
+          "hadith": "hisn-175"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء عند إفطار الصائم",
+      "sections": [
+        "fasting"
+      ],
+      "entries": [
+        {
+          "id": "dhahaba-az-zama",
+          "hadith": "hisn-176"
+        },
+        {
+          "id": "birahmatika-allati-wasiat",
+          "hadith": "hisn-177",
+          "note": "كان عبد الله بن عمرو رضي الله عنهما يقوله إذا أفطر"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء قبل الطعام",
+      "sections": [
+        "food"
+      ],
+      "entries": [
+        {
+          "id": "bismillah",
+          "hadith": "hisn-178",
+          "note": "قبل الطعام"
+        },
+        {
+          "id": "bismillah-awwalahu-wa-akhirah",
+          "hadith": "hisn-178",
+          "note": "إن نسي في أوله"
+        },
+        {
+          "id": "barik-lana-fihi-wa-atimna",
+          "hadith": "hisn-179",
+          "note": "من أطعمه الله الطعام"
+        },
+        {
+          "id": "barik-lana-fihi-wa-zidna",
+          "hadith": "hisn-179",
+          "note": "من سقاه الله لبنًا"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء عند الفراغ من الطعام",
+      "sections": [
+        "food"
+      ],
+      "entries": [
+        {
+          "id": "atamani-hadha",
+          "hadith": "hisn-180"
+        },
+        {
+          "id": "hamdan-kathiran-tayyiban",
+          "hadith": "hisn-181"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الضيف لصاحب الطعام",
+      "sections": [
+        "food",
+        "for-others"
+      ],
+      "entries": [
+        {
+          "id": "barik-lahum-fima-razaqtahum",
+          "hadith": "hisn-182"
+        }
+      ]
+    },
+    {
+      "title": "التعريض بالدعاء لطلب الطعام أو الشراب",
+      "sections": [
+        "food"
+      ],
+      "entries": [
+        {
+          "id": "atim-man-atamani",
+          "hadith": "hisn-183"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء إذا أفطر عند أهل بيت",
+      "sections": [
+        "food",
+        "fasting"
+      ],
+      "entries": [
+        {
+          "id": "aftara-indakum",
+          "hadith": "hisn-184"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الصائم إذا حضر الطعام ولم يفطر",
+      "sections": [
+        "fasting"
+      ],
+      "entries": [
+        {
+          "guide": "إِذَا دُعِيَ أَحَدُكُمْ فَلْيُجِبْ، فَإِنْ كَانَ صَائِمًا فَلْيُصَلِّ، وَإِنْ كَانَ مُفْطِرًا فَلْيَطْعَمْ، وَمَعْنَى فَلْيُصَلِّ أَيْ فَلْيَدْعُ",
+          "hadith": "hisn-185"
+        }
+      ]
+    },
+    {
+      "title": "ما يقول الصائم إذا سابه أحد",
+      "sections": [
+        "fasting"
+      ],
+      "entries": [
+        {
+          "id": "inni-saim",
+          "hadith": "hisn-186"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء عند رؤية باكورة الثمر",
+      "sections": [
+        "food"
+      ],
+      "entries": [
+        {
+          "id": "barik-lana-fi-thamarina",
+          "hadith": "hisn-187"
+        }
+      ]
+    },
+    {
+      "title": "دعاء العطاس",
+      "sections": [
+        "sneeze"
+      ],
+      "entries": [
+        {
+          "id": "alhamdulillah",
+          "hadith": "hisn-188",
+          "note": "يقوله العاطس"
+        },
+        {
+          "id": "yarhamukallah",
+          "hadith": "hisn-188",
+          "note": "يقوله أخوه أو صاحبه"
+        },
+        {
+          "id": "yahdikumullah",
+          "hadith": "hisn-188",
+          "note": "ويردّ العاطس"
+        }
+      ]
+    },
+    {
+      "title": "ما يقال للكافر إذا عطس فحمد الله",
+      "sections": [
+        "sneeze"
+      ],
+      "entries": [
+        {
+          "id": "yahdikumullah",
+          "hadith": "hisn-189",
+          "note": "يقال للكافر إذا عطس فحمد الله"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء للمتزوج",
+      "sections": [
+        "family",
+        "for-others"
+      ],
+      "entries": [
+        {
+          "id": "barakallahu-laka-wa-baraka-alayk",
+          "hadith": "hisn-190"
+        }
+      ]
+    },
+    {
+      "title": "دعاء المتزوج وشراء الدابة",
+      "sections": [
+        "family"
+      ],
+      "entries": [
+        {
+          "id": "asaluka-khayraha-wa-khayra-ma-jabaltaha",
+          "hadith": "hisn-191",
+          "note": "إذا تزوج امرأة أو اشترى خادمًا، وإذا اشترى بعيرًا أخذ بذروة سنامه وقال مثل ذلك"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء قبل إتيان الزوجة",
+      "sections": [
+        "family"
+      ],
+      "entries": [
+        {
+          "id": "jannibna-ash-shaytan",
+          "hadith": "hisn-192"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الغضب",
+      "sections": [
+        "anger"
+      ],
+      "entries": [
+        {
+          "id": "taawwudh",
+          "hadith": "hisn-193"
+        }
+      ]
+    },
+    {
+      "title": "دعاء من رأى مبتلى",
+      "sections": [
+        "misc"
+      ],
+      "entries": [
+        {
+          "id": "afani-mimma-ibtalak",
+          "hadith": "hisn-194"
+        }
+      ]
+    },
+    {
+      "title": "ما يقال في المجلس",
+      "sections": [
+        "majlis"
+      ],
+      "entries": [
+        {
+          "id": "rabbighfir-li-wa-tub-alayy",
+          "num": 100,
+          "hadith": "hisn-195",
+          "note": "كان يُعد لرسول الله ﷺ في المجلس الواحد مائة مرة من قبل أن يقوم"
+        }
+      ]
+    },
+    {
+      "title": "كفارة المجلس",
+      "sections": [
+        "majlis"
+      ],
+      "entries": [
+        {
+          "id": "subhanaka-allahumma-wa-bihamdik",
+          "hadith": "hisn-196"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء لمن قال غفر الله لك",
+      "sections": [
+        "for-others"
+      ],
+      "entries": [
+        {
+          "id": "wa-laka",
+          "hadith": "hisn-197",
+          "note": "لمن قال: غفر الله لك"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء لمن صنع إليك معروفا",
+      "sections": [
+        "for-others"
+      ],
+      "entries": [
+        {
+          "id": "jazakallahu-khayran",
+          "hadith": "hisn-198",
+          "note": "لمن صنع إليك معروفًا"
+        }
+      ]
+    },
+    {
+      "title": "ما يعصم الله به من الدجال",
+      "sections": [
+        "misc"
+      ],
+      "entries": [
+        {
+          "guide": "مَنْ حَفِظَ عَشْرَ آيَاتٍ مِنْ أَوَّلِ سُورَةِ الْكَهْفِ عُصِمَ مِنَ الدَّجَّالِ، وَالْاسْتِعَاذَةُ بِاللَّهِ مِنْ فِتْنَتِهِ عَقِبَ التَّشَهُّدِ الْأَخِيرِ مِنْ كُلِّ صَلاَةٍ",
+          "hadith": "hisn-199"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء لمن قال إني أحبك في الله",
+      "sections": [
+        "for-others"
+      ],
+      "entries": [
+        {
+          "id": "ahabbaka-alladhi",
+          "hadith": "hisn-200",
+          "note": "لمن قال: إني أحبك في الله"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء لمن عرض عليك ماله",
+      "sections": [
+        "for-others"
+      ],
+      "entries": [
+        {
+          "id": "barakallahu-laka-fi-ahlik",
+          "hadith": "hisn-201",
+          "note": "لمن عرض عليك ماله"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء لمن أقرض عند القضاء",
+      "sections": [
+        "for-others",
+        "debt"
+      ],
+      "entries": [
+        {
+          "id": "jaza-as-salaf",
+          "hadith": "hisn-202",
+          "note": "لمن أقرضك، عند قضائه"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الخوف من الشرك",
+      "sections": [
+        "misc"
+      ],
+      "entries": [
+        {
+          "id": "an-ushrika-bika",
+          "hadith": "hisn-203"
+        }
+      ]
+    },
+    {
+      "title": "دعاء كراهية الطيرة",
+      "sections": [
+        "misc"
+      ],
+      "entries": [
+        {
+          "id": "la-tayra-illa-tayruk",
+          "hadith": "hisn-205"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الركوب",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "duaa-ar-rukub",
+          "hadith": "hisn-206"
+        }
+      ]
+    },
+    {
+      "title": "دعاء السفر",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "duaa-as-safar",
+          "hadith": "hisn-207"
+        },
+        {
+          "id": "ayibun-taibun",
+          "hadith": "hisn-207",
+          "note": "وإذا رجع قالهن وزاد فيهن"
+        }
+      ]
+    },
+    {
+      "title": "دعاء دخول القرية أو البلدة",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "duaa-al-qaryah",
+          "hadith": "hisn-208"
+        }
+      ]
+    },
+    {
+      "title": "دعاء دخول السوق",
+      "sections": [
+        "market"
+      ],
+      "entries": [
+        {
+          "id": "duaa-as-suq",
+          "hadith": "hisn-209"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء إذا تعس المركوب",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "bismillah",
+          "hadith": "hisn-210",
+          "note": "إذا تعثّر المركوب"
+        }
+      ]
+    },
+    {
+      "title": "دعاء المسافر للمقيم",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "astawdiukum-allah",
+          "hadith": "hisn-211",
+          "note": "يقوله المسافر للمقيم"
+        }
+      ]
+    },
+    {
+      "title": "دعاء المقيم للمسافر",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "astawdiu-allaha-dinak",
+          "hadith": "hisn-212",
+          "note": "يقوله المقيم للمسافر"
+        },
+        {
+          "id": "zawwadakallahu-at-taqwa",
+          "hadith": "hisn-213"
+        }
+      ]
+    },
+    {
+      "title": "التكبير والتسبيح في سير السفر",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "guide": "كُنَّا إِذَا صَعَدْنَا كَبَّرْنَا، وَإِذَا نَزَلْنَا سَبَّحْنَا",
+          "hadith": "hisn-214"
+        }
+      ]
+    },
+    {
+      "title": "دعاء المسافر إذا أسحر",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "sammaa-samiun",
+          "hadith": "hisn-215",
+          "note": "إذا أسحر في سفره"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء إذا نزل منزلا في سفر أو غيره",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "kalimat-allah",
+          "hadith": "hisn-216",
+          "note": "إذا نزل منزلًا في سفر أو غيره"
+        }
+      ]
+    },
+    {
+      "title": "ذكر الرجوع من السفر",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "qufu-min-as-safar",
+          "hadith": "hisn-217",
+          "note": "يكبّر على كل شرف ثلاث تكبيرات، ثم يقول"
+        }
+      ]
+    },
+    {
+      "title": "ما يقول من أتاه أمر يسره أو يكرهه",
+      "sections": [
+        "joy"
+      ],
+      "entries": [
+        {
+          "id": "bini-matihi-tatimm",
+          "hadith": "hisn-218",
+          "note": "إذا أتاه الأمر يسره"
+        },
+        {
+          "id": "alhamdulillah-ala-kulli-hal",
+          "hadith": "hisn-218",
+          "note": "إذا أتاه الأمر يكرهه"
+        }
+      ]
+    },
+    {
+      "title": "فضل الصلاة على النبي - ﷺ ",
+      "sections": [
+        "salat-nabi"
+      ],
+      "entries": [
+        {
+          "guide": "مَنْ صَلَّى عَلَيَّ صَلاَةً صَلَّى اللَّهُ عَلَيْهِ بِهَا عَشْرًا",
+          "hadith": "hisn-219"
+        },
+        {
+          "guide": "لاَ تَجْعَلُوا قَبْرِي عِيدًا وَصَلُّوا عَلَيَّ؛ فَإِنَّ صَلاَتَكُم تَبْلُغُنِي حَيْثُ كُنْتُمْ",
+          "hadith": "hisn-220"
+        },
+        {
+          "guide": "الْبَخِيلُ مَنْ ذُكِرْتُ عِنْدَهُ فَلَمْ يُصَلِّ عَلَيَّ",
+          "hadith": "hisn-221"
+        },
+        {
+          "guide": "إِنَّ لِلَّهِ مَلاَئِكَةً سَيَّاحِينَ فِي الْأَرْضِ يُبَلِّغُونِي مِنْ أُمَّتِي السَّلاَمَ",
+          "hadith": "hisn-222"
+        },
+        {
+          "guide": "مَا مِنْ أَحَدٍ يُسَلِّمُ عَلَيَّ إِلاَّ رَدَّ اللَّهُ عَلَيَّ رُوحِيَ حَتَّى أَرُدَّ عَلَيْهِ السَّلاَمَ",
+          "hadith": "hisn-223"
+        }
+      ]
+    },
+    {
+      "title": "إفشاء السلام",
+      "sections": [
+        "salam"
+      ],
+      "entries": [
+        {
+          "guide": "لاَ تَدْخُلُوا الْجَنَّةَ حَتَّى تُؤْمِنُوا، وَلاَ تُؤْمِنُوا حَتَّى تَحَابُّوا، أَوَلاَ أَدُلُّكُم عَلَى شَيْءٍ إِذَا فَعَلْتُمُوهُ تَحَابَبْتُم، أَفْشُوا السَّلاَمَ بَيْنَكُمْ",
+          "hadith": "hisn-224"
+        },
+        {
+          "guide": "ثَلاَثٌ مَنْ جَمَعَهُنَّ فَقَدْ جَمَعَ الْإِيمَانَ: الْإِنْصَافُ مِنْ نَفْسِكَ، وَبَذْلُ السَّلاَمِ لِلْعَالَمِ، وَالْإِنْفَاقُ مِنَ الإِقْتَارِ",
+          "hadith": "hisn-225"
+        },
+        {
+          "guide": "تُطْعِمُ الطَّعَامَ، وَتَقْرأُ السَّلاَمَ عَلَى مَنْ عَرَفْتَ وَمَنْ لَمْ تَعْرِفْ",
+          "hadith": "hisn-226"
+        }
+      ]
+    },
+    {
+      "title": "كيف يرد السلام على الكافر إذا سلم",
+      "sections": [
+        "salam"
+      ],
+      "entries": [
+        {
+          "id": "wa-alaykum",
+          "hadith": "hisn-227",
+          "note": "إذا سلّم عليكم أهل الكتاب"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء عند سماع صياح الديك ونهيق الحمار",
+      "sections": [
+        "animals"
+      ],
+      "entries": [
+        {
+          "guide": "إِذَا سَمِعْتُمْ صِيَاحَ الدِّيَكَةِ فَاسْأَلُوا اللَّهَ مِنْ فَضْلِهِ؛ فَإِنَّهَا رَأَتْ مَلَكًا وَإِذَا سَمِعْتُمْ نَهِيقَ الْحِمَارِ فَتَعَوَّذُوا بِاللَّهِ مِنَ الشَّيطَانِ؛ فَإِنَّهُ رَأَى شَيْطَانًا",
+          "hadith": "hisn-228"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء عند سماع نباح الكلاب بالليل",
+      "sections": [
+        "animals"
+      ],
+      "entries": [
+        {
+          "guide": "إِذَا سَمِعْتُمْ نُبَاحَ الْكِلاَبِ وَنَهِيقَ الْحَمِيرِ بِاللَّيْلِ فَتَعَوَّذُوا بِاللَّهِ مِنْهُنَّ؛ فَإِنَّهُنَّ يَرَيْنَ مَا لاَ تَرَوْنَ",
+          "hadith": "hisn-229"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء لمن سببته",
+      "sections": [
+        "for-others"
+      ],
+      "entries": [
+        {
+          "id": "ayyuma-mumin-sababtuh",
+          "hadith": "hisn-230"
+        }
+      ]
+    },
+    {
+      "title": "ما يقول المسلم إذا مدح المسلم",
+      "sections": [
+        "for-others"
+      ],
+      "entries": [
+        {
+          "id": "ahsibu-fulanan",
+          "hadith": "hisn-231",
+          "note": "إذا كان أحدكم مادحًا صاحبه لا محالة فليقل"
+        }
+      ]
+    },
+    {
+      "title": "ما يقول المسلم إذا زكي",
+      "sections": [
+        "for-others"
+      ],
+      "entries": [
+        {
+          "id": "la-tuakhidhni-bima-yaqulun",
+          "hadith": "hisn-232",
+          "note": "إذا زُكّي"
+        }
+      ]
+    },
+    {
+      "title": "كيف يلبي المحرم في الحج أو العمرة",
+      "sections": [
+        "hajj"
+      ],
+      "entries": [
+        {
+          "id": "at-talbiyah",
+          "hadith": "hisn-233"
+        }
+      ]
+    },
+    {
+      "title": "التكبير إذا أتى الحجر الأسود",
+      "sections": [
+        "hajj"
+      ],
+      "entries": [
+        {
+          "id": "allahu-akbar",
+          "hadith": "hisn-234",
+          "note": "كلما أتى الركن (الحجر الأسود) أشار إليه وكبّر"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء بين الركن اليماني والحجر الأسود",
+      "sections": [
+        "hajj"
+      ],
+      "entries": [
+        {
+          "id": "rabbana-atina",
+          "hadith": "hisn-235",
+          "note": "بين الركن اليماني والحجر الأسود"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الوقوف على الصفا والمروة",
+      "sections": [
+        "hajj"
+      ],
+      "entries": [
+        {
+          "id": "ala-as-safa",
+          "hadith": "hisn-236",
+          "note": "لما دنا من الصفا قرأ: «إن الصفا والمروة من شعائر الله»، أبدأ بما بدأ الله به، فرقي عليه حتى رأى البيت، فاستقبل القبلة فوحّد الله وكبّره وقال ثلاث مرات، ودعا بين ذلك، وفعل على المروة كما فعل على الصفا"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء يوم عرفة",
+      "sections": [
+        "hajj"
+      ],
+      "entries": [
+        {
+          "id": "tahleel",
+          "hadith": "hisn-237",
+          "note": "خير الدعاء دعاء يوم عرفة"
+        }
+      ]
+    },
+    {
+      "title": "الذكر عند المشعر الحرام",
+      "sections": [
+        "hajj"
+      ],
+      "entries": [
+        {
+          "guide": "ركب النبي ﷺ حتى أتى المشعر الحرام، فاستقبل القبلة فدعا الله وكبّره وهلّله ووحّده، فلم يزل واقفًا حتى أسفر جدًّا، فدفع قبل أن تطلع الشمس",
+          "hadith": "hisn-238"
+        }
+      ]
+    },
+    {
+      "title": "التكبير عند رمي  الجمار مع كل حصاة",
+      "sections": [
+        "hajj"
+      ],
+      "entries": [
+        {
+          "guide": "يُكَبِّرُ كُلَّمَا رَمَى بِحَصَاةٍ عِنْدَ الْجِمَارِ الثَّلاَثِ، ثُمَّ يَتَقَدَّمُ، ويَقِفُ يَدْعُو مُسْتَقْبِلَ الْقِبلَةِ، رَافِعًا يَدَيْهِ بَعْدَ الْجَمْرَةِ الْأُولَى وَالثَّانِيَةِ. أَمَّا جَمْرَةُ الْعَقَبَةِ فَيَرْمِيهَا وَيُكَبِّرُ عِنْدَ كُلِّ حَصَاةٍ وَيَنْصَرِفُ وَلاَ يَقِفُ عِنْدَهَا",
+          "hadith": "hisn-239"
+        }
+      ]
+    },
+    {
+      "title": "دعاء التعجب والأمر السار",
+      "sections": [
+        "joy"
+      ],
+      "entries": [
+        {
+          "id": "subhanallah",
+          "hadith": "hisn-240",
+          "note": "عند التعجب"
+        },
+        {
+          "id": "allahu-akbar",
+          "hadith": "hisn-241",
+          "note": "عند التعجب والأمر السار"
+        }
+      ]
+    },
+    {
+      "title": "ما يفعل من أتاه أمر يسره",
+      "sections": [
+        "joy"
+      ],
+      "entries": [
+        {
+          "guide": "كان النبي ﷺ إذا أتاه أمر يسره أو يُسرّ به خرّ ساجدًا شكرًا لله تبارك وتعالى",
+          "hadith": "hisn-242"
+        }
+      ]
+    },
+    {
+      "title": "ما يفعل ويقول من أحس وجعا في جسده",
+      "sections": [
+        "ruqyah"
+      ],
+      "entries": [
+        {
+          "id": "bismillah",
+          "num": 3,
+          "hadith": "hisn-243",
+          "note": "ضع يدك على الذي تألم من جسدك، وقل ثلاثًا"
+        },
+        {
+          "id": "audhu-billahi-wa-qudratih",
+          "num": 7,
+          "hadith": "hisn-243"
+        }
+      ]
+    },
+    {
+      "title": "دعاء من خشي أن يصيب شيئا بعينه",
+      "sections": [
+        "ruqyah"
+      ],
+      "entries": [
+        {
+          "guide": "إِذَا رَأَى أَحَدُكُم مِنْ أَخِيهِ، أَوْ مِنْ نَفْسِهِ، أَوْ مِنْ مَالِهِ مَا يُعْجِبُهُ فَلْيَدْعُ لَهُ بِالْبَرَكَةِ فَإِنَّ الْعَيْنَ حَقٌّ",
+          "hadith": "hisn-244"
+        }
+      ]
+    },
+    {
+      "title": "ما يقال عند الفزع",
+      "sections": [
+        "misc"
+      ],
+      "entries": [
+        {
+          "id": "la-ilaha-illallah",
+          "hadith": "hisn-245",
+          "note": "عند الفزع"
+        }
+      ]
+    },
+    {
+      "title": "ما يقول عند الذبح أو النحر",
+      "sections": [
+        "misc"
+      ],
+      "entries": [
+        {
+          "id": "adh-dhabh",
+          "hadith": "hisn-246"
+        }
+      ]
+    },
+    {
+      "title": "ما يقول لرد كيد مردة الشياطين",
+      "sections": [
+        "waswas"
+      ],
+      "entries": [
+        {
+          "id": "kalimat-allah-allati-la-yujawizuhunna",
+          "hadith": "hisn-247"
+        }
+      ]
+    },
+    {
+      "title": "الاستغفار والتوبة",
+      "sections": [
+        "istighfar"
+      ],
+      "entries": [
+        {
+          "id": "astaghfirullah-wa-atubu",
+          "hadith": "hisn-248",
+          "note": "كان النبي ﷺ يقولها في اليوم أكثر من سبعين مرة"
+        },
+        {
+          "guide": "يَا أَيُّهَا النَّاسُ تُوبُوا إِلَى اللَّهِ فَإِنِّي أَتُوبُ فِي الْيَوْمِ إِلَيْهِ مِائَةَ مَرَّةٍ",
+          "hadith": "hisn-249"
+        },
+        {
+          "id": "astaghfirullah-al-azim",
+          "hadith": "hisn-250"
+        },
+        {
+          "guide": "أَقْرَبُ مَا يَكُونُ الرَّبُّ مِنَ الْعَبْدِ فِي جَوْفِ اللَّيْلِ الآخِرِ فَإِنِ اسْتَطَعْتَ أَنْ تَكُونَ مِمَّنْ يَذْكُرُ اللَّهَ فِي تِلْكَ السَّاعَةِ فَكُنْ",
+          "hadith": "hisn-251"
+        },
+        {
+          "guide": "أَقْرَبُ مَا يَكُونُ الْعَبْدُ مِنْ رَبِّهِ وَهُوَ سَاجِدٌ فَأَكثِرُوا الدُّعَاءَ",
+          "hadith": "hisn-252"
+        },
+        {
+          "guide": "إِنَّهُ لَيُغَانُ عَلَى قَلْبِي وَإِنِّي لأَسْتَغْفِرُ اللَّهَ فِي الْيَوْمِ مِائَةَ مَرَّةٍ",
+          "hadith": "hisn-253"
+        }
+      ]
+    },
+    {
+      "title": "فضل التسبيح والتحميد، والتهليل، والتكبير",
+      "sections": [
+        "tasbih"
+      ],
+      "entries": [
+        {
+          "id": "subhanallah-wa-bihamdih",
+          "num": 100,
+          "hadith": "hisn-254"
+        },
+        {
+          "id": "tahleel",
+          "num": 10,
+          "hadith": "hisn-255"
+        },
+        {
+          "id": "subhanallah-al-azim",
+          "hadith": "hisn-256"
+        },
+        {
+          "id": "al-kalimat-al-arba",
+          "hadith": "hisn-257"
+        },
+        {
+          "id": "subhanallah",
+          "num": 100,
+          "hadith": "hisn-258"
+        },
+        {
+          "id": "subhanallah-al-azim-wa-bihamdih",
+          "hadith": "hisn-259"
+        },
+        {
+          "id": "hawqala",
+          "hadith": "hisn-260"
+        },
+        {
+          "id": "al-kalimat-al-arba",
+          "hadith": "hisn-261"
+        },
+        {
+          "id": "kalimat-al-arabi",
+          "hadith": "hisn-262"
+        },
+        {
+          "id": "ighfir-li-warhamni-wahdini-warzuqni",
+          "hadith": "hisn-262"
+        },
+        {
+          "id": "ighfir-li-warhamni-wahdini-wa-afini",
+          "hadith": "hisn-263",
+          "note": "كان الرجل إذا أسلم علّمه النبي ﷺ الصلاة، ثم أمره أن يدعو بهؤلاء الكلمات"
+        },
+        {
+          "guide": "إِنَّ أَفْضَلَ الدُّعَاءِ الْحَمْدُ لِلَّهِ، وَأَفْضَلَ الذِّكْرِ لاَ إِلَهَ إِلاَّ اللَّهُ",
+          "hadith": "hisn-264"
+        },
+        {
+          "id": "al-baqiyat-as-salihat",
+          "hadith": "hisn-265"
+        }
+      ]
+    },
+    {
+      "title": "كيف كان النبي - ﷺ - يسبح",
+      "sections": [
+        "tasbih"
+      ],
+      "entries": [
+        {
+          "guide": "رأيت النبي ﷺ يعقد التسبيح بيمينه — عبد الله بن عمرو رضي الله عنهما",
+          "hadith": "hisn-266"
+        }
+      ]
+    },
+    {
+      "title": "من أنواع الخير والآداب الجامعة",
+      "sections": [
+        "misc"
+      ],
+      "entries": [
+        {
+          "guide": "إِذَا كَانَ جُنْحُ اللَّيْلِ - أَوْ أَمْسَيْتُم - فَكُفُّوا صِبْيانَكُم، فَإِنَّ الشَّيَاطِينَ تَنْتَشِرُ حِينَئِذٍ، فَإِذَا ذَهَبَ سَاعَةٌ مِنَ اللَّيلِ فَخَلُّوهُمْ، وَأَغْلِقُوا الأَبْوَابَ وَاذْكُرُوا اسْمَ اللَّهِ؛ فَإِنَّ الشَّيطَانَ لاَ يَفْتَحُ بَابًا مُغلَقًا، وَأَوْكُوا قِرَبَكُمْ، وَاذْكُرُوا اسْمَ اللَّهِ، وَخَمِّرُوا آنِيَتَكُم، وَاذْكُرُوا اسْمَ اللَّهِ، وَلَوْ أَنْ تَعْرُضُوا عَلَيْهَا شَيْئًا، وَأَطْفِئُوا مَصَابِيحَكُمْ",
+          "hadith": "hisn-267"
+        }
+      ]
+    }
+  ]
+}

@@ -654,7 +654,7 @@ animations were paused) for that part.
 | §7.4 misbaha | `app/tasbih.tsx`, `components/tasbih/Misbaha.tsx` (sprite sheet + one Atlas draw), `lib/misbaha.ts` |
 | §7.6 settings | `app/settings.tsx`, `app/notifications.tsx` |
 | §8 calendar | `lib/hijri.ts` + generated `lib/hijri-table.ts`, `lib/calendar.ts`, `content/calendar.json` |
-| Quran text | `content/sources/KFGQPC-Hafs-V30.docx` → `scripts/quran-text.mjs` → `athkar.json`, `collections.json`, `quran.json` |
+| Quran text | `content/sources/KFGQPC-Hafs-V30.docx` → `scripts/quran-text.mjs` → `athkar.json`, `sections.json` (opening verses), `quran.json` |
 
 **Differences from the plan**
 

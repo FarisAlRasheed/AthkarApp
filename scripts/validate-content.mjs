@@ -8,8 +8,11 @@ export const RESET_POINTS = ['fajr', 'asr', 'isha', 'each-prayer'];
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 const THIKR_KEYS = new Set(['title', 'text', 'quran', 'ayahs', 'basmalah', 'translations']);
-const ENTRY_KEYS = new Set(['id', 'num', 'fadl', 'evidence']);
-const EVIDENCE_KEYS = new Set(['text', 'source', 'grade', 'gradeNote']);
+export const KINDS = ['wird', 'list'];
+const ENTRY_KEYS = new Set(['id', 'num', 'hadith', 'fadl', 'note', 'only', 'guide']);
+const HADITH_KEYS = new Set(['text', 'fadl', 'source', 'grade', 'gradeNote']);
+const BOOK_KEYS = new Set(['title', 'author', 'source', 'chapters']);
+const CHAPTER_KEYS = new Set(['title', 'sections', 'entries']);
 
 const isNonEmptyString = (v) => typeof v === 'string' && v.trim() !== '';
 const isPositiveInt = (v) => Number.isInteger(v) && v >= 1;
@@ -25,7 +28,8 @@ export function loadContent(dir) {
   return {
     manifest,
     athkar: read('athkar.json'),
-    collections: read('collections.json'),
+    hadiths: read('hadiths.json'),
+    sections: read('sections.json'),
     books,
     reciters: read('reciters.json'),
     tasbih: read('tasbih.json'),
@@ -46,7 +50,8 @@ export function validateContent(dir) {
 export function validateData(content, audioRoot, pendingDeletes = new Set()) {
   const errors = [];
   const warnings = [];
-  const { manifest, athkar, collections, books, reciters, tasbih } = content;
+  const { manifest, athkar, hadiths, books, reciters, tasbih } = content;
+  const { groups = {}, sections = {} } = content.sections;
 
   if (!Number.isInteger(manifest.schemaVersion)) errors.push('manifest: schemaVersion must be an integer');
   if (!Number.isInteger(manifest.contentVersion)) errors.push('manifest: contentVersion must be an integer');
@@ -76,16 +81,35 @@ export function validateData(content, audioRoot, pendingDeletes = new Set()) {
     }
   }
 
-  for (const [id, c] of Object.entries(collections)) {
-    if (!isNonEmptyString(c.title)) errors.push(`collections/${id}: title is required`);
-    if (!RESET_POINTS.includes(c.resetAt)) errors.push(`collections/${id}: resetAt must be one of ${RESET_POINTS.join(', ')}`);
+  for (const [id, c] of Object.entries(sections)) {
+    const at = `sections/${id}`;
+    if (!ID_PATTERN.test(id)) errors.push(`${at}: id must be lowercase-kebab`);
+    if (!isNonEmptyString(c.title)) errors.push(`${at}: title is required`);
+    if (!groups[c.group]) errors.push(`${at}: unknown group "${c.group}"`);
+    if (!KINDS.includes(c.kind)) errors.push(`${at}: kind must be one of ${KINDS.join(', ')}`);
+    if (c.kind === 'wird' && !RESET_POINTS.includes(c.resetAt)) errors.push(`${at}: a wird needs resetAt (${RESET_POINTS.join(', ')})`);
+    if (c.kind !== 'wird' && c.resetAt !== undefined) errors.push(`${at}: only a wird resets`);
     if (c.opening !== undefined) {
       const a = c.opening.ayahs ?? {};
       if (!(isPositiveInt(a.sura) && a.sura <= 114 && isPositiveInt(a.from) && isPositiveInt(a.to) && a.from <= a.to)) {
-        errors.push(`collections/${id}: opening.ayahs must be { sura: 1–114, from, to } with from ≤ to`);
+        errors.push(`${at}: opening.ayahs must be { sura: 1–114, from, to } with from ≤ to`);
       }
-      if (!isNonEmptyString(c.opening.text)) errors.push(`collections/${id}: opening.text is empty — run npm run content:quran`);
+      if (!isNonEmptyString(c.opening.text)) errors.push(`${at}: opening.text is empty — run npm run content:quran`);
     }
+  }
+  for (const g of Object.keys(groups)) {
+    if (!Object.values(sections).some((c) => c.group === g)) warnings.push(`sections: group "${g}" has no sections`);
+  }
+
+  for (const [id, h] of Object.entries(hadiths)) {
+    const at = `hadiths/${id}`;
+    if (!ID_PATTERN.test(id)) errors.push(`${at}: id must be lowercase-kebab`);
+    for (const k of Object.keys(h)) if (!HADITH_KEYS.has(k)) errors.push(`${at}: unknown field "${k}"`);
+    for (const k of HADITH_KEYS) if (h[k] !== undefined && !isNonEmptyString(h[k])) errors.push(`${at}: ${k} is empty`);
+    if (!h.source) errors.push(`${at}: source is required`);
+    if (h.grade !== undefined && !GRADES.includes(h.grade)) errors.push(`${at}: grade must be one of ${GRADES.join('، ')}`);
+    // Weak and fabricated narrations are kept out of the app for now.
+    if (h.grade === 'ضعيف' || h.grade === 'موضوع') errors.push(`${at}: graded ${h.grade} — weak narrations are not included`);
   }
 
   for (const bookId of manifest.books ?? []) {
@@ -97,32 +121,53 @@ export function validateData(content, audioRoot, pendingDeletes = new Set()) {
   }
 
   const used = new Set();
+  const usedHadiths = new Set();
   for (const [bookId, book] of Object.entries(books)) {
     const at = `books/${bookId}`;
     if (!book) { errors.push(`${at}.json is listed in the manifest but missing`); continue; }
-    if (!isNonEmptyString(book.name)) errors.push(`${at}: name is required`);
-    for (const [colId, entries] of Object.entries(book.collections ?? {})) {
-      if (!collections[colId]) errors.push(`${at}: unknown collection "${colId}"`);
-      const seen = new Set();
-      entries.forEach((e, i) => {
-        const where = `${at}/${colId}[${i + 1}]`;
+    for (const k of Object.keys(book)) if (!BOOK_KEYS.has(k)) errors.push(`${at}: unknown field "${k}"`);
+    if (!isNonEmptyString(book.title) && !isNonEmptyString(book.author)) errors.push(`${at}: title or author is required`);
+    if (!book.chapters?.length) errors.push(`${at}: needs at least one chapter`);
+    const seen = {};
+    (book.chapters ?? []).forEach((ch, ci) => {
+      const cat = `${at}/chapters[${ci + 1}]`;
+      for (const k of Object.keys(ch)) if (!CHAPTER_KEYS.has(k)) errors.push(`${cat}: unknown field "${k}"`);
+      if (!isNonEmptyString(ch.title)) errors.push(`${cat}: title is required`);
+      for (const sid of ch.sections ?? []) if (!sections[sid]) errors.push(`${cat}: unknown section "${sid}"`);
+      if (!ch.entries?.length) errors.push(`${cat}: needs at least one entry`);
+      (ch.entries ?? []).forEach((e, i) => {
+        const where = `${cat}[${i + 1}]`;
         for (const k of Object.keys(e)) if (!ENTRY_KEYS.has(k)) errors.push(`${where}: unknown field "${k}"`);
-        if (!athkar[e.id]) errors.push(`${where}: thiker "${e.id}" does not exist`);
-        if (!isPositiveInt(e.num)) errors.push(`${where}: num must be a whole number ≥ 1`);
-        if (e.fadl !== undefined && !isNonEmptyString(e.fadl)) errors.push(`${where}: fadl is empty`);
-        if (e.evidence !== undefined) {
-          for (const k of Object.keys(e.evidence)) if (!EVIDENCE_KEYS.has(k)) errors.push(`${where}: unknown evidence field "${k}"`);
-          if (e.evidence.grade !== undefined && !GRADES.includes(e.evidence.grade)) {
-            errors.push(`${where}: grade must be one of ${GRADES.join('، ')}`);
-          }
+        const inWird = (ch.sections ?? []).some((sid) => sections[sid]?.kind === 'wird' && (!e.only || e.only === sid));
+        if (e.guide !== undefined) {
+          // A line of guidance (what to do, not words to say) — shown in reading lists, never counted.
+          if (e.id !== undefined || e.num !== undefined) errors.push(`${where}: a guide has no id or num`);
+          if (!isNonEmptyString(e.guide)) errors.push(`${where}: guide is empty`);
+          if (inWird) errors.push(`${where}: a wird cannot hold a guide`);
+        } else {
+          if (!athkar[e.id]) errors.push(`${where}: thiker "${e.id}" does not exist`);
+          used.add(e.id);
         }
-        // The same thiker twice with different counts is legitimate (e.g. tahleel ×10 and ×100).
-        const key = `${e.id}×${e.num}`;
-        if (seen.has(key)) warnings.push(`${where}: "${e.id}" ×${e.num} appears twice in this list`);
-        seen.add(key);
-        used.add(e.id);
+        if (e.num !== undefined && !(isPositiveInt(e.num) && e.num > 1)) errors.push(`${where}: num is a whole number > 1 (leave it out for once)`);
+        if (e.hadith !== undefined) {
+          if (!hadiths[e.hadith]) errors.push(`${where}: hadith "${e.hadith}" does not exist`);
+          usedHadiths.add(e.hadith);
+        }
+        for (const k of ['fadl', 'note']) if (e[k] !== undefined && !isNonEmptyString(e[k])) errors.push(`${where}: ${k} is empty`);
+        if (e.only !== undefined && !(ch.sections ?? []).includes(e.only)) errors.push(`${where}: only "${e.only}" is not one of this chapter's sections`);
+        // In a wird, the same thiker twice with the same count is almost always a slip
+        // (twice with different counts is legitimate: Ibn Baz lists the tahleel ×10 and ×100).
+        for (const sid of ch.sections ?? []) {
+          if (e.id === undefined || (e.only && e.only !== sid) || sections[sid]?.kind !== 'wird') continue;
+          const key = `${sid}/${e.id}×${e.num ?? 1}`;
+          if (seen[key]) warnings.push(`${where}: "${e.id}" ×${e.num ?? 1} appears twice in ${sid}`);
+          seen[key] = true;
+        }
       });
-    }
+    });
+  }
+  for (const id of Object.keys(hadiths)) {
+    if (!usedHadiths.has(id)) warnings.push(`hadiths/${id}: not used by any book`);
   }
 
   for (const id of Object.keys(athkar)) {

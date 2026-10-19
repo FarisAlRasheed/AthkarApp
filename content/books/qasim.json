@@ -1,0 +1,630 @@
+{
+  "title": "مختصر الأذكار والآداب",
+  "author": "عبد المحسن القاسم",
+  "source": {
+    "turath": 576
+  },
+  "chapters": [
+    {
+      "title": "دخول الخلاء",
+      "sections": [
+        "toilet"
+      ],
+      "entries": [
+        {
+          "id": "audhu-min-al-khubuthi",
+          "hadith": "qasim-5",
+          "note": "إذا أراد دخول الخلاء"
+        }
+      ]
+    },
+    {
+      "title": "الخروج من الخلاء",
+      "sections": [
+        "toilet"
+      ],
+      "entries": [
+        {
+          "id": "ghufranak",
+          "hadith": "qasim-6",
+          "note": "إذا خرج من الخلاء"
+        }
+      ]
+    },
+    {
+      "title": "إذا فرغ من الوضوء",
+      "sections": [
+        "wudu"
+      ],
+      "entries": [
+        {
+          "id": "wudu-abdullahi-wa-rasuluh",
+          "hadith": "qasim-7"
+        }
+      ]
+    },
+    {
+      "title": "الأذان",
+      "sections": [
+        "adhan"
+      ],
+      "entries": [
+        {
+          "guide": "إذا سمعتم المؤذن فقولوا مثل ما يقول، ثم صلّوا عليّ",
+          "hadith": "qasim-8"
+        }
+      ]
+    },
+    {
+      "title": "دخول المسجد والخروج منه",
+      "sections": [
+        "mosque"
+      ],
+      "entries": [
+        {
+          "id": "iftah-li-abwab-rahmatik",
+          "hadith": "qasim-9",
+          "note": "إذا دخل المسجد"
+        },
+        {
+          "id": "asaluka-min-fadlik",
+          "hadith": "qasim-9",
+          "note": "إذا خرج من المسجد"
+        }
+      ]
+    },
+    {
+      "title": "دعاء الاستفتاح",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "istiftah-subhanak",
+          "hadith": "qasim-10",
+          "note": "إذا استفتح الصلاة"
+        }
+      ]
+    },
+    {
+      "title": "الركوع",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "subhana-rabbiyal-azim",
+          "hadith": "qasim-11",
+          "note": "في الركوع"
+        }
+      ]
+    },
+    {
+      "title": "الرفع من الركوع",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "samiallahu-liman-hamidah",
+          "hadith": "qasim-12",
+          "note": "إذا رفع رأسه من الركوع"
+        },
+        {
+          "id": "rabbana-wa-lakal-hamd",
+          "hadith": "qasim-12",
+          "fadl": "رأى النبي ﷺ بضعة وثلاثين ملكًا يبتدرونها أيهم يكتبها أول"
+        }
+      ]
+    },
+    {
+      "title": "السجود",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "subhana-rabbiyal-ala",
+          "hadith": "qasim-13",
+          "note": "في السجود"
+        }
+      ]
+    },
+    {
+      "title": "التشهد",
+      "sections": [
+        "prayer",
+        "salat-nabi"
+      ],
+      "entries": [
+        {
+          "id": "at-tahiyyat",
+          "hadith": "qasim-14",
+          "only": "prayer"
+        },
+        {
+          "id": "as-salat-al-ibrahimiyya",
+          "hadith": "qasim-14-2"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء قبل السلام",
+      "sections": [
+        "prayer"
+      ],
+      "entries": [
+        {
+          "id": "audhu-min-arba",
+          "hadith": "qasim-15",
+          "note": "إذا تشهد قبل أن يسلّم"
+        }
+      ]
+    },
+    {
+      "title": "الأذكار بعد السلام",
+      "sections": [
+        "post-prayer"
+      ],
+      "entries": [
+        {
+          "id": "astaghfirullah",
+          "num": 3,
+          "hadith": "qasim-16"
+        },
+        {
+          "id": "anta-as-salam",
+          "hadith": "qasim-16"
+        },
+        {
+          "id": "subhanallah",
+          "num": 33,
+          "hadith": "qasim-16-2"
+        },
+        {
+          "id": "alhamdulillah",
+          "num": 33,
+          "hadith": "qasim-16-2"
+        },
+        {
+          "id": "allahu-akbar",
+          "num": 33,
+          "hadith": "qasim-16-2"
+        },
+        {
+          "id": "tahleel",
+          "hadith": "qasim-16-2",
+          "note": "تمام المائة"
+        },
+        {
+          "id": "ayat-al-kursi",
+          "hadith": "qasim-16-3"
+        },
+        {
+          "id": "al-ikhlas",
+          "hadith": "qasim-16-4",
+          "note": "دبر كل صلاة"
+        },
+        {
+          "id": "al-falaq",
+          "hadith": "qasim-16-4"
+        },
+        {
+          "id": "an-nas",
+          "hadith": "qasim-16-4"
+        }
+      ]
+    },
+    {
+      "title": "من أحس بوجع",
+      "sections": [
+        "ruqyah"
+      ],
+      "entries": [
+        {
+          "id": "al-ikhlas",
+          "hadith": "qasim-17",
+          "note": "إذا اشتكى يقرأ على نفسه بالمعوذات وينفث"
+        },
+        {
+          "id": "al-falaq",
+          "hadith": "qasim-17"
+        },
+        {
+          "id": "an-nas",
+          "hadith": "qasim-17"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء للمريض عند عيادته",
+      "sections": [
+        "sick"
+      ],
+      "entries": [
+        {
+          "id": "la-bas-tahur",
+          "hadith": "qasim-18",
+          "note": "إذا دخل على مريض يعوده"
+        }
+      ]
+    },
+    {
+      "title": "إذا أصيب بمصيبة",
+      "sections": [
+        "calamity",
+        "distress"
+      ],
+      "entries": [
+        {
+          "id": "qaddarallah",
+          "hadith": "qasim-19",
+          "note": "وإن أصابك شيء فلا تقل: لو أني فعلت كان كذا وكذا، ولكن قل",
+          "only": "distress"
+        },
+        {
+          "id": "inna-lillah-ujurni",
+          "hadith": "qasim-19-2",
+          "only": "calamity"
+        }
+      ]
+    },
+    {
+      "title": "ما يقال للمسافر عند الوداع",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "astawdiu-allaha-dinak",
+          "hadith": "qasim-20",
+          "note": "إذا ودّع أحدًا"
+        }
+      ]
+    },
+    {
+      "title": "دعاء السفر",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "duaa-as-safar",
+          "hadith": "qasim-21",
+          "note": "إذا استوى على بعيره خارجًا إلى سفر كبّر ثلاثًا ثم قال"
+        },
+        {
+          "id": "ayibun-taibun",
+          "hadith": "qasim-21",
+          "note": "وإذا رجع قالهن وزاد فيهن"
+        }
+      ]
+    },
+    {
+      "title": "دخول البيت",
+      "sections": [
+        "home"
+      ],
+      "entries": [
+        {
+          "guide": "يذكر الله عند دخوله بيته وعند طعامه؛ فإن الشيطان يقول: لا مبيت لكم ولا عشاء",
+          "hadith": "qasim-22"
+        }
+      ]
+    },
+    {
+      "title": "لبس الثوب الجديد",
+      "sections": [
+        "clothes"
+      ],
+      "entries": [
+        {
+          "id": "kasawtanihi-khayrahu",
+          "hadith": "qasim-23",
+          "note": "إذا استجدّ ثوبًا سمّاه باسمه — عمامة أو قميصًا أو رداء — ثم يقول"
+        }
+      ]
+    },
+    {
+      "title": "التسمية أول الطعام",
+      "sections": [
+        "food"
+      ],
+      "entries": [
+        {
+          "id": "bismillah",
+          "hadith": "qasim-24",
+          "note": "قبل الطعام"
+        },
+        {
+          "id": "bismillah-awwalahu-wa-akhirah",
+          "hadith": "qasim-24",
+          "note": "إن نسي في أوله"
+        }
+      ]
+    },
+    {
+      "title": "الحمد عند الفراغ من الطعام",
+      "sections": [
+        "food"
+      ],
+      "entries": [
+        {
+          "id": "alhamdulillahi-kathiran-tayyiban",
+          "hadith": "qasim-25",
+          "note": "إذا رفع مائدته"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء إذا أكل عند أحد",
+      "sections": [
+        "food",
+        "for-others"
+      ],
+      "entries": [
+        {
+          "id": "barik-lahum-fima-razaqtahum",
+          "hadith": "qasim-26",
+          "note": "إذا أكل عند أحد"
+        }
+      ]
+    },
+    {
+      "title": "إذا أقبل الليل",
+      "sections": [
+        "sleep"
+      ],
+      "entries": [
+        {
+          "id": "baqarah-ending",
+          "hadith": "qasim-27"
+        }
+      ]
+    },
+    {
+      "title": "أذكار النوم",
+      "sections": [
+        "sleep"
+      ],
+      "entries": [
+        {
+          "id": "ayat-al-kursi",
+          "hadith": "qasim-28"
+        },
+        {
+          "id": "al-ikhlas",
+          "num": 3,
+          "hadith": "qasim-28-2",
+          "note": "يجمع كفيه ثم ينفث فيهما فيقرأ فيهن، ثم يمسح بهما ما استطاع من جسده، يبدأ برأسه ووجهه، يفعل ذلك ثلاث مرات"
+        },
+        {
+          "id": "al-falaq",
+          "num": 3,
+          "hadith": "qasim-28-2"
+        },
+        {
+          "id": "an-nas",
+          "num": 3,
+          "hadith": "qasim-28-2"
+        },
+        {
+          "id": "bismika-amutu",
+          "hadith": "qasim-28-3"
+        }
+      ]
+    },
+    {
+      "title": "ما يقول إذا استيقظ",
+      "sections": [
+        "waking"
+      ],
+      "entries": [
+        {
+          "id": "hamd-ahyana",
+          "hadith": "qasim-29"
+        }
+      ]
+    },
+    {
+      "title": "أذكار الصباح والمساء",
+      "sections": [
+        "morning",
+        "evening"
+      ],
+      "entries": [
+        {
+          "id": "al-ikhlas",
+          "num": 3,
+          "hadith": "qasim-30"
+        },
+        {
+          "id": "al-falaq",
+          "num": 3,
+          "hadith": "qasim-30"
+        },
+        {
+          "id": "an-nas",
+          "num": 3,
+          "hadith": "qasim-30"
+        },
+        {
+          "id": "kalimat-allah",
+          "num": 3,
+          "hadith": "qasim-30-2",
+          "only": "evening"
+        },
+        {
+          "id": "bismillah-la-yadurr",
+          "num": 3,
+          "hadith": "qasim-30-3"
+        },
+        {
+          "id": "sayyid-al-istighfar-alt",
+          "hadith": "qasim-30-4"
+        }
+      ]
+    },
+    {
+      "title": "التسبيح والتحميد",
+      "sections": [
+        "tasbih"
+      ],
+      "entries": [
+        {
+          "id": "subhanallah-wa-bihamdih",
+          "num": 100,
+          "hadith": "qasim-31"
+        },
+        {
+          "id": "subhanallah-al-azim",
+          "hadith": "qasim-31-2"
+        }
+      ]
+    },
+    {
+      "title": "التهليل",
+      "sections": [
+        "tasbih"
+      ],
+      "entries": [
+        {
+          "id": "tahleel",
+          "num": 100,
+          "hadith": "qasim-32"
+        }
+      ]
+    },
+    {
+      "title": "الحوقلة",
+      "sections": [
+        "tasbih"
+      ],
+      "entries": [
+        {
+          "id": "hawqala",
+          "hadith": "qasim-33"
+        }
+      ]
+    },
+    {
+      "title": "الاستغفار",
+      "sections": [
+        "istighfar"
+      ],
+      "entries": [
+        {
+          "id": "astaghfirullah",
+          "num": 100,
+          "hadith": "qasim-34",
+          "note": "في اليوم"
+        }
+      ]
+    },
+    {
+      "title": "عند نزول المطر",
+      "sections": [
+        "weather"
+      ],
+      "entries": [
+        {
+          "id": "sayyiban-nafian",
+          "hadith": "qasim-35",
+          "note": "إذا رأى المطر"
+        }
+      ]
+    },
+    {
+      "title": "من نزل منزلا",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "kalimat-allah",
+          "hadith": "qasim-36",
+          "note": "إذا نزل منزلًا"
+        }
+      ]
+    },
+    {
+      "title": "عند التعجب من شيء",
+      "sections": [
+        "joy"
+      ],
+      "entries": [
+        {
+          "id": "subhanallah",
+          "hadith": "qasim-37",
+          "note": "عند التعجب من شيء"
+        },
+        {
+          "id": "allahu-akbar",
+          "hadith": "qasim-37-2",
+          "note": "عند التعجب من شيء"
+        }
+      ]
+    },
+    {
+      "title": "تشميت العاطس",
+      "sections": [
+        "sneeze"
+      ],
+      "entries": [
+        {
+          "id": "alhamdulillah",
+          "hadith": "qasim-38",
+          "note": "يقوله العاطس"
+        },
+        {
+          "id": "yarhamukallah",
+          "hadith": "qasim-38",
+          "note": "يقوله له أخوه أو صاحبه"
+        },
+        {
+          "id": "yahdikumullah",
+          "hadith": "qasim-38",
+          "note": "ويردّ العاطس"
+        }
+      ]
+    },
+    {
+      "title": "الغضب",
+      "sections": [
+        "anger"
+      ],
+      "entries": [
+        {
+          "id": "taawwudh",
+          "hadith": "qasim-39"
+        }
+      ]
+    },
+    {
+      "title": "الدعاء لمن صنع معروفا",
+      "sections": [
+        "for-others"
+      ],
+      "entries": [
+        {
+          "id": "jazakallahu-khayran",
+          "hadith": "qasim-40",
+          "note": "لمن صنع إليك معروفًا"
+        }
+      ]
+    },
+    {
+      "title": "كفارة المجلس",
+      "sections": [
+        "majlis"
+      ],
+      "entries": [
+        {
+          "id": "subhanaka-allahumma-wa-bihamdik",
+          "hadith": "qasim-41",
+          "note": "قبل أن يقوم من مجلسه"
+        }
+      ]
+    }
+  ]
+}

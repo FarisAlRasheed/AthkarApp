@@ -1,0 +1,267 @@
+{
+  "groups": {
+    "daily": "الأوراد اليومية",
+    "night": "النوم والاستيقاظ",
+    "salah": "الطهارة والصلاة",
+    "home": "البيت واللباس والطعام",
+    "travel": "السفر",
+    "hardship": "الكرب والأحوال",
+    "sickness": "المرض والجنائز",
+    "nature": "الطبيعة والمواسم",
+    "people": "مع الناس",
+    "general": "جوامع الذكر"
+  },
+  "sections": {
+    "morning": {
+      "title": "أذكار الصباح",
+      "resetAt": "fajr",
+      "opening": {
+        "ayahs": {
+          "sura": 30,
+          "from": 17,
+          "to": 17
+        },
+        "text": "فَسُبۡحَٰنَ ٱللَّهِ حِينَ تُمۡسُونَ وَحِينَ تُصۡبِحُونَ ۝١٧"
+      },
+      "group": "daily",
+      "kind": "wird"
+    },
+    "evening": {
+      "title": "أذكار المساء",
+      "resetAt": "asr",
+      "opening": {
+        "ayahs": {
+          "sura": 50,
+          "from": 39,
+          "to": 39
+        },
+        "text": "فَٱصۡبِرۡ عَلَىٰ مَا يَقُولُونَ وَسَبِّحۡ بِحَمۡدِ رَبِّكَ قَبۡلَ طُلُوعِ ٱلشَّمۡسِ وَقَبۡلَ ٱلۡغُرُوبِ ۝٣٩"
+      },
+      "group": "daily",
+      "kind": "wird"
+    },
+    "post-prayer": {
+      "title": "أذكار بعد الصلاة",
+      "resetAt": "each-prayer",
+      "opening": {
+        "ayahs": {
+          "sura": 4,
+          "from": 103,
+          "to": 103
+        },
+        "text": "فَإِذَا قَضَيۡتُمُ ٱلصَّلَوٰةَ فَٱذۡكُرُواْ ٱللَّهَ قِيَٰمࣰا وَقُعُودࣰا وَعَلَىٰ جُنُوبِكُمۡۚ فَإِذَا ٱطۡمَأۡنَنتُمۡ فَأَقِيمُواْ ٱلصَّلَوٰةَۚ إِنَّ ٱلصَّلَوٰةَ كَانَتۡ عَلَى ٱلۡمُؤۡمِنِينَ كِتَٰبࣰا مَّوۡقُوتࣰا ۝١٠٣"
+      },
+      "group": "daily",
+      "kind": "wird"
+    },
+    "sleep": {
+      "title": "أذكار النوم",
+      "resetAt": "isha",
+      "opening": {
+        "ayahs": {
+          "sura": 3,
+          "from": 191,
+          "to": 191
+        },
+        "text": "ٱلَّذِينَ يَذۡكُرُونَ ٱللَّهَ قِيَٰمࣰا وَقُعُودࣰا وَعَلَىٰ جُنُوبِهِمۡ وَيَتَفَكَّرُونَ فِي خَلۡقِ ٱلسَّمَٰوَٰتِ وَٱلۡأَرۡضِ رَبَّنَا مَا خَلَقۡتَ هَٰذَا بَٰطِلࣰا سُبۡحَٰنَكَ فَقِنَا عَذَابَ ٱلنَّارِ ۝١٩١"
+      },
+      "group": "daily",
+      "kind": "wird"
+    },
+    "waking": {
+      "title": "أذكار الاستيقاظ من النوم",
+      "group": "night",
+      "kind": "list"
+    },
+    "night": {
+      "title": "التقلب ليلًا والفزع والرؤيا",
+      "group": "night",
+      "kind": "list"
+    },
+    "toilet": {
+      "title": "دخول الخلاء والخروج منه",
+      "group": "salah",
+      "kind": "list"
+    },
+    "wudu": {
+      "title": "الوضوء",
+      "group": "salah",
+      "kind": "list"
+    },
+    "adhan": {
+      "title": "الأذان",
+      "group": "salah",
+      "kind": "list"
+    },
+    "mosque": {
+      "title": "الذهاب إلى المسجد ودخوله والخروج منه",
+      "group": "salah",
+      "kind": "list"
+    },
+    "prayer": {
+      "title": "أدعية الصلاة",
+      "group": "salah",
+      "kind": "list"
+    },
+    "witr": {
+      "title": "قنوت الوتر والذكر بعده",
+      "group": "salah",
+      "kind": "list"
+    },
+    "istikhara": {
+      "title": "صلاة الاستخارة",
+      "group": "salah",
+      "kind": "list"
+    },
+    "home": {
+      "title": "الخروج من المنزل ودخوله",
+      "group": "home",
+      "kind": "list"
+    },
+    "clothes": {
+      "title": "اللباس",
+      "group": "home",
+      "kind": "list"
+    },
+    "food": {
+      "title": "الطعام والشراب",
+      "group": "home",
+      "kind": "list"
+    },
+    "sneeze": {
+      "title": "العطاس",
+      "group": "home",
+      "kind": "list"
+    },
+    "family": {
+      "title": "الزواج والأولاد",
+      "group": "home",
+      "kind": "list"
+    },
+    "travel": {
+      "title": "الركوب والسفر",
+      "group": "travel",
+      "kind": "list"
+    },
+    "market": {
+      "title": "دخول السوق",
+      "group": "travel",
+      "kind": "list"
+    },
+    "distress": {
+      "title": "الهم والحزن والكرب",
+      "group": "hardship",
+      "kind": "list"
+    },
+    "fear": {
+      "title": "الخوف ولقاء العدو",
+      "group": "hardship",
+      "kind": "list"
+    },
+    "waswas": {
+      "title": "الوسوسة وطرد الشيطان",
+      "group": "hardship",
+      "kind": "list"
+    },
+    "debt": {
+      "title": "قضاء الدين",
+      "group": "hardship",
+      "kind": "list"
+    },
+    "anger": {
+      "title": "الغضب",
+      "group": "hardship",
+      "kind": "list"
+    },
+    "ruqyah": {
+      "title": "الوجع والعين والتعويذ",
+      "group": "hardship",
+      "kind": "list"
+    },
+    "sick": {
+      "title": "المريض والمحتضر",
+      "group": "sickness",
+      "kind": "list"
+    },
+    "calamity": {
+      "title": "المصيبة",
+      "group": "sickness",
+      "kind": "list"
+    },
+    "funeral": {
+      "title": "الجنائز والتعزية",
+      "group": "sickness",
+      "kind": "list"
+    },
+    "graves": {
+      "title": "زيارة القبور",
+      "group": "sickness",
+      "kind": "list"
+    },
+    "weather": {
+      "title": "الريح والرعد والمطر",
+      "group": "nature",
+      "kind": "list"
+    },
+    "hilal": {
+      "title": "رؤية الهلال",
+      "group": "nature",
+      "kind": "list"
+    },
+    "fasting": {
+      "title": "الصيام",
+      "group": "nature",
+      "kind": "list"
+    },
+    "hajj": {
+      "title": "الحج والعمرة",
+      "group": "nature",
+      "kind": "list"
+    },
+    "animals": {
+      "title": "صياح الديك ونباح الكلاب",
+      "group": "nature",
+      "kind": "list"
+    },
+    "salam": {
+      "title": "السلام",
+      "group": "people",
+      "kind": "list"
+    },
+    "majlis": {
+      "title": "المجلس وكفارته",
+      "group": "people",
+      "kind": "list"
+    },
+    "for-others": {
+      "title": "الدعاء للناس وجوابه",
+      "group": "people",
+      "kind": "list"
+    },
+    "tasbih": {
+      "title": "التسبيح والتحميد والتهليل والتكبير",
+      "group": "general",
+      "kind": "list"
+    },
+    "istighfar": {
+      "title": "الاستغفار والتوبة",
+      "group": "general",
+      "kind": "list"
+    },
+    "salat-nabi": {
+      "title": "الصلاة على النبي ﷺ",
+      "group": "general",
+      "kind": "list"
+    },
+    "joy": {
+      "title": "الأمر السار والتعجب",
+      "group": "general",
+      "kind": "list"
+    },
+    "misc": {
+      "title": "متفرقات",
+      "group": "general",
+      "kind": "list"
+    }
+  }
+}

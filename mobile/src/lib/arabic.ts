@@ -44,3 +44,21 @@ export function formatIn(ms: number): string {
   if (!h) return `${toArabicDigits(m)} د`;
   return toArabicDigits(`${h}:${String(m).padStart(2, '0')}`);
 }
+
+/** Letters only — no harakat, one alif, one ya — for matching what the user types. */
+export function plainArabic(s: string): string {
+  return s
+    .replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** «مرتان»، «٣ مرات»، «٣٣ مرة»: a repeat count as it is said. */
+export function timesLabel(n: number): string {
+  if (n === 1) return 'مرة';
+  if (n === 2) return 'مرتان';
+  return `${toArabicDigits(n)} ${n <= 10 ? 'مرات' : 'مرة'}`;
+}
