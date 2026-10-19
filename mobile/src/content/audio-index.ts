@@ -28,7 +28,6 @@ export const audioIndex: Record<string, Record<string, number>> = {
     'sayyid-al-istighfar': require('../../../content/audio/faris-alrasheed/sayyid-al-istighfar.m4a'),
     'sayyid-al-istighfar-alt': require('../../../content/audio/faris-alrasheed/sayyid-al-istighfar-alt.m4a'),
     'fatir-as-samawat': require('../../../content/audio/faris-alrasheed/fatir-as-samawat.m4a'),
-    'fatir-as-samawat-short': require('../../../content/audio/faris-alrasheed/fatir-as-samawat-short.m4a'),
     'asbahtu-ushhiduk': require('../../../content/audio/faris-alrasheed/asbahtu-ushhiduk.m4a'),
     'amsaytu-ushhiduk': require('../../../content/audio/faris-alrasheed/amsaytu-ushhiduk.m4a'),
     'hasbiyallah': require('../../../content/audio/faris-alrasheed/hasbiyallah.m4a'),

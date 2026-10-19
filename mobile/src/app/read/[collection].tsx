@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useIsFocused, useLocalSearchParams } from 'expo-router';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type LayoutRectangle } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type LayoutChangeEvent, type LayoutRectangle, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   FadeIn,
@@ -16,6 +16,7 @@ import Animated, {
 import { scheduleOnRN } from 'react-native-worklets';
 import { Khatam } from '@/components/Khatam';
 import { Counter } from '@/components/reader/Counter';
+import { FadlView } from '@/components/reader/FadlView';
 import { Motes, Ripples, type MotesHandle, type RipplesHandle } from '@/components/reader/Effects';
 import { Ending, Opening } from '@/components/reader/Moments';
 import { ThikerText } from '@/components/reader/ThikerText';
@@ -201,13 +202,45 @@ export default function Reader() {
     feel.select();
     arrive(tier === 'still' ? 0 : 8, 220);
   };
+  // Swipes are shortcuts only (APP_PLAN §2): tabs and the list do the same with a tap. A text that
+  // fits the card doesn't scroll at all, so a vertical swipe moves on at once. A longer text scrolls
+  // first and moves on only from its edge, so the two never fight.
+  const metrics = useRef({ offset: 0, visible: 0, content: 0 });
+  const [textScrolls, setTextScrolls] = useState(false);
+  const measure = useCallback(() => {
+    const { visible, content } = metrics.current;
+    setTextScrolls(visible > 0 && content > visible + 4);
+  }, []);
+  const scrollNative = useMemo(() => Gesture.Native(), []);
+  const textScroll = useRef<ScrollView>(null);
+  // Each thiker and tab starts at the top of its text.
+  useEffect(() => {
+    textScroll.current?.scrollTo({ y: 0, animated: false });
+    metrics.current.offset = 0;
+  }, [index, tab]);
+  const onTextSize = useCallback((_: number, h: number) => {
+    metrics.current.content = h;
+    measure();
+  }, [measure]);
+  const onTextLayout = useCallback((e: LayoutChangeEvent) => {
+    metrics.current.visible = e.nativeEvent.layout.height;
+    measure();
+  }, [measure]);
+  const onTextScroll = useCallback(({ nativeEvent: n }: NativeSyntheticEvent<NativeScrollEvent>) => {
+    metrics.current = { offset: n.contentOffset.y, visible: n.layoutMeasurement.height, content: n.contentSize.height };
+  }, []);
   const onSwipe = (dir: 'left' | 'right' | 'up' | 'down') => {
     const order: Tab[] = hasTranslation ? ['translation', 'thiker', 'fadl'] : ['thiker', 'fadl'];
     if (dir === 'left' || dir === 'right') {
-      const i = order.indexOf(tab) + (dir === 'right' ? 1 : -1);
+      const i = order.indexOf(tab) + (dir === 'left' ? 1 : -1);
       if (order[i]) changeTab(order[i]);
-    } else if (dir === 'up' && index + 1 < total) goTo(index + 1);
-    else if (dir === 'down' && index > 0) goTo(index - 1);
+      return;
+    }
+    const { offset, visible, content } = metrics.current;
+    const atTop = !textScrolls || offset <= 4;
+    const atBottom = !textScrolls || offset + visible >= content - 4;
+    if (dir === 'up' && index + 1 < total && atBottom) goTo(index + 1);
+    else if (dir === 'down' && index > 0 && atTop) goTo(index - 1);
   };
 
   // Gestures run on the UI thread and call the latest handlers through a ref, so they are built
@@ -219,22 +252,19 @@ export default function Reader() {
   const callTap = useCallback((x: number, y: number) => latest.current.onTap(x, y), []);
   const callSwipe = useCallback((dir: 'left' | 'right' | 'up' | 'down') => latest.current.onSwipe(dir), []);
 
-  // Swipes are shortcuts only (APP_PLAN §2): tabs and the list do the same with a tap. Vertical
-  // swipes only work when the text doesn't scroll, so they never fight the scroll.
-  const [scrollable, setScrollable] = useState(false);
   /* eslint-disable react-hooks/refs -- gesture callbacks run on touch events, never during render */
   const gesture = useMemo(() => {
-    const tap = Gesture.Tap().maxDistance(12).onEnd((e, success) => {
+    const tap = Gesture.Tap().maxDistance(12).simultaneousWithExternalGesture(scrollNative).onEnd((e, success) => {
       if (success) scheduleOnRN(callTap, e.x, e.y);
     });
-    const panH = Gesture.Pan().activeOffsetX([-24, 24]).failOffsetY([-16, 16]).onEnd((e) => {
+    const panH = Gesture.Pan().activeOffsetX([-24, 24]).failOffsetY([-16, 16]).simultaneousWithExternalGesture(scrollNative).onEnd((e) => {
       if (Math.abs(e.translationX) > 60) scheduleOnRN(callSwipe, e.translationX > 0 ? 'right' : 'left');
     });
-    const panV = Gesture.Pan().enabled(!scrollable).activeOffsetY([-24, 24]).failOffsetX([-16, 16]).onEnd((e) => {
-      if (Math.abs(e.translationY) > 70 && Math.abs(e.velocityY) > 400) scheduleOnRN(callSwipe, e.translationY < 0 ? 'up' : 'down');
+    const panV = Gesture.Pan().activeOffsetY([-24, 24]).failOffsetX([-16, 16]).simultaneousWithExternalGesture(scrollNative).onEnd((e) => {
+      if (Math.abs(e.translationY) > 50) scheduleOnRN(callSwipe, e.translationY < 0 ? 'up' : 'down');
     });
     return Gesture.Race(panH, panV, tap);
-  }, [scrollable, callTap, callSwipe]);
+  }, [scrollNative, callTap, callSwipe]);
   /* eslint-enable react-hooks/refs */
 
   if (!total) return null;
@@ -288,22 +318,27 @@ export default function Reader() {
         onLayout={(e) => { cardBox.current = e.nativeEvent.layout; }}
       >
         <View style={[styles.card, { backgroundColor: theme.paper, borderColor: theme.paperBorder }]}>
-          <Corners color={theme.ornament} />
           <Thread counts={progress.counts} nums={entries.map((e) => e.num)} index={index} tier={tier} onPress={() => setListOpen(true)} />
 
           <GestureDetector gesture={gesture}>
             <View style={{ flex: 1 }} collapsable={false} onLayout={(e) => { textBox.current = e.nativeEvent.layout; }}>
               <Animated.View pointerEvents="none" style={[styles.glow, { backgroundColor: theme.glow }, glowStyle]} />
+              <GestureDetector gesture={scrollNative}>
               <ScrollView
+                ref={textScroll}
                 style={{ flex: 1 }}
                 contentContainerStyle={styles.textWrap}
-                onContentSizeChange={(_, h) => setScrollable(h > (textBox.current?.height ?? Infinity) + 4)}
+                onLayout={onTextLayout}
+                scrollEnabled={textScrolls}
+                onContentSizeChange={onTextSize}
+                onScroll={onTextScroll}
+                scrollEventThrottle={32}
                 showsVerticalScrollIndicator={false}
               >
                 <Animated.View style={textStyle} accessibilityHint={tab === 'thiker' ? 'اضغط للعد' : undefined}>
                   {tab === 'thiker' ? (
                     <View style={{ gap: space.md }}>
-                      <T variant="caption" center color={theme.paperMuted}>{entry.thiker.title}</T>
+                      {entry.note ? <T variant="caption" center color={theme.accent}>{entry.note}</T> : null}
                       <ThikerText entry={entry} fontSize={fontSize} />
                     </View>
                   ) : tab === 'fadl' ? (
@@ -313,6 +348,7 @@ export default function Reader() {
                   )}
                 </Animated.View>
               </ScrollView>
+              </GestureDetector>
               <Ripples ref={ripples} color={theme.accent} pool={tier === 'full' ? 3 : 1} />
             </View>
           </GestureDetector>
@@ -420,59 +456,6 @@ function Tabs({ tab, setTab, hasTranslation }: { tab: Tab; setTab: (t: Tab) => v
   );
 }
 
-/** Small khatam ornaments in the card's corners. */
-const Corners = memo(function Corners({ color }: { color: string }) {
-  return (
-    <>
-      {[styles.cornerTR, styles.cornerTL, styles.cornerBR, styles.cornerBL].map((pos, i) => (
-        <View key={i} pointerEvents="none" style={[styles.corner, pos]}>
-          <Khatam size={18} color={color} />
-        </View>
-      ))}
-    </>
-  );
-});
-
-function FadlView({ entry }: { entry: ResolvedEntry }) {
-  const theme = useTheme();
-  const ev = entry.evidence;
-  if (!entry.fadl && !ev) {
-    return (
-      <View style={{ alignItems: 'center', gap: space.md }}>
-        <Khatam size={40} color={theme.ornament} />
-        <T center color={theme.paperMuted}>لم يُضف فضل هذا الذكر بعد.</T>
-      </View>
-    );
-  }
-  const gradeColor = { صحيح: theme.success, حسن: '#3a8f8a', ضعيف: '#b8862f', موضوع: '#c0503f' } as const;
-  return (
-    <View style={{ gap: space.lg }}>
-      {entry.fadl ? (
-        <View style={{ gap: space.xs }}>
-          <T variant="caption" color={theme.paperMuted}>الفضل</T>
-          <T color={theme.paperText} style={{ fontSize: 19, lineHeight: 34 }}>{entry.fadl}</T>
-        </View>
-      ) : null}
-      {entry.fadl && ev ? <View style={{ alignItems: 'center' }}><Khatam size={20} color={theme.ornament} /></View> : null}
-      {ev?.text ? (
-        <View style={{ gap: space.xs }}>
-          <T variant="caption" color={theme.paperMuted}>الدليل</T>
-          <T color={theme.paperText} style={{ fontFamily: ATHKAR_FONTS.naskh.family, fontSize: 19, lineHeight: 36 }}>{ev.text}</T>
-        </View>
-      ) : null}
-      {ev?.source || ev?.grade ? (
-        <Row gap={space.sm} style={{ flexWrap: 'wrap' }}>
-          {ev.source ? <T color={theme.paperMuted} style={{ flexShrink: 1 }}>{ev.source}</T> : null}
-          {ev.grade ? (
-            <View style={[styles.grade, { backgroundColor: gradeColor[ev.grade] }]}>
-              <T variant="caption" bold color="#ffffff">{ev.grade}{ev.gradeNote ? ` — ${ev.gradeNote}` : ''}</T>
-            </View>
-          ) : null}
-        </Row>
-      ) : null}
-    </View>
-  );
-}
 
 function ReaderMenu({ visible, onClose, collectionId, entries }: {
   visible: boolean; onClose: () => void; collectionId: string; entries: ResolvedEntry[];
@@ -547,10 +530,4 @@ const styles = StyleSheet.create({
   controls: { justifyContent: 'space-between', paddingTop: space.xs },
   side: { width: 48, alignItems: 'center' },
   listRow: { paddingVertical: space.sm, paddingHorizontal: space.sm, borderRadius: radius.sm },
-  grade: { paddingHorizontal: space.md, paddingVertical: 4, borderRadius: radius.pill },
-  corner: { position: 'absolute', opacity: 0.9 },
-  cornerTR: { top: 8, right: 8 },
-  cornerTL: { top: 8, left: 8 },
-  cornerBR: { bottom: 8, right: 8 },
-  cornerBL: { bottom: 8, left: 8 },
 });

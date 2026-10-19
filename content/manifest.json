@@ -1,10 +1,11 @@
 {
-  "schemaVersion": 1,
-  "contentVersion": 2,
+  "schemaVersion": 2,
+  "contentVersion": 29,
   "defaultBook": "baz",
   "books": [
+    "hisn",
     "baz",
-    "uthaymeen",
-    "general"
+    "qasim",
+    "uthaymeen"
   ]
 }

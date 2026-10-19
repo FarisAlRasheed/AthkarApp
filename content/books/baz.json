@@ -1,215 +1,507 @@
 {
-  "name": "الشيخ ابن باز",
-  "collections": {
-    "morning": [
-      {
-        "id": "ayat-al-kursi",
-        "num": 1,
-        "fadl": "تحمي من الشيطان حتى يمسي"
-      },
-      {
-        "id": "al-ikhlas",
-        "num": 3,
-        "fadl": "تكفيك من كل شيء"
-      },
-      {
-        "id": "al-falaq",
-        "num": 3,
-        "fadl": "تكفيك من كل شيء"
-      },
-      {
-        "id": "an-nas",
-        "num": 3,
-        "fadl": "تكفيك من كل شيء"
-      },
-      {
-        "id": "asbahna-almulk-long",
-        "num": 1,
-        "evidence": {
-          "source": "صحيح مسلم (2723)"
+  "title": "تحفة الأخيار",
+  "author": "ابن باز",
+  "source": {
+    "turath": 31303
+  },
+  "chapters": [
+    {
+      "title": "الأذكار المشروعة بعد السلام في الصلوات الخمس",
+      "sections": [
+        "post-prayer"
+      ],
+      "entries": [
+        {
+          "id": "astaghfirullah",
+          "num": 3,
+          "hadith": "hisn-66"
+        },
+        {
+          "id": "anta-as-salam",
+          "hadith": "hisn-66"
+        },
+        {
+          "id": "la-mania-lima-atayt",
+          "hadith": "hisn-67"
+        },
+        {
+          "id": "la-nabudu-illa-iyyah",
+          "hadith": "hisn-68"
+        },
+        {
+          "id": "subhanallah",
+          "num": 33,
+          "hadith": "hisn-69"
+        },
+        {
+          "id": "alhamdulillah",
+          "num": 33,
+          "hadith": "hisn-69"
+        },
+        {
+          "id": "allahu-akbar",
+          "num": 33,
+          "hadith": "hisn-69"
+        },
+        {
+          "id": "tahleel",
+          "hadith": "hisn-69",
+          "note": "تمام المائة"
+        },
+        {
+          "id": "ayat-al-kursi",
+          "hadith": "hisn-71"
+        },
+        {
+          "id": "al-ikhlas",
+          "hadith": "hisn-70",
+          "note": "بعد كل صلاة، ويستحب تكرار السور الثلاث ثلاث مرات بعد صلاة الفجر وصلاة المغرب"
+        },
+        {
+          "id": "al-falaq",
+          "hadith": "hisn-70"
+        },
+        {
+          "id": "an-nas",
+          "hadith": "hisn-70"
+        },
+        {
+          "id": "tahleel-yuhyi-wa-yumit",
+          "num": 10,
+          "hadith": "hisn-72",
+          "note": "بعد صلاة الفجر وصلاة المغرب"
         }
-      },
-      {
-        "id": "sayyid-al-istighfar-alt",
-        "num": 1,
-        "fadl": "سيد الاستغفار، من قالها من النهار موقناً بها فمات من يومه قبل أن يمسي فهو من أهل الجنة"
-      },
-      {
-        "id": "bika-asbahna",
-        "num": 1
-      },
-      {
-        "id": "fatir-as-samawat-short",
-        "num": 1
-      },
-      {
-        "id": "bismillah-la-yadurr",
-        "num": 3,
-        "fadl": "لم يضره شيء"
-      },
-      {
-        "id": "raditu-billah",
-        "num": 3,
-        "fadl": "إلا كان حقاً على الله أن يرضيه يوم القيامة"
-      },
-      {
-        "id": "asbahtu-ushhiduk",
-        "num": 4,
-        "fadl": "من قالها حين يصبح أعتق الله ربعه من النار، فإن قالها أربعاً أعتقه الله من النار"
-      },
-      {
-        "id": "ma-asbaha-bi",
-        "num": 1,
-        "fadl": "من قالها حين يصبح فقد أدى شكر يومه"
-      },
-      {
-        "id": "afiyah",
-        "num": 1
-      },
-      {
-        "id": "tahleel",
-        "num": 10,
-        "fadl": "كتب له بها مائة حسنة، ومحي عنه بها مائة سيئة، وكانت له عدل رقبة، وحفظ بها يومئذ حتى يمسي"
-      },
-      {
-        "id": "asbahna-ala-fitrah",
-        "num": 1,
-        "evidence": {
-          "source": "خرجه الإمام أحمد في مسنده بإسناد صحيح"
+      ]
+    },
+    {
+      "title": "أذكار الصباح والمساء",
+      "sections": [
+        "morning",
+        "evening"
+      ],
+      "entries": [
+        {
+          "id": "subhanallah-wa-bihamdih",
+          "num": 100,
+          "hadith": "hisn-91"
+        },
+        {
+          "id": "asbahna-almulk-long",
+          "hadith": "hisn-77",
+          "only": "morning"
+        },
+        {
+          "id": "amsayna-almulk-long",
+          "hadith": "hisn-77",
+          "only": "evening"
+        },
+        {
+          "id": "sayyid-al-istighfar-alt",
+          "hadith": "hisn-79"
+        },
+        {
+          "id": "al-ikhlas",
+          "num": 3,
+          "hadith": "hisn-76"
+        },
+        {
+          "id": "al-falaq",
+          "num": 3,
+          "hadith": "hisn-76"
+        },
+        {
+          "id": "an-nas",
+          "num": 3,
+          "hadith": "hisn-76"
+        },
+        {
+          "id": "bika-asbahna",
+          "hadith": "hisn-78",
+          "only": "morning"
+        },
+        {
+          "id": "bika-amsayna",
+          "hadith": "hisn-78",
+          "only": "evening"
+        },
+        {
+          "id": "fatir-as-samawat",
+          "hadith": "hisn-85",
+          "note": "وإذا أخذ مضجعه"
+        },
+        {
+          "id": "bismillah-la-yadurr",
+          "num": 3,
+          "hadith": "hisn-86"
+        },
+        {
+          "id": "raditu-billah",
+          "num": 3,
+          "hadith": "hisn-87"
+        },
+        {
+          "id": "asbahtu-ushhiduk",
+          "num": 4,
+          "hadith": "hisn-80",
+          "only": "morning"
+        },
+        {
+          "id": "amsaytu-ushhiduk-bianna",
+          "num": 4,
+          "hadith": "hisn-80",
+          "only": "evening"
+        },
+        {
+          "id": "ma-asbaha-bi",
+          "hadith": "hisn-81",
+          "only": "morning"
+        },
+        {
+          "id": "ma-amsa-bi-aw-biahad",
+          "hadith": "hisn-81",
+          "only": "evening"
+        },
+        {
+          "id": "afiyah-alt",
+          "hadith": "hisn-84"
+        },
+        {
+          "id": "tahleel",
+          "num": 10,
+          "hadith": "baz-tahleel-10"
+        },
+        {
+          "id": "kalimat-allah",
+          "num": 3,
+          "hadith": "hisn-97",
+          "only": "evening"
+        },
+        {
+          "id": "asbahna-ala-fitrah",
+          "hadith": "hisn-90",
+          "only": "morning"
+        },
+        {
+          "id": "amsayna-ala-fitrah",
+          "hadith": "hisn-90",
+          "only": "evening"
+        },
+        {
+          "id": "afini-fi-badani",
+          "num": 3,
+          "hadith": "hisn-82"
+        },
+        {
+          "id": "kufr-wal-faqr-wa-audhu",
+          "num": 3,
+          "hadith": "hisn-82"
+        },
+        {
+          "id": "tahleel",
+          "num": 100,
+          "hadith": "hisn-93",
+          "note": "في صباح كل يوم",
+          "only": "morning"
         }
-      },
-      {
-        "id": "afini-fi-badani",
-        "num": 3,
-        "evidence": {
-          "source": "رواه الإمام أحمد وأبو داود بإسناد حسن"
+      ]
+    },
+    {
+      "title": "ما يقال عند دخول المنزل",
+      "sections": [
+        "home"
+      ],
+      "entries": [
+        {
+          "guide": "يذكر الله تعالى عند دخوله وعند طعامه؛ فإن الشيطان يقول: لا مبيت لكم ولا عشاء",
+          "hadith": "baz-home-dhikr"
+        },
+        {
+          "id": "khayr-al-mawlij",
+          "hadith": "baz-mawlij",
+          "note": "إذا ولج الرجل بيته، ثم ليسلّم على أهله"
         }
-      },
-      {
-        "id": "kufr-wal-faqr",
-        "num": 3,
-        "evidence": {
-          "source": "رواه الإمام أحمد وأبو داود بإسناد حسن"
+      ]
+    },
+    {
+      "title": "ما يقال عند الخروج من المنزل إلى المسجد أو غيره",
+      "sections": [
+        "home"
+      ],
+      "entries": [
+        {
+          "id": "khuruj-bismillah-tawakkaltu",
+          "hadith": "hisn-16"
+        },
+        {
+          "id": "audhu-an-adilla",
+          "hadith": "hisn-17",
+          "note": "كان ﷺ إذا خرج من بيته رفع طرفه إلى السماء وقال"
         }
-      },
-      {
-        "id": "tahleel",
-        "num": 100,
-        "fadl": "كانت له عدل عشر رقاب، وكتبت له مائة حسنة، ومحيت عنه مائة سيئة، وكانت له حرزاً من الشيطان يومه ذلك حتى يمسي"
-      },
-      {
-        "id": "subhanallah-wa-bihamdih",
-        "num": 100,
-        "fadl": "حطت خطياه ولو كانت مثل زبد البحر"
-      }
-    ],
-    "evening": [
-      {
-        "id": "ayat-al-kursi",
-        "num": 1,
-        "fadl": "تحمي من الشيطان حتى يصبح"
-      },
-      {
-        "id": "al-ikhlas",
-        "num": 3,
-        "fadl": "تكفيك من كل شيء"
-      },
-      {
-        "id": "al-falaq",
-        "num": 3,
-        "fadl": "تكفيك من كل شيء"
-      },
-      {
-        "id": "an-nas",
-        "num": 3
-      },
-      {
-        "id": "amsayna-almulk-long",
-        "num": 1,
-        "evidence": {
-          "source": "صحيح مسلم (2723)"
+      ]
+    },
+    {
+      "title": "ما يشرع عند دخول المسجد والخروج منه",
+      "sections": [
+        "mosque"
+      ],
+      "entries": [
+        {
+          "id": "iftah-li-abwab-rahmatik",
+          "hadith": "baz-masjid-1",
+          "note": "إذا دخل المسجد سلّم على النبي ﷺ وقال"
+        },
+        {
+          "id": "audhu-billahil-azim",
+          "hadith": "baz-masjid-2",
+          "note": "إذا دخل المسجد"
+        },
+        {
+          "id": "asaluka-min-fadlik",
+          "hadith": "baz-masjid-1",
+          "note": "إذا خرج من المسجد"
+        },
+        {
+          "id": "isimni-min-ash-shaytan",
+          "hadith": "baz-masjid-3",
+          "note": "إذا خرج من المسجد سلّم على النبي ﷺ وقال"
         }
-      },
-      {
-        "id": "sayyid-al-istighfar-alt",
-        "num": 1,
-        "fadl": "سيد الاستغفار، من قالها من الليل وهو موقن بها فمات قبل أن يصبح فهو من أهل الجنة"
-      },
-      {
-        "id": "bika-amsayna",
-        "num": 1
-      },
-      {
-        "id": "fatir-as-samawat-short",
-        "num": 1,
-        "fadl": "قله إذا أصبحت وإذا أمسيت وإذا أخذت مضجعك"
-      },
-      {
-        "id": "kalimat-allah",
-        "num": 3,
-        "fadl": "لم يضره حُمَة تلك الليلة (ولا يضره شيء حتى يرتحل)"
-      },
-      {
-        "id": "bismillah-la-yadurr",
-        "num": 3,
-        "fadl": "لم يضره شيء"
-      },
-      {
-        "id": "raditu-billah",
-        "num": 3,
-        "fadl": "إلا كان حقاً على الله أن يرضيه يوم القيامة"
-      },
-      {
-        "id": "amsaytu-ushhiduk",
-        "num": 4,
-        "fadl": "من قالها أربع مرات أعتقه الله من النار"
-      },
-      {
-        "id": "ma-amsa-bi",
-        "num": 1,
-        "fadl": "من قالها حين يمسي فقد أدى شكر ليلته"
-      },
-      {
-        "id": "afiyah-alt",
-        "num": 1,
-        "fadl": "لم يكن النبي يدع هؤلاء الدعوات حين يمسي وحين يصبح"
-      },
-      {
-        "id": "tahleel",
-        "num": 10,
-        "fadl": "كتب له بها مائة حسنة، ومحي عنه بها مائة سيئة، وكانت له عدل رقبة، وحفظ بها يومئذ حتى يمسي"
-      },
-      {
-        "id": "amsayna-ala-fitrah",
-        "num": 1,
-        "evidence": {
-          "source": "خرجه الإمام أحمد في مسنده بإسناد صحيح"
+      ]
+    },
+    {
+      "title": "ما يشرع من الذكر والدعاء عند النوم واليقظة",
+      "sections": [
+        "sleep",
+        "waking"
+      ],
+      "entries": [
+        {
+          "id": "bismika-amutu",
+          "hadith": "hisn-105",
+          "note": "إذا أخذ مضجعه من الليل وضع يده تحت خده",
+          "only": "sleep"
+        },
+        {
+          "id": "hamd-ahyana",
+          "hadith": "hisn-1",
+          "only": "waking"
+        },
+        {
+          "id": "al-ikhlas",
+          "num": 3,
+          "hadith": "hisn-99",
+          "note": "كان ﷺ إذا أوى إلى فراشه جمع كفيه ثم نفث فيهما فقرأ المعوذات، ثم يمسح بهما ما استطاع من جسده، يبدأ برأسه ووجهه، يفعل ذلك ثلاث مرات",
+          "only": "sleep"
+        },
+        {
+          "id": "al-falaq",
+          "num": 3,
+          "hadith": "hisn-99",
+          "only": "sleep"
+        },
+        {
+          "id": "an-nas",
+          "num": 3,
+          "hadith": "hisn-99",
+          "only": "sleep"
+        },
+        {
+          "id": "ayat-al-kursi",
+          "hadith": "hisn-100",
+          "only": "sleep"
+        },
+        {
+          "id": "baqarah-ending",
+          "hadith": "hisn-101",
+          "only": "sleep"
+        },
+        {
+          "id": "aslamtu-nafsi-wajjahtu",
+          "hadith": "hisn-111",
+          "note": "يتوضأ وضوءه للصلاة، ثم يضطجع على شقه الأيمن، ويجعلهن آخر ما يقول",
+          "only": "sleep"
+        },
+        {
+          "id": "rabb-as-samawat-wa-rabb-al-ard",
+          "hadith": "hisn-107",
+          "only": "sleep"
+        },
+        {
+          "id": "qini-adhabak",
+          "num": 3,
+          "hadith": "hisn-104",
+          "note": "يضع يده اليمنى تحت خده الأيمن",
+          "only": "sleep"
+        },
+        {
+          "id": "atamana-wa-saqana",
+          "hadith": "hisn-108",
+          "only": "sleep"
+        },
+        {
+          "id": "khalaqta-nafsi-tatawaffaha",
+          "hadith": "hisn-103",
+          "only": "sleep"
+        },
+        {
+          "id": "subhanaka-rabbi-bika-wadatu",
+          "hadith": "hisn-102",
+          "note": "إذا أوى إلى فراشه نفضه بداخلة إزاره وسمّى الله، ثم اضطجع على شقه الأيمن وقال",
+          "only": "sleep"
+        },
+        {
+          "id": "subhanallah",
+          "num": 33,
+          "hadith": "hisn-106",
+          "only": "sleep"
+        },
+        {
+          "id": "alhamdulillah",
+          "num": 33,
+          "hadith": "hisn-106",
+          "only": "sleep"
+        },
+        {
+          "id": "allahu-akbar",
+          "num": 34,
+          "hadith": "hisn-106",
+          "only": "sleep"
+        },
+        {
+          "id": "man-taarra",
+          "hadith": "hisn-2",
+          "note": "إذا استيقظ من الليل",
+          "only": "waking"
         }
-      },
-      {
-        "id": "afini-fi-badani",
-        "num": 3,
-        "evidence": {
-          "source": "رواه الإمام أحمد وأبو داود بإسناد حسن"
+      ]
+    },
+    {
+      "title": "الأذكار والأدعية المشروعة في ابتداء الشراب والأكل والفراغ منهما",
+      "sections": [
+        "food"
+      ],
+      "entries": [
+        {
+          "id": "bismillah",
+          "hadith": "baz-sammi-allah",
+          "note": "قبل الطعام"
+        },
+        {
+          "id": "bismillah-awwalahu-wa-akhirahu",
+          "hadith": "baz-awwalahu",
+          "note": "إن نسي أن يذكر الله في أوله"
+        },
+        {
+          "guide": "إن الله ليرضى عن العبد أن يأكل الأكلة فيحمده عليها، أو يشرب الشربة فيحمده عليها",
+          "hadith": "baz-yarda"
+        },
+        {
+          "id": "atamani-hadha",
+          "hadith": "hisn-180",
+          "fadl": "غفر له ما تقدم من ذنبه"
+        },
+        {
+          "id": "hamdan-kathiran-tayyiban",
+          "hadith": "hisn-181",
+          "note": "إذا فرغ من طعامه"
         }
-      },
-      {
-        "id": "kufr-wal-faqr",
-        "num": 3,
-        "evidence": {
-          "source": "رواه الإمام أحمد وأبو داود بإسناد حسن"
+      ]
+    },
+    {
+      "title": "ما يشرع من الذكر والدعاء عند رؤية البلدة أو القفول منها",
+      "sections": [
+        "travel"
+      ],
+      "entries": [
+        {
+          "id": "duaa-al-qaryah",
+          "hadith": "hisn-208",
+          "note": "إذا رأى قرية يريد دخولها"
+        },
+        {
+          "id": "ayibun-taibun",
+          "hadith": "baz-ayibun",
+          "note": "إذا أقبل على بلده، يقولها حتى يدخلها"
         }
-      },
-      {
-        "id": "tahleel",
-        "num": 100,
-        "fadl": "كانت له حرزاً من الشيطان يومه ذلك حتى يمسي"
-      },
-      {
-        "id": "subhanallah-wa-bihamdih",
-        "num": 100,
-        "fadl": "حطت خطياه ولو كانت مثل زبد البحر"
-      }
-    ]
-  }
+      ]
+    },
+    {
+      "title": "ما يشرع من الذكر والدعاء عند الأذان وبعده",
+      "sections": [
+        "adhan"
+      ],
+      "entries": [
+        {
+          "guide": "إذا سمعتم النداء فقولوا مثل ما يقول المؤذن",
+          "hadith": "baz-nida"
+        },
+        {
+          "id": "hawqala",
+          "hadith": "baz-umar-adhan",
+          "note": "عند «حيّ على الصلاة» و«حيّ على الفلاح»، ويقول مثل ما يقول المؤذن فيما سواهما"
+        },
+        {
+          "id": "adhan-ashhadu",
+          "hadith": "hisn-23",
+          "note": "حين يسمع المؤذن"
+        },
+        {
+          "guide": "ثم صلّوا على النبي ﷺ؛ فإنه من صلّى عليه صلاة صلى الله عليه بها عشرًا، ثم سلوا الله له الوسيلة",
+          "hadith": "baz-wasila"
+        },
+        {
+          "id": "adhan-al-wasila",
+          "hadith": "hisn-25",
+          "fadl": "حلّت له شفاعتي يوم القيامة"
+        }
+      ]
+    },
+    {
+      "title": "مشروعية السلام بدءًا وإجابة، وتشميت العاطس إذا حمد الله، وعيادة المريض",
+      "sections": [
+        "salam",
+        "sneeze",
+        "sick"
+      ],
+      "entries": [
+        {
+          "guide": "تطعم الطعام، وتقرأ السلام على من عرفت ومن لم تعرف",
+          "hadith": "baz-salam-1"
+        },
+        {
+          "guide": "أفشوا السلام بينكم",
+          "hadith": "baz-salam-2"
+        },
+        {
+          "guide": "حق المسلم على المسلم ست: إذا لقيته فسلّم عليه، وإذا دعاك فأجبه، وإذا استنصحك فانصحه، وإذا عطس فحمد الله فشمّته، وإذا مرض فعُده، وإذا مات فاتبعه",
+          "hadith": "baz-haqq-al-muslim"
+        },
+        {
+          "id": "alhamdulillah",
+          "hadith": "hisn-188",
+          "note": "يقوله العاطس",
+          "only": "sneeze"
+        },
+        {
+          "id": "yarhamukallah",
+          "hadith": "hisn-188",
+          "note": "يقوله له أخوه أو صاحبه",
+          "only": "sneeze"
+        },
+        {
+          "id": "yahdikumullah",
+          "hadith": "hisn-188",
+          "note": "ويردّ العاطس",
+          "only": "sneeze"
+        },
+        {
+          "guide": "إذا عطس أحدكم فحمد الله فشمّتوه، فإن لم يحمد الله فلا تشمّتوه",
+          "hadith": "baz-tashmit"
+        },
+        {
+          "guide": "التثاؤب من الشيطان، فإذا تثاءب أحدكم فليمسك بيده على فيه ما استطاع",
+          "hadith": "baz-tathawub"
+        }
+      ]
+    }
+  ]
 }
