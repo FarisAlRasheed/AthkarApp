@@ -52,6 +52,8 @@ interface SettingsState {
   hijriOffset: number;
   beadMaterial: BeadMaterial;
   onboarded: boolean;
+  /** The home screen's «add to home screen» card was closed (web only). */
+  installHidden: boolean;
   set: (patch: Partial<Omit<SettingsState, 'set' | 'setBook'>>) => void;
   setBook: (collectionId: string, bookId: string) => void;
 }
@@ -79,6 +81,7 @@ export const useSettings = create<SettingsState>()(
       hijriOffset: 0,
       beadMaterial: 'amber',
       onboarded: false,
+      installHidden: false,
       set: (patch) => set(patch),
       setBook: (collectionId, bookId) =>
         set((s) => ({ bookByCollection: { ...s.bookByCollection, [collectionId]: bookId } })),

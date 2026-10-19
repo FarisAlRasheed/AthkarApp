@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "أذكارنا",
+  "short_name": "أذكارنا",
+  "description": "أذكار الصباح والمساء والنوم، المسبحة ومواقيت الصلاة",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#04050d",
+  "theme_color": "#04050d",
+  "categories": ["lifestyle", "books"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
