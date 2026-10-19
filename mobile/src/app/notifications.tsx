@@ -1,11 +1,13 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Alert, Linking, ScrollView, StyleSheet, Switch, View } from 'react-native';
+import { useState } from 'react';
+import { Alert, Linking, Platform, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { InstallSheet } from '@/components/Install';
 import { SkyScreen } from '@/components/Sky';
-import { Card, IconButton, Pill, Row, T } from '@/components/ui';
+import { Button, Card, IconButton, Pill, Row, T } from '@/components/ui';
 import { goBack, useTheme } from '@/hooks';
 import { toArabicDigits } from '@/lib/arabic';
-import { askPermission, hasPermission, notificationsSupported } from '@/lib/notify';
+import { askPermission, hasPermission, notificationsNeedInstall, notificationsSupported } from '@/lib/notify';
 import { PRAYER_LABELS, PRAYERS, type Prayer } from '@/lib/prayer';
 import { anyReminderOn, useNotify } from '@/store/notify';
 import { useSkyScene } from '@/store/sky';
@@ -21,10 +23,16 @@ export default function NotificationsScreen() {
   useSkyScene({ kind: 'clock' });
   const theme = useTheme();
   const n = useNotify();
+  const [install, setInstall] = useState(false);
 
   /** Turns a reminder on, asking for permission the first time. */
   const enable = async (patch: Partial<Parameters<typeof n.set>[0]>) => {
     if (!anyReminderOn(n) && !(await hasPermission()) && !(await askPermission())) {
+      if (Platform.OS === 'web') {
+        // No system settings to open from a web page; the browser's site settings hold the switch.
+        window.alert('الإشعارات مغلقة لهذا الموقع. اسمح بها من إعدادات المتصفح للموقع (أو إعدادات الجهاز للتطبيق المضاف) لتصلك التذكيرات.');
+        return;
+      }
       Alert.alert('الإشعارات مغلقة', 'اسمح لأذكارنا بالإشعارات من إعدادات الجهاز لتصلك التذكيرات.', [
         { text: 'إلغاء', style: 'cancel' },
         { text: 'فتح الإعدادات', onPress: () => Linking.openSettings() },
@@ -63,8 +71,15 @@ export default function NotificationsScreen() {
             <T variant="heading">تذكير لطيف في وقته</T>
             <T muted style={{ lineHeight: 24 }}>
               تُجدوَل التذكيرات على جهازك فقط وتُحسب من مواقيت الصلاة في موقعك، دون إنترنت ودون أي خادم.
-              {notificationsSupported ? '' : ' الإشعارات متاحة في تطبيق الجوال فقط.'}
+              {Platform.OS === 'web' && notificationsSupported ? ' في نسخة الويب تصل التذكيرات ما دام التطبيق مفتوحًا أو في الخلفية منذ وقت قريب.' : ''}
+              {notificationsSupported || notificationsNeedInstall ? '' : ' الإشعارات غير متاحة في هذا المتصفح.'}
             </T>
+            {notificationsNeedInstall ? (
+              <>
+                <T style={{ lineHeight: 24 }}>على آيفون تعمل الإشعارات بعد إضافة أذكارنا إلى الشاشة الرئيسية وفتحه منها.</T>
+                <Button label="طريقة الإضافة" icon="phone-portrait-outline" onPress={() => setInstall(true)} />
+              </>
+            ) : null}
           </Card>
 
           <Card style={{ gap: space.md }}>
@@ -87,6 +102,7 @@ export default function NotificationsScreen() {
           </Card>
         </Animated.View>
       </ScrollView>
+      <InstallSheet visible={install} onClose={() => setInstall(false)} />
     </SkyScreen>
   );
 }

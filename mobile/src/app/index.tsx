@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { Countdown } from '@/components/Countdown';
 import { DayArc } from '@/components/home/DayArc';
+import { InstallCard } from '@/components/Install';
 import { Khatam } from '@/components/Khatam';
 import { SkyScreen } from '@/components/Sky';
 import { Button, Card, IconButton, Pill, Press, Row, T } from '@/components/ui';
@@ -66,6 +67,7 @@ export default function Home() {
         </Animated.View>
         <Animated.View entering={enter(1)}><PrayerSection /></Animated.View>
         <SpecialDayCard />
+        <Animated.View entering={enter(2)}><InstallCard /></Animated.View>
         <Animated.View entering={enter(2)}><SuggestionCard /></Animated.View>
         <Animated.View entering={enter(3)}>
           <T variant="heading" style={{ marginTop: space.md }}>الأوراد اليومية</T>

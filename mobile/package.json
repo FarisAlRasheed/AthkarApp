@@ -59,7 +59,7 @@
     "lint": "expo lint",
     "test": "node --test \"src/lib/*.test.ts\"",
     "preweb": "node scripts/gen-audio-index.mjs && node scripts/gen-sound-index.mjs && setup-skia-web public",
-    "build:web": "node scripts/gen-audio-index.mjs && node scripts/gen-sound-index.mjs && setup-skia-web public && expo export -p web"
+    "build:web": "node scripts/gen-audio-index.mjs && node scripts/gen-sound-index.mjs && setup-skia-web public && expo export -p web && node scripts/gen-sw.mjs"
   },
   "private": true,
   "allowScripts": {

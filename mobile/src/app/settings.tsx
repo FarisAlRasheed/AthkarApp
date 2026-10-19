@@ -1,8 +1,9 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import type { ComponentProps, ReactNode } from 'react';
+import { useState, type ComponentProps, type ReactNode } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { InstallSheet } from '@/components/Install';
 import { RATES } from '@/components/reader/AudioPlayer';
 import { SkyScreen } from '@/components/Sky';
 import { Card, IconButton, Pill, Row, T } from '@/components/ui';
@@ -11,6 +12,7 @@ import { goBack, useMinute, useTheme } from '@/hooks';
 import { toArabicDigits } from '@/lib/arabic';
 import { formatDateLine } from '@/lib/hijri';
 import { METHODS } from '@/lib/prayer';
+import { canInstall } from '@/lib/pwa';
 import { useTier } from '@/lib/quality';
 import { hasAmbient } from '@/lib/sound';
 import { useProgress } from '@/store/progress';
@@ -26,6 +28,7 @@ export default function Settings() {
   const s = useSettings();
   const tier = useTier();
   const now = useMinute();
+  const [install, setInstall] = useState(false);
 
   const confirmReset = () =>
     Alert.alert('مسح كل التقدم؟', 'سيُمسح تقدّمك في جميع الأذكار والمسبحة. لا يمكن التراجع.', [
@@ -70,6 +73,15 @@ export default function Settings() {
               <Ionicons name="chevron-back" size={20} color={theme.muted} />
             </Row>
           </Card>
+
+          {canInstall ? (
+            <Card onPress={() => setInstall(true)}>
+              <Row style={{ justifyContent: 'space-between' }}>
+                <Heading icon="phone-portrait-outline" title="أضف إلى الشاشة الرئيسية" caption="ليفتح كتطبيق ويعمل دون إنترنت" />
+                <Ionicons name="chevron-back" size={20} color={theme.muted} />
+              </Row>
+            </Card>
+          ) : null}
 
           <Group icon="book-outline" title="الكتاب والقارئ">
             {(['morning', 'evening'] as const).map((c) => {
@@ -185,6 +197,7 @@ export default function Settings() {
           ) : null}
         </Animated.View>
       </ScrollView>
+      <InstallSheet visible={install} onClose={() => setInstall(false)} />
     </SkyScreen>
   );
 }
